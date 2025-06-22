@@ -1,11 +1,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, Phone, Instagram, CheckCircle } from "lucide-react";
+import { Calendar, Clock, Phone, Instagram, CheckCircle, Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const features = [
     {
@@ -43,19 +45,48 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg">
-              <Calendar className="h-6 w-6" />
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg">
+                <Calendar className="h-6 w-6" />
+              </div>
+              <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
             </div>
-            <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
+            
+            {/* Desktop Menu */}
+            <div className="hidden md:block">
+              <Button 
+                onClick={() => navigate('/dashboard')}
+                className="btn-primary shadow-lg"
+              >
+                Iniciar Sesión
+              </Button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button 
+              className="md:hidden p-2 rounded-lg hover:bg-secondary/80 transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
-          <Button 
-            onClick={() => navigate('/dashboard')}
-            className="btn-primary shadow-lg"
-          >
-            Iniciar Sesión
-          </Button>
+
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 border-t border-border/20 pt-4">
+              <Button 
+                onClick={() => {
+                  navigate('/dashboard');
+                  setIsMenuOpen(false);
+                }}
+                className="btn-primary shadow-lg w-full"
+              >
+                Iniciar Sesión
+              </Button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -65,7 +96,7 @@ const Index = () => {
           <div className="animate-fade-in max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Tu link de reservas
-              <span className="block gradient-primary bg-clip-text text-transparent animate-bounce-gentle">
+              <span className="block mt-2 bg-gradient-to-r from-trust-blue via-trust-teal to-trust-blue bg-clip-text text-transparent animate-bounce-gentle">
                 profesional
               </span>
             </h1>
@@ -76,7 +107,7 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Button 
                 size="lg" 
-                className="btn-accent shadow-xl px-8 py-6 text-lg font-semibold"
+                className="btn-accent shadow-xl px-8 py-6 text-lg font-semibold w-full sm:w-auto"
                 onClick={() => navigate('/register')}
               >
                 Crear Mi Perfil Gratis
@@ -84,7 +115,7 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-primary text-primary px-8 py-6 text-lg font-semibold hover:bg-primary hover:text-primary-foreground"
+                className="border-2 border-primary text-primary px-8 py-6 text-lg font-semibold hover:bg-primary hover:text-primary-foreground w-full sm:w-auto"
                 onClick={() => navigate('/booking/demo')}
               >
                 Ver Demo
@@ -92,11 +123,11 @@ const Index = () => {
             </div>
             
             {/* Trust indicators */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
               {benefits.map((benefit, index) => (
-                <div key={index} className="flex items-center space-x-2 text-muted-foreground">
-                  <CheckCircle className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">{benefit}</span>
+                <div key={index} className="flex items-center justify-center sm:justify-start space-x-2 text-muted-foreground">
+                  <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="text-sm font-medium text-center sm:text-left">{benefit}</span>
                 </div>
               ))}
             </div>
@@ -113,7 +144,7 @@ const Index = () => {
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
             Diseñado especialmente para barberos, estilistas y profesionales de la belleza en México
           </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
               <Card key={index} className="text-center card-hover border-border/50 bg-card/80 backdrop-blur-sm animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
                 <CardHeader className="pb-4">
@@ -133,29 +164,28 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Social Proof Section */}
+      {/* Waitlist Section */}
       <section className="py-16 px-4">
         <div className="container mx-auto text-center">
           <div className="bg-card rounded-3xl p-8 border border-border/50 shadow-xl max-w-4xl mx-auto">
-            <h3 className="text-2xl font-bold text-foreground mb-4">
-              Únete a más de 500+ profesionales
+            <div className="gradient-primary text-primary-foreground p-4 rounded-2xl w-fit mx-auto mb-6 shadow-lg">
+              <Calendar className="h-8 w-8" />
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+              ¡Próximamente en Julio 2025!
             </h3>
-            <p className="text-muted-foreground mb-6">
-              Ya están usando Bookeasy.mx para hacer crecer sus negocios
+            <p className="text-muted-foreground mb-6 text-lg">
+              Únete a nuestra lista de espera y sé de los primeros en revolucionar tu negocio
             </p>
-            <div className="flex justify-center space-x-8 mb-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">500+</div>
-                <div className="text-sm text-muted-foreground">Profesionales</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">5000+</div>
-                <div className="text-sm text-muted-foreground">Citas Reservadas</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">98%</div>
-                <div className="text-sm text-muted-foreground">Satisfacción</div>
-              </div>
+            <Button 
+              size="lg" 
+              className="btn-accent shadow-xl px-8 py-6 text-lg font-semibold mb-6"
+              onClick={() => navigate('/register')}
+            >
+              Unirme a la Lista de Espera
+            </Button>
+            <div className="text-sm text-muted-foreground">
+              Recibe notificaciones exclusivas sobre el lanzamiento y ofertas especiales
             </div>
           </div>
         </div>
@@ -168,15 +198,15 @@ const Index = () => {
             ¿Listo para profesionalizar tu negocio?
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto font-inter">
-            Únete a cientos de profesionales que ya están usando Bookeasy.mx 
-            para gestionar sus citas de forma profesional.
+            Prepárate para el futuro de las reservas online. 
+            Únete a nuestra lista de espera y obtén acceso temprano.
           </p>
           <Button 
             size="lg" 
             className="bg-card text-primary hover:bg-card/90 px-8 py-6 text-lg font-semibold shadow-xl"
             onClick={() => navigate('/register')}
           >
-            Empezar Ahora - Es Gratis
+            Reservar Mi Lugar - Gratis
           </Button>
         </div>
       </section>
