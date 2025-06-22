@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, MapPin } from "lucide-react";
+import { Star, MapPin, Briefcase } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Provider {
@@ -51,7 +51,7 @@ const ProviderCard = ({ provider }: ProviderCardProps) => {
               {provider.name}
             </h3>
             <div className="flex items-center space-x-1 text-sm text-muted-foreground mt-1">
-              <Tag className="h-3 w-3" />
+              <Briefcase className="h-3 w-3" />
               <span>{provider.category}</span>
             </div>
           </div>
