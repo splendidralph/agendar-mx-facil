@@ -12,10 +12,10 @@ import { mockProviders } from "@/data/mockProviders";
 const Explore = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [priceRange, setPriceRange] = useState("");
-  const [minRating, setMinRating] = useState("");
+  const [selectedCity, setSelectedCity] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [priceRange, setPriceRange] = useState("all");
+  const [minRating, setMinRating] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
 
   // Filter providers based on search criteria
@@ -25,9 +25,9 @@ const Explore = () => {
       provider.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       provider.description.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesCity = selectedCity === "" || provider.city === selectedCity;
-    const matchesCategory = selectedCategory === "" || provider.category === selectedCategory;
-    const matchesRating = minRating === "" || provider.rating >= parseFloat(minRating);
+    const matchesCity = selectedCity === "all" || provider.city === selectedCity;
+    const matchesCategory = selectedCategory === "all" || provider.category === selectedCategory;
+    const matchesRating = minRating === "all" || provider.rating >= parseFloat(minRating);
     
     return matchesSearch && matchesCity && matchesCategory && matchesRating;
   });
@@ -160,10 +160,10 @@ const Explore = () => {
                 <Button
                   onClick={() => {
                     setSearchQuery("");
-                    setSelectedCity("");
-                    setSelectedCategory("");
-                    setPriceRange("");
-                    setMinRating("");
+                    setSelectedCity("all");
+                    setSelectedCategory("all");
+                    setPriceRange("all");
+                    setMinRating("all");
                   }}
                   variant="outline"
                 >

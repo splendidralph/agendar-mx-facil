@@ -58,7 +58,7 @@ const SearchFilters = ({
               <SelectValue placeholder="Todas las ciudades" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas las ciudades</SelectItem>
+              <SelectItem value="all">Todas las ciudades</SelectItem>
               {cities.map((city) => (
                 <SelectItem key={city} value={city}>
                   {city}
@@ -81,7 +81,7 @@ const SearchFilters = ({
               <SelectValue placeholder="Todas las categorías" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas las categorías</SelectItem>
+              <SelectItem value="all">Todas las categorías</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
@@ -104,7 +104,7 @@ const SearchFilters = ({
               <SelectValue placeholder="Cualquier precio" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Cualquier precio</SelectItem>
+              <SelectItem value="all">Cualquier precio</SelectItem>
               {priceRanges.map((range) => (
                 <SelectItem key={range.value} value={range.value}>
                   {range.label}
@@ -127,7 +127,7 @@ const SearchFilters = ({
               <SelectValue placeholder="Cualquier calificación" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Cualquier calificación</SelectItem>
+              <SelectItem value="all">Cualquier calificación</SelectItem>
               {ratings.map((rating) => (
                 <SelectItem key={rating.value} value={rating.value}>
                   {rating.label}
