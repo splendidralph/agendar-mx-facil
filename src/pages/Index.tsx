@@ -55,10 +55,17 @@ const Index = () => {
             </div>
             
             {/* Desktop Menu */}
-            <div className="hidden md:block">
+            <div className="hidden md:flex items-center space-x-4">
+              <Button 
+                variant="ghost"
+                onClick={() => navigate('/explore')}
+                className="text-foreground hover:text-primary"
+              >
+                Explorar
+              </Button>
               <Button 
                 onClick={() => navigate('/dashboard')}
-                className="btn-primary shadow-lg"
+                variant="outline"
               >
                 Iniciar Sesión
               </Button>
@@ -75,13 +82,24 @@ const Index = () => {
 
           {/* Mobile Menu */}
           {isMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 border-t border-border/20 pt-4">
+            <div className="md:hidden mt-4 pb-4 border-t border-border/20 pt-4 space-y-3">
+              <Button 
+                variant="ghost"
+                onClick={() => {
+                  navigate('/explore');
+                  setIsMenuOpen(false);
+                }}
+                className="w-full justify-start text-foreground hover:text-primary"
+              >
+                Explorar Profesionales
+              </Button>
               <Button 
                 onClick={() => {
                   navigate('/dashboard');
                   setIsMenuOpen(false);
                 }}
-                className="btn-primary shadow-lg w-full"
+                variant="outline"
+                className="w-full"
               >
                 Iniciar Sesión
               </Button>
@@ -96,7 +114,7 @@ const Index = () => {
           <div className="animate-fade-in max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Tu link de reservas
-              <span className="block mt-2 bg-gradient-to-r from-trust-blue via-trust-teal to-trust-blue bg-clip-text text-transparent animate-bounce-gentle">
+              <span className="block mt-2 gradient-primary bg-clip-text text-transparent animate-bounce-gentle">
                 profesional
               </span>
             </h1>
@@ -116,9 +134,9 @@ const Index = () => {
                 size="lg" 
                 variant="outline" 
                 className="border-2 border-primary text-primary px-8 py-6 text-lg font-semibold hover:bg-primary hover:text-primary-foreground w-full sm:w-auto"
-                onClick={() => navigate('/booking/demo')}
+                onClick={() => navigate('/explore')}
               >
-                Ver Demo
+                Explorar Profesionales
               </Button>
             </div>
             
