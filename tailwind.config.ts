@@ -73,16 +73,20 @@ export default {
 					200: '#bae6fd',
 					300: '#7dd3fc',
 					400: '#38bdf8',
-					500: '#0ea5e9',
+					500: '#1D84B5',
 					600: '#0284c7',
 					700: '#0369a1',
 					800: '#075985',
 					900: '#0c4a6e',
 				},
-				mexican: {
-					green: '#006847',
-					red: '#ce1126',
-					gold: '#fcab10',
+				trust: {
+					blue: '#1D84B5',
+					teal: '#00A591',
+					mint: '#F3F8F7',
+					cream: '#EAFBF7',
+					coral: '#FF6B4A',
+					orange: '#FF835C',
+					charcoal: '#2D2D2D',
 				}
 			},
 			borderRadius: {
@@ -126,13 +130,33 @@ export default {
 						opacity: '1',
 						transform: 'translateY(0)'
 					}
+				},
+				'scale-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'scale(0.9)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'scale(1)'
+					}
+				},
+				'bounce-gentle': {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-4px)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out',
-				'slide-up': 'slide-up 0.3s ease-out'
+				'slide-up': 'slide-up 0.3s ease-out',
+				'scale-in': 'scale-in 0.3s ease-out',
+				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite'
 			}
 		}
 	},
