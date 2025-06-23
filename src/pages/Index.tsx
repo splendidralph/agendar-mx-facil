@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, Phone, Instagram, CheckCircle, Menu, X } from "lucide-react";
@@ -114,7 +113,7 @@ const Index = () => {
           <div className="animate-fade-in max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Tu link de reservas
-              <span className="block mt-2 gradient-primary bg-clip-text text-transparent animate-bounce-gentle">
+              <span className="block mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-bounce-gentle">
                 profesional
               </span>
             </h1>
