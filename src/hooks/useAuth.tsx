@@ -43,62 +43,116 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName?: string, role: 'provider' | 'client' = 'client') => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    console.log('Attempting signup with:', { email, fullName, role });
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName,
-          role: role
-        }
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      console.log('Attempting signup with:', { email, fullName, role, redirectUrl });
+      
+      // First, let's check if the user already exists
+      const { data: existingUser } = await supabase.auth.getUser();
+      if (existingUser.user) {
+        console.log('User already signed in, signing out first');
+        await supabase.auth.signOut();
       }
-    });
 
-    if (error) {
-      console.error('Signup error:', error);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName || '',
+            role: role
+          }
+        }
+      });
+
+      console.log('Signup response:', { data, error });
+
+      if (error) {
+        console.error('Signup error:', error);
+        toast({
+          title: "Error al crear cuenta",
+          description: error.message,
+          variant: "destructive"
+        });
+        return { error };
+      }
+
+      if (data.user && !data.user.email_confirmed_at) {
+        toast({
+          title: "¡Cuenta creada!",
+          description: "Revisa tu email para confirmar tu cuenta",
+        });
+      } else if (data.user) {
+        toast({
+          title: "¡Cuenta creada exitosamente!",
+          description: "Ya puedes usar tu cuenta",
+        });
+      }
+
+      return { error: null };
+    } catch (err) {
+      console.error('Unexpected signup error:', err);
+      const error = err as Error;
       toast({
-        title: "Error al crear cuenta",
-        description: error.message,
+        title: "Error inesperado",
+        description: error.message || "Ocurrió un error inesperado",
         variant: "destructive"
       });
-    } else {
-      toast({
-        title: "¡Cuenta creada!",
-        description: "Revisa tu email para confirmar tu cuenta",
-      });
+      return { error };
     }
-
-    return { error };
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    try {
+      console.log('Attempting signin for:', email);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-    if (error) {
+      console.log('Signin response:', { data, error });
+
+      if (error) {
+        console.error('Signin error:', error);
+        toast({
+          title: "Error al iniciar sesión",
+          description: error.message,
+          variant: "destructive"
+        });
+        return { error };
+      }
+
       toast({
-        title: "Error al iniciar sesión",
-        description: error.message,
+        title: "¡Bienvenido!",
+        description: "Has iniciado sesión exitosamente",
+      });
+
+      return { error: null };
+    } catch (err) {
+      console.error('Unexpected signin error:', err);
+      const error = err as Error;
+      toast({
+        title: "Error inesperado",
+        description: error.message || "Ocurrió un error inesperado",
         variant: "destructive"
       });
+      return { error };
     }
-
-    return { error };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    toast({
-      title: "Sesión cerrada",
-      description: "Has cerrado sesión exitosamente",
-    });
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Sesión cerrada",
+        description: "Has cerrado sesión exitosamente",
+      });
+    } catch (err) {
+      console.error('Signout error:', err);
+    }
   };
 
   return (

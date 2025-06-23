@@ -12,7 +12,7 @@ import { Calendar, ArrowLeft } from 'lucide-react';
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { signUp, signIn, loading } = useAuth();
+  const { signUp, signIn, loading, user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Sign up form state
@@ -29,39 +29,84 @@ const Auth = () => {
     password: ''
   });
 
+  // Redirect if already authenticated
+  if (user && !loading) {
+    navigate('/dashboard');
+    return null;
+  }
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     
-    const { error } = await signUp(
-      signUpData.email, 
-      signUpData.password, 
-      signUpData.fullName,
-      signUpData.role
-    );
-    
-    if (!error) {
-      // User will need to confirm email, so we stay on this page
+    if (!signUpData.email || !signUpData.password) {
+      console.error('Email and password are required');
+      return;
     }
+
+    setIsSubmitting(true);
+    console.log('Starting signup process...');
     
-    setIsSubmitting(false);
+    try {
+      const { error } = await signUp(
+        signUpData.email.trim(), 
+        signUpData.password, 
+        signUpData.fullName.trim() || undefined,
+        signUpData.role
+      );
+      
+      console.log('Signup completed, error:', error);
+      
+      if (!error) {
+        // Clear form on success
+        setSignUpData({
+          email: '',
+          password: '',
+          fullName: '',
+          role: 'client'
+        });
+      }
+    } catch (err) {
+      console.error('Form submission error:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     
-    const { error } = await signIn(signInData.email, signInData.password);
-    
-    if (!error) {
-      navigate('/dashboard');
+    if (!signInData.email || !signInData.password) {
+      console.error('Email and password are required');
+      return;
     }
+
+    setIsSubmitting(true);
+    console.log('Starting signin process...');
     
-    setIsSubmitting(false);
+    try {
+      const { error } = await signIn(signInData.email.trim(), signInData.password);
+      
+      console.log('Signin completed, error:', error);
+      
+      if (!error) {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      console.error('Form submission error:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Cargando...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -110,6 +155,7 @@ const Auth = () => {
                       value={signInData.email}
                       onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
                   <div>
@@ -120,6 +166,8 @@ const Auth = () => {
                       value={signInData.password}
                       onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
                       required
+                      disabled={isSubmitting}
+                      minLength={6}
                     />
                   </div>
                   <Button
@@ -151,28 +199,33 @@ const Auth = () => {
                       type="text"
                       value={signUpData.fullName}
                       onChange={(e) => setSignUpData({ ...signUpData, fullName: e.target.value })}
-                      required
+                      disabled={isSubmitting}
+                      placeholder="Tu nombre completo"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">Email *</Label>
                     <Input
                       id="signup-email"
                       type="email"
                       value={signUpData.email}
                       onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
                       required
+                      disabled={isSubmitting}
+                      placeholder="tu@email.com"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="signup-password">Contraseña</Label>
+                    <Label htmlFor="signup-password">Contraseña *</Label>
                     <Input
                       id="signup-password"
                       type="password"
                       value={signUpData.password}
                       onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
                       required
+                      disabled={isSubmitting}
                       minLength={6}
+                      placeholder="Mínimo 6 caracteres"
                     />
                   </div>
                   <div>
@@ -183,6 +236,7 @@ const Auth = () => {
                         setSignUpData({ ...signUpData, role: value })
                       }
                       className="mt-2"
+                      disabled={isSubmitting}
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="client" id="client" />
