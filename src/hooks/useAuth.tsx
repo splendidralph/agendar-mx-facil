@@ -45,6 +45,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (email: string, password: string, fullName?: string, role: 'provider' | 'client' = 'client') => {
     const redirectUrl = `${window.location.origin}/`;
     
+    console.log('Attempting signup with:', { email, fullName, role });
+    
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -58,6 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     if (error) {
+      console.error('Signup error:', error);
       toast({
         title: "Error al crear cuenta",
         description: error.message,
