@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -43,6 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, fullName?: string, role: 'provider' | 'client' = 'client') => {
     try {
+      setLoading(true);
       const redirectUrl = `${window.location.origin}/`;
       
       console.log('Attempting signup with:', { 
@@ -51,21 +54,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         role, 
         redirectUrl 
       });
-      
-      // First, let's check if the user already exists
-      const { data: existingUser } = await supabase.auth.getUser();
-      if (existingUser.user) {
-        console.log('User already signed in, signing out first');
-        await supabase.auth.signOut();
-      }
 
-      // Prepare metadata - ensure we always send valid data
+      // Prepare metadata with proper field names
       const metadata = {
         full_name: fullName || '',
-        role: role || 'client'
+        role: role
       };
 
-      console.log('Sending metadata:', metadata);
+      console.log('Sending signup request with metadata:', metadata);
 
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -76,16 +72,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       });
 
-      console.log('Signup response:', { data, error });
+      console.log('Signup response:', { 
+        user: data.user?.email, 
+        session: !!data.session,
+        error: error?.message 
+      });
 
       if (error) {
-        console.error('Signup error details:', {
-          message: error.message,
-          status: error.status,
-          code: error.code,
-          details: error
-        });
-        
+        console.error('Signup error:', error);
         toast({
           title: "Error al crear cuenta",
           description: error.message,
@@ -97,7 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.user && !data.user.email_confirmed_at) {
         toast({
           title: "¡Cuenta creada!",
-          description: "Revisa tu email para confirmar tu cuenta",
+          description: "Revisa tu email para confirmar tu cuenta antes de iniciar sesión",
         });
       } else if (data.user) {
         toast({
@@ -116,11 +110,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         variant: "destructive"
       });
       return { error };
+    } finally {
+      setLoading(false);
     }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
+      setLoading(true);
       console.log('Attempting signin for:', email);
       
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -128,7 +125,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         password
       });
 
-      console.log('Signin response:', { data, error });
+      console.log('Signin response:', { 
+        user: data.user?.email, 
+        session: !!data.session,
+        error: error?.message 
+      });
 
       if (error) {
         console.error('Signin error:', error);
@@ -155,11 +156,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         variant: "destructive"
       });
       return { error };
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOut = async () => {
     try {
+      setLoading(true);
+      console.log('Signing out user');
       await supabase.auth.signOut();
       toast({
         title: "Sesión cerrada",
@@ -167,6 +172,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (err) {
       console.error('Signout error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
