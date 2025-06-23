@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, Phone, Instagram, CheckCircle, Menu, X } from "lucide-react";
+import { Calendar, Clock, Phone, Instagram, CheckCircle, Menu, X, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const features = [
@@ -40,6 +42,14 @@ const Index = () => {
     "Soporte en español"
   ];
 
+  const handleAuthClick = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
       {/* Header */}
@@ -62,12 +72,33 @@ const Index = () => {
               >
                 Explorar
               </Button>
-              <Button 
-                onClick={() => navigate('/dashboard')}
-                variant="outline"
-              >
-                Iniciar Sesión
-              </Button>
+              {user ? (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-muted-foreground">
+                    Hola, {user.user_metadata?.full_name || user.email}
+                  </span>
+                  <Button 
+                    onClick={handleAuthClick}
+                    variant="outline"
+                  >
+                    Dashboard
+                  </Button>
+                  <Button 
+                    onClick={signOut}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  onClick={handleAuthClick}
+                  variant="outline"
+                >
+                  Iniciar Sesión
+                </Button>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -92,16 +123,45 @@ const Index = () => {
               >
                 Explorar Profesionales
               </Button>
-              <Button 
-                onClick={() => {
-                  navigate('/dashboard');
-                  setIsMenuOpen(false);
-                }}
-                variant="outline"
-                className="w-full"
-              >
-                Iniciar Sesión
-              </Button>
+              {user ? (
+                <>
+                  <div className="text-sm text-muted-foreground px-3">
+                    Hola, {user.user_metadata?.full_name || user.email}
+                  </div>
+                  <Button 
+                    onClick={() => {
+                      handleAuthClick();
+                      setIsMenuOpen(false);
+                    }}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Dashboard
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    variant="ghost"
+                    className="w-full justify-start"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Cerrar Sesión
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  onClick={() => {
+                    handleAuthClick();
+                    setIsMenuOpen(false);
+                  }}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Iniciar Sesión
+                </Button>
+              )}
             </div>
           )}
         </div>
@@ -125,9 +185,9 @@ const Index = () => {
               <Button 
                 size="lg" 
                 className="btn-accent shadow-xl px-8 py-6 text-lg font-semibold w-full sm:w-auto"
-                onClick={() => navigate('/register')}
+                onClick={() => navigate('/auth')}
               >
-                Crear Mi Perfil Gratis
+                {user ? 'Ir al Dashboard' : 'Crear Mi Perfil Gratis'}
               </Button>
               <Button 
                 size="lg" 
@@ -197,7 +257,7 @@ const Index = () => {
             <Button 
               size="lg" 
               className="btn-accent shadow-xl px-8 py-6 text-lg font-semibold mb-6"
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/auth')}
             >
               Unirme a la Lista de Espera
             </Button>
@@ -221,7 +281,7 @@ const Index = () => {
           <Button 
             size="lg" 
             className="bg-card text-primary hover:bg-card/90 px-8 py-6 text-lg font-semibold shadow-xl"
-            onClick={() => navigate('/register')}
+            onClick={() => navigate('/auth')}
           >
             Reservar Mi Lugar - Gratis
           </Button>
