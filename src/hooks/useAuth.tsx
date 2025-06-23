@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -46,7 +45,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       
-      console.log('Attempting signup with:', { email, fullName, role, redirectUrl });
+      console.log('Attempting signup with:', { 
+        email, 
+        fullName: fullName || 'Not provided', 
+        role, 
+        redirectUrl 
+      });
       
       // First, let's check if the user already exists
       const { data: existingUser } = await supabase.auth.getUser();
@@ -55,22 +59,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await supabase.auth.signOut();
       }
 
+      // Prepare metadata - ensure we always send valid data
+      const metadata = {
+        full_name: fullName || '',
+        role: role || 'client'
+      };
+
+      console.log('Sending metadata:', metadata);
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: redirectUrl,
-          data: {
-            full_name: fullName || '',
-            role: role
-          }
+          data: metadata
         }
       });
 
       console.log('Signup response:', { data, error });
 
       if (error) {
-        console.error('Signup error:', error);
+        console.error('Signup error details:', {
+          message: error.message,
+          status: error.status,
+          code: error.code,
+          details: error
+        });
+        
         toast({
           title: "Error al crear cuenta",
           description: error.message,
