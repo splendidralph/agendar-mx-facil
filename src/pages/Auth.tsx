@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -142,17 +143,20 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8 relative">
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="absolute top-4 left-4 text-muted-foreground hover:text-foreground"
+            className="absolute top-0 left-0 text-muted-foreground hover:text-foreground z-10"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
           
-          <div className="flex justify-center items-center space-x-3 mb-4">
+          <div 
+            className="flex justify-center items-center space-x-3 mb-4 pt-12 sm:pt-0 cursor-pointer"
+            onClick={() => navigate('/')}
+          >
             <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg">
               <Calendar className="h-6 w-6" />
             </div>
