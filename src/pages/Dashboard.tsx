@@ -10,12 +10,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [bookingLink] = useState("bookeasy.mx/barberjose");
 
-  const recentBookings = [
-    { id: 1, client: "Juan Pérez", service: "Corte + Barba", date: "2024-06-23", time: "10:00", phone: "+52 55 1234 5678", status: "Confirmado" },
-    { id: 2, client: "María González", service: "Corte de Cabello", date: "2024-06-23", time: "14:30", phone: "+52 55 8765 4321", status: "Pendiente" },
-    { id: 3, client: "Carlos Ruiz", service: "Barba", date: "2024-06-24", time: "09:00", phone: "+52 55 5555 5555", status: "Confirmado" }
-  ];
-
   const copyLink = () => {
     navigator.clipboard.writeText(`https://${bookingLink}`);
     toast.success("¡Link copiado al portapapeles!");
@@ -33,7 +27,7 @@ const Dashboard = () => {
             <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-muted-foreground hidden sm:inline font-inter">¡Hola, José!</span>
+            <span className="text-muted-foreground hidden sm:inline font-inter">¡Hola!</span>
             <Button 
               variant="outline"
               onClick={() => navigate('/')}
@@ -64,8 +58,8 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground font-semibold">Citas Hoy</p>
-                    <p className="text-3xl font-bold text-foreground">3</p>
-                    <p className="text-xs text-primary font-medium">+2 vs ayer</p>
+                    <p className="text-3xl font-bold text-foreground">0</p>
+                    <p className="text-xs text-muted-foreground font-medium">Sin citas programadas</p>
                   </div>
                   <div className="gradient-primary p-3 rounded-xl">
                     <Calendar className="h-6 w-6 text-primary-foreground" />
@@ -79,8 +73,8 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground font-semibold">Esta Semana</p>
-                    <p className="text-3xl font-bold text-foreground">12</p>
-                    <p className="text-xs text-primary font-medium">+25%</p>
+                    <p className="text-3xl font-bold text-foreground">0</p>
+                    <p className="text-xs text-muted-foreground font-medium">Sin citas</p>
                   </div>
                   <div className="gradient-accent p-3 rounded-xl">
                     <TrendingUp className="h-6 w-6 text-accent-foreground" />
@@ -94,8 +88,8 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground font-semibold">Clientes</p>
-                    <p className="text-3xl font-bold text-foreground">48</p>
-                    <p className="text-xs text-primary font-medium">+8 nuevos</p>
+                    <p className="text-3xl font-bold text-foreground">0</p>
+                    <p className="text-xs text-muted-foreground font-medium">Sin clientes</p>
                   </div>
                   <div className="bg-primary/10 p-3 rounded-xl">
                     <Users className="h-6 w-6 text-primary" />
@@ -109,8 +103,8 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground font-semibold">Ingresos</p>
-                    <p className="text-3xl font-bold text-foreground">$2,400</p>
-                    <p className="text-xs text-primary font-medium">Esta semana</p>
+                    <p className="text-3xl font-bold text-foreground">$0</p>
+                    <p className="text-xs text-muted-foreground font-medium">Esta semana</p>
                   </div>
                   <div className="bg-accent/10 p-3 rounded-xl">
                     <DollarSign className="h-6 w-6 text-accent" />
@@ -159,40 +153,12 @@ const Dashboard = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {recentBookings.map((booking, index) => (
-                    <div key={booking.id} className="flex items-center justify-between p-4 border border-border/50 rounded-xl hover:bg-secondary/30 smooth-transition animate-scale-in" style={{ animationDelay: `${0.6 + index * 0.1}s` }}>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-sm">
-                            {booking.client.split(' ').map(n => n[0]).join('')}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-foreground">{booking.client}</p>
-                            <p className="text-sm text-muted-foreground font-inter">{booking.service}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right mr-4">
-                        <p className="font-semibold text-foreground">{booking.date}</p>
-                        <p className="text-sm text-muted-foreground">{booking.time}</p>
-                      </div>
-                      <div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          booking.status === 'Confirmado' 
-                            ? 'bg-primary/10 text-primary' 
-                            : 'bg-accent/10 text-accent'
-                        }`}>
-                          {booking.status}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-6 text-center">
-                  <Button variant="outline" className="border-border text-foreground hover:bg-secondary">
-                    Ver Todas las Citas
-                  </Button>
+                <div className="text-center py-12">
+                  <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground font-inter">No tienes citas programadas</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Las citas aparecerán aquí cuando los clientes hagan reservas
+                  </p>
                 </div>
               </CardContent>
             </Card>
