@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -13,8 +12,10 @@ import 'react-phone-number-input/style.css';
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { signUp, signIn, loading, user } = useAuth();
+  const { signUp, signIn, resetPassword, loading, user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
 
   // Sign up form state
   const [signUpData, setSignUpData] = useState({
@@ -99,6 +100,33 @@ const Auth = () => {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!resetEmail) {
+      console.error('Email is required');
+      return;
+    }
+
+    setIsSubmitting(true);
+    console.log('Starting password reset process...');
+    
+    try {
+      const { error } = await resetPassword(resetEmail.trim());
+      
+      console.log('Password reset completed, error:', error);
+      
+      if (!error) {
+        setResetEmail('');
+        setShowForgotPassword(false);
+      }
+    } catch (err) {
+      console.error('Password reset error:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -141,44 +169,95 @@ const Auth = () => {
           <TabsContent value="signin">
             <Card>
               <CardHeader>
-                <CardTitle>Iniciar Sesión</CardTitle>
+                <CardTitle>
+                  {showForgotPassword ? 'Recuperar Contraseña' : 'Iniciar Sesión'}
+                </CardTitle>
                 <CardDescription>
-                  Ingresa con tu cuenta existente
+                  {showForgotPassword 
+                    ? 'Ingresa tu email para recibir instrucciones de recuperación'
+                    : 'Ingresa con tu cuenta existente'
+                  }
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSignIn} className="space-y-4">
-                  <div>
-                    <Label htmlFor="signin-email">Email</Label>
-                    <Input
-                      id="signin-email"
-                      type="email"
-                      value={signInData.email}
-                      onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
-                      required
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="signin-password">Contraseña</Label>
-                    <Input
-                      id="signin-password"
-                      type="password"
-                      value={signInData.password}
-                      onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
-                      required
-                      disabled={isSubmitting}
-                      minLength={6}
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full btn-accent"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-                  </Button>
-                </form>
+                {showForgotPassword ? (
+                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                    <div>
+                      <Label htmlFor="reset-email">Email</Label>
+                      <Input
+                        id="reset-email"
+                        type="email"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        required
+                        disabled={isSubmitting}
+                        placeholder="tu@email.com"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Button
+                        type="submit"
+                        className="w-full btn-accent"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? 'Enviando...' : 'Enviar Instrucciones'}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="w-full"
+                        onClick={() => setShowForgotPassword(false)}
+                        disabled={isSubmitting}
+                      >
+                        Volver al inicio de sesión
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <form onSubmit={handleSignIn} className="space-y-4">
+                    <div>
+                      <Label htmlFor="signin-email">Email</Label>
+                      <Input
+                        id="signin-email"
+                        type="email"
+                        value={signInData.email}
+                        onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="signin-password">Contraseña</Label>
+                      <Input
+                        id="signin-password"
+                        type="password"
+                        value={signInData.password}
+                        onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
+                        required
+                        disabled={isSubmitting}
+                        minLength={6}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Button
+                        type="submit"
+                        className="w-full btn-accent"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="w-full text-sm"
+                        onClick={() => setShowForgotPassword(true)}
+                        disabled={isSubmitting}
+                      >
+                        ¿Olvidaste tu contraseña?
+                      </Button>
+                    </div>
+                  </form>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
