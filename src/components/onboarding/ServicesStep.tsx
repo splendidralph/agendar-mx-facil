@@ -9,19 +9,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Database } from '@/integrations/supabase/types';
+
+type ServiceCategory = Database['public']['Enums']['service_category'];
 
 interface Service {
   name: string;
   price: number;
   duration: number;
   description: string;
-  category: string;
+  category: ServiceCategory;
 }
 
 const ServicesStep = () => {
   const { data, updateData, nextStep, prevStep, loading } = useOnboarding();
   const [services, setServices] = useState<Service[]>(data.services.length > 0 ? data.services : [
-    { name: '', price: 0, duration: 30, description: '', category: 'haircut' }
+    { name: '', price: 0, duration: 30, description: '', category: 'haircut' as ServiceCategory }
   ]);
 
   useEffect(() => {
@@ -30,7 +33,7 @@ const ServicesStep = () => {
     }
   }, [data.services]);
 
-  const categories = [
+  const categories: ServiceCategory[] = [
     'haircut',
     'beard',
     'nails',
@@ -39,7 +42,7 @@ const ServicesStep = () => {
     'other'
   ];
 
-  const categoryLabels = {
+  const categoryLabels: Record<ServiceCategory, string> = {
     haircut: 'Corte de Cabello',
     beard: 'Barba',
     nails: 'Uñas',
@@ -49,7 +52,7 @@ const ServicesStep = () => {
   };
 
   const addService = () => {
-    setServices(prev => [...prev, { name: '', price: 0, duration: 30, description: '', category: 'haircut' }]);
+    setServices(prev => [...prev, { name: '', price: 0, duration: 30, description: '', category: 'haircut' as ServiceCategory }]);
   };
 
   const removeService = (index: number) => {
@@ -127,7 +130,7 @@ const ServicesStep = () => {
                   <Label htmlFor={`service-category-${index}`}>Categoría</Label>
                   <Select
                     value={service.category}
-                    onValueChange={(value) => updateService(index, 'category', value)}
+                    onValueChange={(value: ServiceCategory) => updateService(index, 'category', value)}
                   >
                     <SelectTrigger className="mt-1">
                       <SelectValue />
@@ -135,7 +138,7 @@ const ServicesStep = () => {
                     <SelectContent>
                       {categories.map((category) => (
                         <SelectItem key={category} value={category}>
-                          {categoryLabels[category as keyof typeof categoryLabels]}
+                          {categoryLabels[category]}
                         </SelectItem>
                       ))}
                     </SelectContent>

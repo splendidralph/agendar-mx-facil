@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Database } from '@/integrations/supabase/types';
+
+type ServiceCategory = Database['public']['Enums']['service_category'];
 
 interface OnboardingData {
   step: number;
@@ -17,7 +20,7 @@ interface OnboardingData {
     price: number;
     duration: number;
     description: string;
-    category: string;
+    category: ServiceCategory;
   }>;
 }
 
@@ -84,7 +87,7 @@ export const useOnboarding = () => {
               price: service.price,
               duration: service.duration_minutes,
               description: service.description || '',
-              category: service.category
+              category: service.category as ServiceCategory
             }))
           }));
         }
@@ -188,14 +191,14 @@ export const useOnboarding = () => {
           .delete()
           .eq('provider_id', providerId);
 
-        // Insert new services
+        // Insert new services with proper typing
         const servicesToInsert = data.services.map(service => ({
           provider_id: providerId,
           name: service.name,
           price: service.price,
           duration_minutes: service.duration,
           description: service.description,
-          category: service.category,
+          category: service.category as ServiceCategory,
           is_active: true
         }));
 

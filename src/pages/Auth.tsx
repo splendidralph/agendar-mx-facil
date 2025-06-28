@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -32,13 +33,6 @@ const Auth = () => {
     password: ''
   });
 
-  // Redirect if already authenticated
-  if (user && !loading) {
-    // Check if user has completed onboarding
-    checkOnboardingStatus();
-    return null;
-  }
-
   const checkOnboardingStatus = async () => {
     if (!user) return;
 
@@ -64,6 +58,13 @@ const Auth = () => {
       navigate('/onboarding');
     }
   };
+
+  // Redirect if already authenticated
+  if (user && !loading) {
+    // Check if user has completed onboarding
+    checkOnboardingStatus();
+    return null;
+  }
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
