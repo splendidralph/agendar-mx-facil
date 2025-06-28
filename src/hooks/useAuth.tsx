@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName?: string, role?: 'provider' | 'client') => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName?: string, phone?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -43,22 +42,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName?: string, role: 'provider' | 'client' = 'client') => {
+  const signUp = async (email: string, password: string, fullName?: string, phone?: string) => {
     try {
       setLoading(true);
       const redirectUrl = `${window.location.origin}/`;
       
       console.log('Attempting signup with:', { 
         email, 
-        fullName: fullName || 'Not provided', 
-        role, 
+        fullName: fullName || 'Not provided',
+        phone: phone || 'Not provided',
+        role: 'provider', // Always default to provider
         redirectUrl 
       });
 
-      // Prepare metadata with proper field names
+      // Prepare metadata with proper field names - default everyone to provider
       const metadata = {
         full_name: fullName || '',
-        role: role
+        phone: phone || '',
+        role: 'provider' // Always set to provider by default
       };
 
       console.log('Sending signup request with metadata:', metadata);
@@ -95,7 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } else if (data.user) {
         toast({
-          title: "¡Cuenta creada exitosamente!",
+          title: "¡Cuenta de proveedor creada exitosamente!",
           description: "Ya puedes usar tu cuenta",
         });
       }

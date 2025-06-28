@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar, ArrowLeft } from 'lucide-react';
+import PhoneInput from 'react-phone-number-input/input';
+import 'react-phone-number-input/style.css';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const Auth = () => {
     email: '',
     password: '',
     fullName: '',
-    role: 'client' as 'provider' | 'client'
+    phone: ''
   });
 
   // Sign in form state
@@ -51,7 +52,7 @@ const Auth = () => {
         signUpData.email.trim(), 
         signUpData.password, 
         signUpData.fullName.trim() || undefined,
-        signUpData.role
+        signUpData.phone.trim() || undefined
       );
       
       console.log('Signup completed, error:', error);
@@ -62,7 +63,7 @@ const Auth = () => {
           email: '',
           password: '',
           fullName: '',
-          role: 'client'
+          phone: ''
         });
       }
     } catch (err) {
@@ -187,7 +188,7 @@ const Auth = () => {
               <CardHeader>
                 <CardTitle>Crear Cuenta</CardTitle>
                 <CardDescription>
-                  Únete a la comunidad de BookEasy.mx
+                  Únete como proveedor de servicios en BookEasy.mx
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -216,6 +217,18 @@ const Auth = () => {
                     />
                   </div>
                   <div>
+                    <Label htmlFor="signup-phone">Teléfono</Label>
+                    <PhoneInput
+                      international
+                      defaultCountry="MX"
+                      value={signUpData.phone}
+                      onChange={(phone) => setSignUpData({ ...signUpData, phone: phone || '' })}
+                      disabled={isSubmitting}
+                      placeholder="Ingresa tu número de teléfono"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                    />
+                  </div>
+                  <div>
                     <Label htmlFor="signup-password">Contraseña *</Label>
                     <Input
                       id="signup-password"
@@ -228,32 +241,12 @@ const Auth = () => {
                       placeholder="Mínimo 6 caracteres"
                     />
                   </div>
-                  <div>
-                    <Label>Tipo de Cuenta</Label>
-                    <RadioGroup
-                      value={signUpData.role}
-                      onValueChange={(value: 'provider' | 'client') => 
-                        setSignUpData({ ...signUpData, role: value })
-                      }
-                      className="mt-2"
-                      disabled={isSubmitting}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="client" id="client" />
-                        <Label htmlFor="client">Cliente - Quiero reservar servicios</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="provider" id="provider" />
-                        <Label htmlFor="provider">Proveedor - Quiero ofrecer servicios</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
                   <Button
                     type="submit"
                     className="w-full btn-accent"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta'}
+                    {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta de Proveedor'}
                   </Button>
                 </form>
               </CardContent>
