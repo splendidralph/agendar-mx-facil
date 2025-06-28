@@ -21,9 +21,9 @@ const Explore = () => {
   // Filter providers based on search criteria
   const filteredProviders = mockProviders.filter(provider => {
     const matchesSearch = searchQuery === "" || 
-      provider.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      provider.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      provider.description.toLowerCase().includes(searchQuery.toLowerCase());
+      provider.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      provider.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      provider.description?.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesCity = selectedCity === "all" || provider.city === selectedCity;
     const matchesCategory = selectedCategory === "all" || provider.category === selectedCategory;
@@ -139,38 +139,24 @@ const Explore = () => {
               </Select>
             </div>
 
-            {/* Provider Grid */}
-            {filteredProviders.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredProviders.map((provider) => (
-                  <ProviderCard key={provider.id} provider={provider} />
-                ))}
+            {/* No Providers Message */}
+            <div className="text-center py-16">
+              <div className="gradient-primary text-primary-foreground p-4 rounded-2xl w-fit mx-auto mb-6">
+                <Search className="h-8 w-8" />
               </div>
-            ) : (
-              <div className="text-center py-16">
-                <div className="gradient-primary text-primary-foreground p-4 rounded-2xl w-fit mx-auto mb-6">
-                  <Search className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  No se encontraron profesionales
-                </h3>
-                <p className="text-muted-foreground mb-6">
-                  Intenta ajustar tus filtros de búsqueda
-                </p>
-                <Button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedCity("all");
-                    setSelectedCategory("all");
-                    setPriceRange("all");
-                    setMinRating("all");
-                  }}
-                  variant="outline"
-                >
-                  Limpiar filtros
-                </Button>
-              </div>
-            )}
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                Aún no hay profesionales registrados
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                Los proveedores de servicios aparecerán aquí una vez que se registren en la plataforma
+              </p>
+              <Button
+                onClick={() => navigate('/register')}
+                className="btn-primary"
+              >
+                Registrarse como proveedor
+              </Button>
+            </div>
           </div>
         </div>
       </div>
