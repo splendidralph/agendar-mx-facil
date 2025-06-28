@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, ArrowLeft } from 'lucide-react';
-import PhoneInput from 'react-phone-number-input/input';
+import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
 const Auth = () => {
@@ -39,8 +39,8 @@ const Auth = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!signUpData.email || !signUpData.password) {
-      console.error('Email and password are required');
+    if (!signUpData.email || !signUpData.password || !signUpData.fullName || !signUpData.phone) {
+      console.error('All fields are required');
       return;
     }
 
@@ -51,8 +51,8 @@ const Auth = () => {
       const { error } = await signUp(
         signUpData.email.trim(), 
         signUpData.password, 
-        signUpData.fullName.trim() || undefined,
-        signUpData.phone.trim() || undefined
+        signUpData.fullName.trim(),
+        signUpData.phone.trim()
       );
       
       console.log('Signup completed, error:', error);
@@ -194,12 +194,13 @@ const Auth = () => {
               <CardContent>
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div>
-                    <Label htmlFor="signup-name">Nombre Completo</Label>
+                    <Label htmlFor="signup-name">Nombre Completo *</Label>
                     <Input
                       id="signup-name"
                       type="text"
                       value={signUpData.fullName}
                       onChange={(e) => setSignUpData({ ...signUpData, fullName: e.target.value })}
+                      required
                       disabled={isSubmitting}
                       placeholder="Tu nombre completo"
                     />
@@ -217,15 +218,20 @@ const Auth = () => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="signup-phone">Teléfono</Label>
+                    <Label htmlFor="signup-phone">Teléfono *</Label>
                     <PhoneInput
                       international
+                      countryCallingCodeEditable={false}
                       defaultCountry="MX"
                       value={signUpData.phone}
                       onChange={(phone) => setSignUpData({ ...signUpData, phone: phone || '' })}
                       disabled={isSubmitting}
                       placeholder="Ingresa tu número de teléfono"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                      style={{
+                        '--PhoneInputCountryFlag-height': '1em',
+                        '--PhoneInputCountrySelectArrow-color': 'var(--color-text-muted)',
+                      } as React.CSSProperties}
                     />
                   </div>
                   <div>
