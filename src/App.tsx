@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Register from "./pages/Register";
 import Setup from "./pages/Setup";
 import Dashboard from "./pages/Dashboard";
+import Onboarding from "./pages/Onboarding";
 import BookingDemo from "./pages/BookingDemo";
 import Explore from "./pages/Explore";
 import Auth from "./pages/Auth";
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/register" element={<Register />} />
             <Route path="/setup" element={<Setup />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/booking/demo" element={<BookingDemo />} />
             <Route path="/explore" element={<Explore />} />

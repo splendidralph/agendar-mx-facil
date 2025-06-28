@@ -1,7 +1,7 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -34,9 +34,36 @@ const Auth = () => {
 
   // Redirect if already authenticated
   if (user && !loading) {
-    navigate('/dashboard');
+    // Check if user has completed onboarding
+    checkOnboardingStatus();
     return null;
   }
+
+  const checkOnboardingStatus = async () => {
+    if (!user) return;
+
+    try {
+      const { data: provider, error } = await supabase
+        .from('providers')
+        .select('profile_completed')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        // No provider found, redirect to onboarding
+        navigate('/onboarding');
+      } else if (provider && !provider.profile_completed) {
+        // Provider exists but not completed
+        navigate('/onboarding');
+      } else {
+        // Profile completed
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      navigate('/onboarding');
+    }
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,7 +119,10 @@ const Auth = () => {
       console.log('Signin completed, error:', error);
       
       if (!error) {
-        navigate('/dashboard');
+        // Check onboarding status after successful sign in
+        setTimeout(() => {
+          checkOnboardingStatus();
+        }, 100);
       }
     } catch (err) {
       console.error('Form submission error:', err);

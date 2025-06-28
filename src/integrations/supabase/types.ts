@@ -159,49 +159,61 @@ export type Database = {
           address: string | null
           bio: string | null
           business_name: string
+          category: string | null
           created_at: string | null
           id: string
           instagram_handle: string | null
           is_active: boolean | null
           location_id: string | null
+          onboarding_step: number | null
           phone: string | null
+          profile_completed: boolean | null
           profile_image_url: string | null
           rating: number | null
           total_reviews: number | null
           updated_at: string | null
           user_id: string
+          username: string | null
         }
         Insert: {
           address?: string | null
           bio?: string | null
           business_name: string
+          category?: string | null
           created_at?: string | null
           id?: string
           instagram_handle?: string | null
           is_active?: boolean | null
           location_id?: string | null
+          onboarding_step?: number | null
           phone?: string | null
+          profile_completed?: boolean | null
           profile_image_url?: string | null
           rating?: number | null
           total_reviews?: number | null
           updated_at?: string | null
           user_id: string
+          username?: string | null
         }
         Update: {
           address?: string | null
           bio?: string | null
           business_name?: string
+          category?: string | null
           created_at?: string | null
           id?: string
           instagram_handle?: string | null
           is_active?: boolean | null
           location_id?: string | null
+          onboarding_step?: number | null
           phone?: string | null
+          profile_completed?: boolean | null
           profile_image_url?: string | null
           rating?: number | null
           total_reviews?: number | null
           updated_at?: string | null
           user_id?: string
+          username?: string | null
         }
         Relationships: [
           {

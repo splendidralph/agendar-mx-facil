@@ -1,19 +1,78 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, Phone, Instagram, Link, TrendingUp, Users, DollarSign } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Calendar, Link, TrendingUp, Users, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [bookingLink] = useState("bookeasy.mx/barberjose");
+  const { user, signOut } = useAuth();
+  const [provider, setProvider] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      checkProviderProfile();
+    }
+  }, [user]);
+
+  const checkProviderProfile = async () => {
+    if (!user) return;
+
+    try {
+      const { data: providerData, error } = await supabase
+        .from('providers')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching provider:', error);
+        return;
+      }
+
+      if (!providerData || !providerData.profile_completed) {
+        navigate('/onboarding');
+        return;
+      }
+
+      setProvider(providerData);
+    } catch (error) {
+      console.error('Error checking provider profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const copyLink = () => {
-    navigator.clipboard.writeText(`https://${bookingLink}`);
-    toast.success("¡Link copiado al portapapeles!");
+    if (provider?.username) {
+      const bookingUrl = `https://bookeasy.mx/@${provider.username}`;
+      navigator.clipboard.writeText(bookingUrl);
+      toast.success("¡Link copiado al portapapeles!");
+    }
   };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Cargando dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!provider) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
@@ -27,10 +86,12 @@ const Dashboard = () => {
             <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-muted-foreground hidden sm:inline font-inter">¡Hola!</span>
+            <span className="text-muted-foreground hidden sm:inline font-inter">
+              ¡Hola, {provider.business_name}!
+            </span>
             <Button 
               variant="outline"
-              onClick={() => navigate('/')}
+              onClick={handleSignOut}
               className="border-border text-foreground hover:bg-secondary"
             >
               Cerrar Sesión
@@ -125,7 +186,9 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="p-4 bg-secondary/50 rounded-xl border border-border/50">
-                  <p className="text-sm font-mono text-foreground break-all">{bookingLink}</p>
+                  <p className="text-sm font-mono text-foreground break-all">
+                    bookeasy.mx/@{provider.username}
+                  </p>
                 </div>
                 <Button 
                   onClick={copyLink}
@@ -137,7 +200,7 @@ const Dashboard = () => {
                 <Button 
                   variant="outline"
                   className="w-full border-border text-foreground hover:bg-secondary"
-                  onClick={() => navigate('/booking/demo')}
+                  onClick={() => window.open(`https://bookeasy.mx/@${provider.username}`, '_blank')}
                 >
                   Ver Mi Perfil
                 </Button>
