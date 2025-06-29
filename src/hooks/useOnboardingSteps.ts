@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { OnboardingData } from '@/types/onboarding';
-import { validateStepRequirements } from '@/utils/onboardingValidation';
+import { validateStep } from '@/utils/onboardingValidation';
 import { updateProviderStep } from '@/services/onboardingService';
 
 export const useOnboardingSteps = (
@@ -24,9 +24,7 @@ export const useOnboardingSteps = (
   }, [data.step]);
 
   const nextStep = useCallback(async (updatedData?: Partial<OnboardingData>) => {
-    console.log('useOnboardingSteps: nextStep called for step:', currentStep);
-    console.log('useOnboardingSteps: updatedData:', updatedData);
-    console.log('useOnboardingSteps: current global data:', {
+    console.log('► nextStep start—step:', currentStep, 'data before:', {
       businessName: data.businessName,
       category: data.category,
       username: data.username,
@@ -34,63 +32,57 @@ export const useOnboardingSteps = (
     });
     
     // Prepare data for validation and saving
-    let dataForValidation = { ...data };
+    const newData = { ...data, ...updatedData };
+    console.log('nextStep: Merged data for validation:', {
+      businessName: newData.businessName,
+      category: newData.category,
+      username: newData.username,
+      servicesCount: newData.services?.length || 0
+    });
     
-    // If we have updated data, merge it immediately
+    // Update local data state immediately to ensure UI sync
     if (updatedData) {
-      dataForValidation = { ...dataForValidation, ...updatedData };
-      console.log('useOnboardingSteps: Merged data for validation:', {
-        businessName: dataForValidation.businessName,
-        category: dataForValidation.category,
-        username: dataForValidation.username,
-        servicesCount: dataForValidation.services?.length || 0
-      });
-      
-      // Update local data state immediately to ensure UI sync
       updateData(updatedData);
     }
     
-    // Validate step requirements with the merged data
-    const isStepValid = validateStepRequirements(currentStep, dataForValidation);
-    console.log('useOnboardingSteps: Step validation result:', isStepValid);
-    
-    if (!isStepValid) {
-      console.log('useOnboardingSteps: Validation failed, not advancing');
+    // Validate current step with the merged data
+    if (!validateStep(currentStep, newData)) {
+      console.warn('✋ Validation failed for step', currentStep);
       return;
     }
     
     // Only advance if we're not at the final step
     if (currentStep < 5) {
-      const newStep = currentStep + 1;
-      console.log('useOnboardingSteps: Advancing to step:', newStep);
+      const nextStepNumber = currentStep + 1;
+      console.log('✔️ Validation passed. Advancing to step', nextStepNumber);
       
       try {
         // Save the current step with the validated data
-        console.log('useOnboardingSteps: Saving current step data...');
-        const saved = await saveCurrentStep(dataForValidation, currentStep);
+        console.log('nextStep: Saving current step data...');
+        const saved = await saveCurrentStep(newData, currentStep);
         
         if (!saved) {
-          console.log('useOnboardingSteps: Save failed, not advancing');
+          console.log('nextStep: Save failed, not advancing');
           return;
         }
 
         // Update the step in the database
         if (userId) {
-          await updateProviderStep(userId, newStep);
-          console.log('useOnboardingSteps: Successfully updated step in database');
+          await updateProviderStep(userId, nextStepNumber);
+          console.log('nextStep: Successfully updated step in database');
         }
         
         // Update local state
-        setCurrentStep(newStep);
-        updateData({ step: newStep });
-        console.log('useOnboardingSteps: Successfully advanced to step:', newStep);
+        setCurrentStep(nextStepNumber);
+        updateData({ step: nextStepNumber });
+        console.log('nextStep: Successfully advanced to step:', nextStepNumber);
         
       } catch (error) {
-        console.error('useOnboardingSteps: Error during step advancement:', error);
+        console.error('❌ nextStep error:', error);
         toast.error('Error avanzando al siguiente paso');
       }
     } else {
-      console.log('useOnboardingSteps: Already at final step');
+      console.log('nextStep: Already at final step');
     }
   }, [currentStep, data, updateData, saveCurrentStep, userId]);
 

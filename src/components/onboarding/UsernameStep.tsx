@@ -6,9 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowRight, ArrowLeft, Check, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { validateStep } from '@/utils/onboardingValidation';
 
 const UsernameStep = () => {
-  const { data, updateData, nextStep, prevStep, loading, generateUsername, checkUsernameAvailability } = useOnboarding();
+  const { data, updateData, nextStep, prevStep, loading, generateUsername, checkUsernameAvailability, currentStep } = useOnboarding();
   const [username, setUsername] = useState(data.username || '');
   const [isChecking, setIsChecking] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
@@ -20,7 +21,6 @@ const UsernameStep = () => {
       const generated = generateUsername(data.businessName);
       console.log('UsernameStep: Generated username:', generated);
       setUsername(generated);
-      // Immediately sync to global state
       updateData({ username: generated });
       checkAvailability(generated);
     } else if (data.username && data.username !== username) {
@@ -51,7 +51,6 @@ const UsernameStep = () => {
   };
 
   const handleUsernameChange = (value: string) => {
-    // Clean the username
     const cleanUsername = value
       .toLowerCase()
       .replace(/[^a-z0-9-]/g, '')
@@ -59,18 +58,14 @@ const UsernameStep = () => {
     
     console.log('UsernameStep: Username changed to:', cleanUsername);
     setUsername(cleanUsername);
-    
-    // Immediately sync to global state
     updateData({ username: cleanUsername });
     
     setIsAvailable(null);
 
-    // Clear existing timeout
     if (checkTimeout) {
       clearTimeout(checkTimeout);
     }
 
-    // Set new timeout for availability check
     if (cleanUsername.length >= 3) {
       const timeout = setTimeout(() => {
         checkAvailability(cleanUsername);
@@ -80,35 +75,12 @@ const UsernameStep = () => {
   };
 
   const handleNext = async () => {
-    console.log('UsernameStep: handleNext called');
-    console.log('UsernameStep: Current username:', username);
-    console.log('UsernameStep: Is available:', isAvailable);
-    console.log('UsernameStep: Global data username:', data.username);
+    console.log('→ Clicking Continuar step', currentStep, 'valid:', validateStep(currentStep, { ...data, username }));
     
-    // Validate username
-    if (!username || username.length < 3) {
-      console.log('UsernameStep: Username too short');
-      toast.error('El username debe tener al menos 3 caracteres');
-      return;
-    }
-
-    if (isAvailable !== true) {
-      console.log('UsernameStep: Username not available');
-      toast.error('Por favor elige un username disponible');
-      return;
-    }
-
-    // Ensure global state has the latest username before proceeding
     const usernameData = { username };
-    console.log('UsernameStep: Updating global data and proceeding with:', usernameData);
+    updateData(usernameData);
     
     try {
-      // Update local data first to ensure sync
-      updateData(usernameData);
-      
-      // Add small delay to ensure state is updated
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
       await nextStep(usernameData);
       console.log('UsernameStep: Successfully advanced to next step');
     } catch (error) {
@@ -117,13 +89,16 @@ const UsernameStep = () => {
     }
   };
 
-  const isValid = username && username.length >= 3 && isAvailable === true;
+  // Simple validation check
+  const currentData = { ...data, username };
+  const isValidStep = validateStep(currentStep, currentData) && isAvailable === true;
 
   console.log('UsernameStep: Render state:', {
     username,
     isAvailable,
-    isValid,
+    isValidStep,
     loading,
+    currentStep,
     globalUsername: data.username
   });
 
@@ -182,14 +157,16 @@ const UsernameStep = () => {
           onClick={prevStep}
           variant="outline"
           className="border-border text-foreground"
+          type="button"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Anterior
         </Button>
         <Button
           onClick={handleNext}
-          disabled={!isValid || loading}
+          disabled={loading || !isValidStep}
           className="btn-primary"
+          type="button"
         >
           {loading ? 'Guardando...' : 'Continuar'}
           <ArrowRight className="h-4 w-4 ml-2" />

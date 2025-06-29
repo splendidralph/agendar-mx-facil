@@ -49,24 +49,38 @@ const Onboarding = () => {
   ];
 
   const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return <ProfileSetupStep />;
-      case 2:
-        return <ContactStep />;
-      case 3:
-        return <UsernameStep />;
-      case 4:
-        return <ServicesStep />;
-      case 5:
-        return <PreviewStep />;
-      default:
-        return <ProfileSetupStep />;
-    }
+    console.log('Onboarding: renderStep called with currentStep:', currentStep);
+    
+    if (currentStep === 1) return <ProfileSetupStep />;
+    if (currentStep === 2) return <ContactStep />;
+    if (currentStep === 3) return <UsernameStep />;
+    if (currentStep === 4) return <ServicesStep />;
+    if (currentStep === 5) return <PreviewStep />;
+    
+    // Fallback to step 1 if invalid step
+    console.warn('Onboarding: Invalid currentStep, falling back to step 1');
+    return <ProfileSetupStep />;
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
+      {/* Debug Banner */}
+      <div 
+        style={{ 
+          position: 'fixed', 
+          top: 0, 
+          right: 0, 
+          zIndex: 9999,
+          background: 'red',
+          color: 'white',
+          padding: '4px 8px',
+          fontSize: '12px',
+          fontWeight: 'bold'
+        }}
+      >
+        DEBUG STEP: {currentStep}
+      </div>
+
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-4 flex justify-center items-center">
