@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar, ChevronLeft, Clock, Phone, Instagram, CheckCircle, Star, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { categoryLabels } from "@/utils/serviceCategories";
@@ -40,10 +40,12 @@ const Booking = () => {
   const [selectedTime, setSelectedTime] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [clientData, setClientData] = useState({
     name: "",
     phone: "",
-    email: ""
+    email: "",
+    notes: ""
   });
 
   const timeSlots = [
@@ -115,22 +117,65 @@ const Booking = () => {
     }
   };
 
-  const handleBooking = (e: React.FormEvent) => {
+  const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedService) {
+    
+    if (!selectedService || !provider) {
       toast.error('Por favor selecciona un servicio');
       return;
     }
-    
-    console.log("Reserva:", { 
-      provider: provider?.business_name,
-      service: selectedService.name,
-      date: selectedDate, 
-      time: selectedTime, 
-      client: clientData 
-    });
-    setShowConfirmation(true);
-    toast.success("¡Reserva registrada! Te contactaremos pronto para confirmar.");
+
+    if (!selectedDate || !selectedTime) {
+      toast.error('Por favor selecciona fecha y hora');
+      return;
+    }
+
+    if (!clientData.name || !clientData.phone) {
+      toast.error('Por favor completa tu nombre y teléfono');
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      console.log("Creating booking:", {
+        provider: provider.business_name,
+        service: selectedService.name,
+        date: selectedDate,
+        time: selectedTime,
+        client: clientData
+      });
+
+      const { data, error } = await supabase.functions.invoke('create-booking', {
+        body: {
+          providerId: provider.id,
+          serviceId: selectedService.id,
+          bookingDate: selectedDate,
+          bookingTime: selectedTime,
+          clientData: clientData,
+          isGuest: true // For now, all bookings are guest bookings
+        }
+      });
+
+      if (error) {
+        console.error('Booking submission error:', error);
+        throw error;
+      }
+
+      if (!data.success) {
+        throw new Error(data.error || 'Error al crear la reserva');
+      }
+
+      console.log('Booking created successfully:', data);
+      setShowConfirmation(true);
+      toast.success("¡Reserva creada exitosamente!");
+
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      toast.error(error.message || 'Error al crear la reserva. Inténtalo de nuevo.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -166,7 +211,7 @@ const Booking = () => {
             <div className="gradient-primary p-4 rounded-full w-fit mx-auto mb-6">
               <CheckCircle className="h-12 w-12 text-primary-foreground checkmark-animation" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-4">¡Solicitud de Reserva Enviada!</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-4">¡Reserva Creada Exitosamente!</h2>
             <div className="space-y-3 text-left bg-secondary/50 p-4 rounded-lg mb-6">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Negocio:</span>
@@ -190,7 +235,7 @@ const Booking = () => {
               </div>
             </div>
             <p className="text-muted-foreground mb-6 font-inter">
-              Hemos enviado tu solicitud de reserva. {provider.business_name} se pondrá en contacto contigo para confirmar la disponibilidad.
+              Tu reserva ha sido guardada exitosamente. {provider.business_name} se pondrá en contacto contigo para confirmar la disponibilidad.
             </p>
             <div className="space-y-3">
               <Button 
@@ -403,12 +448,24 @@ const Booking = () => {
                     />
                   </div>
 
+                  <div>
+                    <Label htmlFor="notes" className="text-foreground font-semibold">Notas adicionales (opcional)</Label>
+                    <Textarea
+                      id="notes"
+                      value={clientData.notes}
+                      onChange={(e) => setClientData(prev => ({ ...prev, notes: e.target.value }))}
+                      className="border-border focus:border-primary mt-2"
+                      placeholder="Cualquier información adicional..."
+                      rows={3}
+                    />
+                  </div>
+
                   <Button 
                     type="submit" 
                     className="w-full btn-accent py-6 text-lg font-semibold shadow-lg"
-                    disabled={!selectedService || !selectedDate || !selectedTime || !clientData.name || !clientData.phone}
+                    disabled={!selectedService || !selectedDate || !selectedTime || !clientData.name || !clientData.phone || submitting}
                   >
-                    Solicitar Reserva
+                    {submitting ? 'Creando Reserva...' : 'Crear Reserva'}
                   </Button>
                 </form>
               </CardContent>

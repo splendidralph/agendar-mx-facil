@@ -130,6 +130,41 @@ export type Database = {
           },
         ]
       }
+      guest_bookings: {
+        Row: {
+          booking_id: string
+          created_at: string | null
+          guest_email: string | null
+          guest_name: string
+          guest_phone: string
+          id: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string | null
+          guest_email?: string | null
+          guest_name: string
+          guest_phone: string
+          id?: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string | null
+          guest_email?: string | null
+          guest_name?: string
+          guest_phone?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_bookings_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           city: string
