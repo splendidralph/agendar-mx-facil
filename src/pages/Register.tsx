@@ -12,9 +12,8 @@ const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
-    business: "",
-    phone: "",
     email: "",
+    phone: "",
     category: ""
   });
 
@@ -79,7 +78,7 @@ const Register = () => {
             <CardHeader>
               <CardTitle className="text-bookeasy-800">Información Básica</CardTitle>
               <CardDescription>
-                Cuéntanos sobre tu negocio
+                Cuéntanos sobre ti
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -99,16 +98,16 @@ const Register = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="business" className="text-bookeasy-700">Nombre del Negocio *</Label>
+                  <Label htmlFor="email" className="text-bookeasy-700">Email *</Label>
                   <Input
-                    id="business"
-                    name="business"
-                    type="text"
+                    id="email"
+                    name="email"
+                    type="email"
                     required
-                    value={formData.business}
+                    value={formData.email}
                     onChange={handleChange}
                     className="border-bookeasy-200 focus:border-bookeasy-400"
-                    placeholder="Ej. Salón María"
+                    placeholder="maria@ejemplo.com"
                   />
                 </div>
 
@@ -140,19 +139,6 @@ const Register = () => {
                     onChange={handleChange}
                     className="border-bookeasy-200 focus:border-bookeasy-400"
                     placeholder="Ej. +52 55 1234 5678"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="email" className="text-bookeasy-700">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="border-bookeasy-200 focus:border-bookeasy-400"
-                    placeholder="maria@ejemplo.com"
                   />
                 </div>
 
