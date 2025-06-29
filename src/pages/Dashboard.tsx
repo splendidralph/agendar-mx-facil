@@ -9,6 +9,7 @@ import { Calendar, Link, TrendingUp, Users, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 import ProfileSettings from "@/components/dashboard/ProfileSettings";
 import ServicesManager from "@/components/dashboard/ServicesManager";
+import NotificationSettings from "@/components/dashboard/NotificationSettings";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -245,10 +246,11 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          {/* Profile and Services Management */}
-          <div className="grid lg:grid-cols-2 gap-8">
+          {/* Profile, Services and Notification Management */}
+          <div className="grid lg:grid-cols-3 gap-8">
             <ProfileSettings provider={provider} onUpdate={refreshProvider} />
             <ServicesManager providerId={provider.id} />
+            <NotificationSettings provider={provider} onUpdate={refreshProvider} />
           </div>
         </div>
       </div>
