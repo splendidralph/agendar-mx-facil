@@ -52,24 +52,25 @@ const ProfileSetupStep = () => {
   };
 
   const handleNext = async () => {
-    console.log('ProfileSetupStep: handleNext called');
-    console.log('FormData:', formData);
-    console.log('Is valid:', isValid);
+    console.log('ProfileSetupStep: handleNext called with formData:', formData);
     
     if (!isValid) {
       console.log('ProfileSetupStep: Form is not valid, not proceeding');
       return;
     }
     
-    console.log('ProfileSetupStep: Updating data and calling nextStep');
+    // Update data first, then proceed
     updateData(formData);
     
-    try {
-      await nextStep();
-      console.log('ProfileSetupStep: nextStep completed successfully');
-    } catch (error) {
-      console.error('ProfileSetupStep: Error in nextStep:', error);
-    }
+    // Wait a bit for state to update, then proceed
+    setTimeout(async () => {
+      try {
+        await nextStep();
+        console.log('ProfileSetupStep: nextStep completed successfully');
+      } catch (error) {
+        console.error('ProfileSetupStep: Error in nextStep:', error);
+      }
+    }, 100);
   };
 
   const isValid = formData.businessName.length >= 2 && formData.category;

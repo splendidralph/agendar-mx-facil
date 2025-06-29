@@ -75,8 +75,20 @@ const UsernameStep = () => {
       return;
     }
 
+    console.log('UsernameStep: handleNext called with username:', username);
+    
+    // Update data first, then proceed
     updateData({ username });
-    await nextStep();
+    
+    // Wait a bit for state to update, then proceed
+    setTimeout(async () => {
+      try {
+        await nextStep();
+        console.log('UsernameStep: nextStep completed successfully');
+      } catch (error) {
+        console.error('UsernameStep: Error in nextStep:', error);
+      }
+    }, 100);
   };
 
   const isValid = username.length >= 3 && isAvailable === true;

@@ -42,6 +42,7 @@ export const useOnboarding = () => {
     if (result) {
       const { provider, services } = result;
       const step = provider.onboarding_step || 1;
+      console.log('useOnboarding: Setting step to:', step);
       setCurrentStep(step);
       setData(prev => ({
         ...prev,
@@ -65,24 +66,29 @@ export const useOnboarding = () => {
 
   const updateData = (updates: Partial<OnboardingData>) => {
     console.log('useOnboarding: Updating data with:', updates);
-    setData(prev => ({ ...prev, ...updates }));
+    setData(prev => {
+      const newData = { ...prev, ...updates };
+      console.log('useOnboarding: New data state:', newData);
+      return newData;
+    });
   };
 
-  const saveCurrentStep = async () => {
+  const saveCurrentStep = async (dataToSave?: OnboardingData) => {
     if (!user) {
       console.log('useOnboarding: No user, cannot save step');
       return false;
     }
 
-    console.log('useOnboarding: Saving current step:', currentStep, 'with data:', data);
+    const saveData = dataToSave || data;
+    console.log('useOnboarding: Saving current step:', currentStep, 'with data:', saveData);
     setLoading(true);
     
     try {
-      const providerId = await saveProviderData(user.id, data, currentStep);
+      const providerId = await saveProviderData(user.id, saveData, currentStep);
 
       // Save services if we're on step 4 or later and have services
-      if (currentStep >= 4 && data.services.length > 0 && providerId) {
-        await saveServices(providerId, data.services);
+      if (currentStep >= 4 && saveData.services.length > 0 && providerId) {
+        await saveServices(providerId, saveData.services);
       }
 
       console.log('useOnboarding: Successfully saved step');
@@ -98,8 +104,9 @@ export const useOnboarding = () => {
 
   const nextStep = async () => {
     console.log('useOnboarding: nextStep called, current step:', currentStep);
+    console.log('useOnboarding: Current data:', data);
     
-    // First save the current step
+    // First save the current step with current data
     const saved = await saveCurrentStep();
     if (!saved) {
       console.log('useOnboarding: Failed to save, not advancing step');
@@ -115,8 +122,10 @@ export const useOnboarding = () => {
       if (user) {
         try {
           await updateProviderStep(user.id, newStep);
+          console.log('useOnboarding: Successfully updated step in database');
         } catch (error) {
           console.error('useOnboarding: Error updating step:', error);
+          toast.error('Error avanzando al siguiente paso');
           return;
         }
       }
