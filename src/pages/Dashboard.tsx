@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Link, TrendingUp, Users, DollarSign } from "lucide-react";
 import { toast } from "sonner";
+import ProfileSettings from "@/components/dashboard/ProfileSettings";
+import ServicesManager from "@/components/dashboard/ServicesManager";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -53,12 +55,18 @@ const Dashboard = () => {
       const bookingUrl = `https://bookeasy.mx/${provider.username}`;
       navigator.clipboard.writeText(bookingUrl);
       toast.success("¡Link copiado al portapapeles!");
+    } else {
+      toast.error("Necesitas configurar tu username primero");
     }
   };
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const refreshProvider = () => {
+    checkProviderProfile();
   };
 
   if (loading) {
@@ -175,7 +183,7 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-8 mb-8">
             {/* Booking Link */}
             <Card className="lg:col-span-1 animate-slide-up border-border/50 shadow-lg" style={{ animationDelay: '0.4s' }}>
               <CardHeader>
@@ -187,12 +195,13 @@ const Dashboard = () => {
               <CardContent className="space-y-4">
                 <div className="p-4 bg-secondary/50 rounded-xl border border-border/50">
                   <p className="text-sm font-mono text-foreground break-all">
-                    bookeasy.mx/{provider.username}
+                    {provider.username ? `bookeasy.mx/${provider.username}` : 'Configura tu username primero'}
                   </p>
                 </div>
                 <Button 
                   onClick={copyLink}
                   className="w-full btn-primary shadow-lg"
+                  disabled={!provider.username}
                 >
                   <Link className="h-4 w-4 mr-2" />
                   Copiar Link
@@ -200,7 +209,8 @@ const Dashboard = () => {
                 <Button 
                   variant="outline"
                   className="w-full border-border text-foreground hover:bg-secondary"
-                  onClick={() => window.open(`https://bookeasy.mx/${provider.username}`, '_blank')}
+                  onClick={() => provider.username && window.open(`https://bookeasy.mx/${provider.username}`, '_blank')}
+                  disabled={!provider.username}
                 >
                   Ver Mi Perfil
                 </Button>
@@ -225,6 +235,12 @@ const Dashboard = () => {
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Profile and Services Management */}
+          <div className="grid lg:grid-cols-2 gap-8">
+            <ProfileSettings provider={provider} onUpdate={refreshProvider} />
+            <ServicesManager providerId={provider.id} />
           </div>
         </div>
       </div>
