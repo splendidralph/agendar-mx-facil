@@ -49,6 +49,23 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       hasServices: data.services?.length || 0
     });
     
+    // First, verify the user exists in our database
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (userError) {
+      console.error('onboardingService: Error checking user existence:', userError);
+      throw new Error('Error verificando la cuenta de usuario');
+    }
+
+    if (!userData) {
+      console.error('onboardingService: User not found in database:', userId);
+      throw new Error('INVALID_SESSION'); // Special error code for handling
+    }
+    
     // Check if provider exists
     const { data: existingProvider, error: fetchError } = await supabase
       .from('providers')
@@ -129,6 +146,12 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
     return providerId;
   } catch (error) {
     console.error('onboardingService: Error saving provider data:', error);
+    
+    // Handle special case of invalid session
+    if (error.message === 'INVALID_SESSION') {
+      throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+    }
+    
     // Re-throw with more context
     throw new Error(`Failed to save provider data: ${error.message || 'Unknown error'}`);
   }

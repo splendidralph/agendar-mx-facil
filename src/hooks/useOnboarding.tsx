@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { OnboardingData } from '@/types/onboarding';
 import { generateUsername, checkUsernameAvailability } from '@/utils/usernameUtils';
@@ -55,6 +56,7 @@ const determineStepFromData = (data: OnboardingData): number => {
 
 export const useOnboarding = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -159,6 +161,16 @@ export const useOnboarding = () => {
       return true;
     } catch (error) {
       console.error('useOnboarding: Error saving onboarding data:', error);
+      
+      // Handle authentication errors specially
+      if (error.message.includes('sesión ha expirado') || error.message.includes('inicia sesión')) {
+        toast.error('Tu sesión ha expirado. Redirigiendo al inicio de sesión...');
+        setTimeout(() => {
+          navigate('/auth');
+        }, 2000);
+        return false;
+      }
+      
       // More specific error messages
       if (error.message.includes('duplicate key')) {
         toast.error('El username ya está en uso. Por favor elige otro.');

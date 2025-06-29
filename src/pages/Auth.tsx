@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +36,25 @@ const Auth = () => {
     if (!user) return;
 
     try {
+      // First check if user exists in our users table
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (userError) {
+        console.error('Error checking user existence:', userError);
+        navigate('/onboarding');
+        return;
+      }
+
+      if (!userData) {
+        console.log('User not found in database, signing out');
+        await supabase.auth.signOut();
+        return;
+      }
+
       const { data: provider, error } = await supabase
         .from('providers')
         .select('profile_completed')
@@ -60,11 +78,11 @@ const Auth = () => {
   };
 
   // Redirect if already authenticated
-  if (user && !loading) {
-    // Check if user has completed onboarding
-    checkOnboardingStatus();
-    return null;
-  }
+  useEffect(() => {
+    if (user && !loading) {
+      checkOnboardingStatus();
+    }
+  }, [user, loading]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,6 +183,18 @@ const Auth = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render auth form if user is authenticated
+  if (user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Verificando cuenta...</p>
         </div>
       </div>
     );
