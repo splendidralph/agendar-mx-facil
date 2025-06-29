@@ -2,12 +2,14 @@
 import { useState, useEffect } from 'react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, ArrowLeft, MessageCircle, MapPin, Instagram, CheckCircle, AlertCircle, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
+import PhoneInput from 'react-phone-number-input/input';
+import { Input } from '@/components/ui/input';
+import 'react-phone-number-input/style.css';
 
 const ContactStep = () => {
   const { data, updateData, nextStep, prevStep, loading } = useOnboarding();
@@ -29,29 +31,17 @@ const ContactStep = () => {
     });
   }, [data]);
 
-  const validatePhoneNumber = (phone: string) => {
-    if (!phone) {
+  const validatePhoneNumber = (phoneValue?: string) => {
+    if (!phoneValue) {
       setPhoneValidation({ isValid: true, message: '' });
       return;
     }
 
-    // Basic validation for Mexican phone numbers
-    const cleanPhone = phone.replace(/\D/g, '');
-    
-    if (cleanPhone.length < 10) {
+    // Basic validation - react-phone-number-input handles most of the formatting
+    if (phoneValue.length < 10) {
       setPhoneValidation({ 
         isValid: false, 
-        message: 'Número muy corto. Debe tener al menos 10 dígitos.' 
-      });
-    } else if (cleanPhone.length > 13) {
-      setPhoneValidation({ 
-        isValid: false, 
-        message: 'Número muy largo. Máximo 13 dígitos.' 
-      });
-    } else if (!cleanPhone.match(/^(\+?52)?[1-9]\d{9}$/)) {
-      setPhoneValidation({ 
-        isValid: false, 
-        message: 'Formato inválido. Usa +52 55 1234 5678 o 55 1234 5678' 
+        message: 'Número incompleto' 
       });
     } else {
       setPhoneValidation({ isValid: true, message: '¡Perfecto! Número válido' });
@@ -82,10 +72,10 @@ const ContactStep = () => {
     setFormData(prev => ({ ...prev, instagramHandle: cleanValue }));
   };
 
-  const handleWhatsAppChange = (value: string) => {
-    const cleanValue = value.replace(/[^\d+\s-]/g, '');
-    setFormData(prev => ({ ...prev, whatsappPhone: cleanValue }));
-    validatePhoneNumber(cleanValue);
+  const handleWhatsAppChange = (value?: string) => {
+    const phoneValue = value || '';
+    setFormData(prev => ({ ...prev, whatsappPhone: phoneValue }));
+    validatePhoneNumber(phoneValue);
   };
 
   return (
@@ -131,17 +121,18 @@ const ContactStep = () => {
               Número de WhatsApp
             </Label>
             <div className="relative mt-2">
-              <Smartphone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 h-4 w-4" />
-              <Input
-                id="whatsapp"
+              <Smartphone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 h-4 w-4 z-10" />
+              <PhoneInput
+                international
+                defaultCountry="MX"
                 value={formData.whatsappPhone}
-                onChange={(e) => handleWhatsAppChange(e.target.value)}
-                placeholder="+52 55 1234 5678"
-                className={`pl-10 border-green-200 focus:border-green-400 focus:ring-green-400 ${
+                onChange={handleWhatsAppChange}
+                className={`pl-10 w-full h-10 px-3 py-2 border rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-green-200 focus:border-green-400 focus:ring-green-400 ${
                   formData.whatsappPhone && !phoneValidation.isValid ? 'border-red-300' : ''
                 } ${
                   formData.whatsappPhone && phoneValidation.isValid ? 'border-green-300' : ''
                 }`}
+                placeholder="Número de WhatsApp"
               />
               {formData.whatsappPhone && (
                 <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
@@ -164,7 +155,7 @@ const ContactStep = () => {
             )}
             {!formData.whatsappPhone && (
               <p className="text-sm text-green-600 mt-1">
-                Ejemplo: +52 55 1234 5678 (incluye código de país)
+                El número se guardará automáticamente con el código de país
               </p>
             )}
           </div>

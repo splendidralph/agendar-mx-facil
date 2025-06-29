@@ -4,12 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Bell, Settings } from 'lucide-react';
 import { toast } from 'sonner';
+import PhoneInput from 'react-phone-number-input/input';
+import 'react-phone-number-input/style.css';
 
 interface NotificationSettingsProps {
   provider: any;
@@ -142,6 +143,10 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
     }
   };
 
+  const handleWhatsAppChange = (value?: string) => {
+    setFormData(prev => ({ ...prev, whatsapp_phone: value || '' }));
+  };
+
   return (
     <Card className="border-border/50 shadow-lg">
       <CardHeader>
@@ -184,14 +189,16 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
             <div className="space-y-6">
               <div>
                 <Label htmlFor="whatsapp_phone">Número de WhatsApp</Label>
-                <Input
-                  id="whatsapp_phone"
+                <PhoneInput
+                  international
+                  defaultCountry="MX"
                   value={formData.whatsapp_phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, whatsapp_phone: e.target.value }))}
-                  placeholder="+52 123 456 7890"
+                  onChange={handleWhatsAppChange}
+                  className="w-full h-10 px-3 py-2 border border-input rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1"
+                  placeholder="Número de WhatsApp"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Incluye el código de país (ej. +52 para México)
+                  El número se guardará automáticamente con el código de país
                 </p>
               </div>
 
