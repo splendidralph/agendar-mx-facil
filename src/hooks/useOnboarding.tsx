@@ -64,10 +64,11 @@ export const useOnboarding = () => {
 
       if (provider) {
         console.log('useOnboarding: Found existing provider data:', provider);
-        setCurrentStep(provider.onboarding_step || 1);
+        const step = provider.onboarding_step || 1;
+        setCurrentStep(step);
         setData(prev => ({
           ...prev,
-          step: provider.onboarding_step || 1,
+          step: step,
           businessName: provider.business_name || '',
           category: provider.category || '',
           bio: provider.bio || '',
@@ -248,13 +249,39 @@ export const useOnboarding = () => {
 
   const nextStep = async () => {
     console.log('useOnboarding: nextStep called, current step:', currentStep);
+    
+    // First save the current step
     const saved = await saveCurrentStep();
-    if (saved && currentStep < 5) {
-      console.log('useOnboarding: Moving to next step');
-      setCurrentStep(prev => prev + 1);
-      setData(prev => ({ ...prev, step: currentStep + 1 }));
-    } else if (!saved) {
+    if (!saved) {
       console.log('useOnboarding: Failed to save, not advancing step');
+      return;
+    }
+
+    // Only advance if we're not at the final step
+    if (currentStep < 5) {
+      const newStep = currentStep + 1;
+      console.log('useOnboarding: Moving to next step:', newStep);
+      
+      // Update the step in the database immediately
+      if (user) {
+        try {
+          const { error } = await supabase
+            .from('providers')
+            .update({ onboarding_step: newStep })
+            .eq('user_id', user.id);
+            
+          if (error) {
+            console.error('useOnboarding: Error updating step in database:', error);
+            return;
+          }
+        } catch (error) {
+          console.error('useOnboarding: Error updating step:', error);
+          return;
+        }
+      }
+      
+      setCurrentStep(newStep);
+      setData(prev => ({ ...prev, step: newStep }));
     } else {
       console.log('useOnboarding: Already at final step');
     }
@@ -262,9 +289,10 @@ export const useOnboarding = () => {
 
   const prevStep = () => {
     if (currentStep > 1) {
-      console.log('useOnboarding: Moving to previous step');
-      setCurrentStep(prev => prev - 1);
-      setData(prev => ({ ...prev, step: currentStep - 1 }));
+      const newStep = currentStep - 1;
+      console.log('useOnboarding: Moving to previous step:', newStep);
+      setCurrentStep(newStep);
+      setData(prev => ({ ...prev, step: newStep }));
     }
   };
 
