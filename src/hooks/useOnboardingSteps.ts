@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { OnboardingData } from '@/types/onboarding';
@@ -13,9 +13,9 @@ export const useOnboardingSteps = (
   saveCurrentStep: (dataToSave?: OnboardingData, currentStep?: number) => Promise<boolean>
 ) => {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(data.step || 1);
 
-  const nextStep = async (updatedData?: Partial<OnboardingData>) => {
+  const nextStep = useCallback(async (updatedData?: Partial<OnboardingData>) => {
     console.log('useOnboardingSteps: nextStep called, current step:', currentStep);
     console.log('useOnboardingSteps: updatedData provided:', updatedData);
     
@@ -68,22 +68,29 @@ export const useOnboardingSteps = (
     } else {
       console.log('useOnboardingSteps: Already at final step');
     }
-  };
+  }, [currentStep, data, updateData, saveCurrentStep, userId]);
 
-  const prevStep = () => {
+  const prevStep = useCallback(() => {
     if (currentStep > 1) {
       const newStep = currentStep - 1;
       console.log('useOnboardingSteps: Moving to previous step:', newStep);
       setCurrentStep(newStep);
       updateData({ step: newStep });
     }
-  };
+  }, [currentStep, updateData]);
 
-  const setStep = (step: number) => {
+  const setStep = useCallback((step: number) => {
     console.log('useOnboardingSteps: Setting step to:', step);
     setCurrentStep(step);
     updateData({ step });
-  };
+  }, [updateData]);
+
+  // Update currentStep when data.step changes
+  useState(() => {
+    if (data.step && data.step !== currentStep) {
+      setCurrentStep(data.step);
+    }
+  });
 
   return {
     currentStep,

@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { generateUsername, checkUsernameAvailability } from '@/utils/usernameUtils';
 import { useOnboardingData } from '@/hooks/useOnboardingData';
@@ -24,18 +24,20 @@ export const useOnboarding = () => {
     setStep
   } = useOnboardingSteps(user?.id, data, updateData, saveCurrentStep);
 
+  // Load data only once when user is available and data hasn't been loaded
   useEffect(() => {
-    if (user && !dataLoaded) {
+    if (user?.id && !dataLoaded && !loading) {
       console.log('useOnboarding: Loading existing data for user:', user.id);
       loadExistingData().then((step) => {
-        if (step) {
+        if (step && step !== currentStep) {
           setStep(step);
         }
       });
     }
-  }, [user, dataLoaded, loadExistingData, setStep]);
+  }, [user?.id, dataLoaded, loading, loadExistingData, setStep, currentStep]);
 
-  return {
+  // Memoize the return value to prevent unnecessary re-renders
+  return useMemo(() => ({
     currentStep,
     data,
     loading,
@@ -46,5 +48,14 @@ export const useOnboarding = () => {
     completeOnboarding,
     generateUsername,
     checkUsernameAvailability
-  };
+  }), [
+    currentStep,
+    data,
+    loading,
+    updateData,
+    nextStep,
+    prevStep,
+    saveCurrentStep,
+    completeOnboarding
+  ]);
 };

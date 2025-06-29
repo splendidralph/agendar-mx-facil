@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { OnboardingData } from '@/types/onboarding';
 import { toast } from 'sonner';
 import { 
@@ -26,8 +26,8 @@ export const useOnboardingData = (userId: string | undefined) => {
     services: []
   });
 
-  const loadExistingData = async () => {
-    if (!userId) return;
+  const loadExistingData = useCallback(async () => {
+    if (!userId || dataLoaded) return;
 
     setLoading(true);
     try {
@@ -84,18 +84,18 @@ export const useOnboardingData = (userId: string | undefined) => {
       setLoading(false);
       setDataLoaded(true);
     }
-  };
+  }, [userId, dataLoaded]);
 
-  const updateData = (updates: Partial<OnboardingData>) => {
+  const updateData = useCallback((updates: Partial<OnboardingData>) => {
     console.log('useOnboardingData: Updating data with:', updates);
     setData(prev => {
       const newData = { ...prev, ...updates };
       console.log('useOnboardingData: New data state:', newData);
       return newData;
     });
-  };
+  }, []);
 
-  const saveCurrentStep = async (dataToSave?: OnboardingData, currentStep?: number) => {
+  const saveCurrentStep = useCallback(async (dataToSave?: OnboardingData, currentStep?: number) => {
     if (!userId) {
       console.log('useOnboardingData: No user, cannot save step');
       return false;
@@ -137,9 +137,9 @@ export const useOnboardingData = (userId: string | undefined) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, data]);
 
-  const completeOnboarding = async () => {
+  const completeOnboarding = useCallback(async () => {
     if (!userId) return false;
 
     const saved = await saveCurrentStep();
@@ -154,11 +154,11 @@ export const useOnboardingData = (userId: string | undefined) => {
       toast.error('Error completando el perfil');
       return false;
     }
-  };
+  }, [userId, saveCurrentStep]);
 
   return {
     data,
-    loading: loading || !dataLoaded,
+    loading,
     dataLoaded,
     loadExistingData,
     updateData,
