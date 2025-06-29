@@ -37,14 +37,20 @@ const ContactStep = () => {
       return;
     }
 
-    // Basic validation - react-phone-number-input handles most of the formatting
-    if (phoneValue.length < 10) {
+    // Check if it's a valid E.164 format (starts with + and has at least 10 digits)
+    const e164Regex = /^\+[1-9]\d{1,14}$/;
+    if (e164Regex.test(phoneValue) && phoneValue.length >= 12) {
+      setPhoneValidation({ isValid: true, message: '¡Perfecto! Número válido' });
+    } else if (phoneValue.length < 12) {
       setPhoneValidation({ 
         isValid: false, 
         message: 'Número incompleto' 
       });
     } else {
-      setPhoneValidation({ isValid: true, message: '¡Perfecto! Número válido' });
+      setPhoneValidation({ 
+        isValid: false, 
+        message: 'Formato de número inválido' 
+      });
     }
   };
 
@@ -123,8 +129,7 @@ const ContactStep = () => {
             <div className="relative mt-2">
               <Smartphone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 h-4 w-4 z-10" />
               <PhoneInput
-                international
-                defaultCountry="MX"
+                country="MX"
                 value={formData.whatsappPhone}
                 onChange={handleWhatsAppChange}
                 className={`pl-10 w-full h-10 px-3 py-2 border rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-green-200 focus:border-green-400 focus:ring-green-400 ${
@@ -155,7 +160,7 @@ const ContactStep = () => {
             )}
             {!formData.whatsappPhone && (
               <p className="text-sm text-green-600 mt-1">
-                El número se guardará automáticamente con el código de país
+                El número se guardará automáticamente con el código de país (+52 para México)
               </p>
             )}
           </div>

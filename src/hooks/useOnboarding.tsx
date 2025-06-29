@@ -175,6 +175,7 @@ export const useOnboarding = () => {
 
   const nextStep = async (updatedData?: Partial<OnboardingData>) => {
     console.log('useOnboarding: nextStep called, current step:', currentStep);
+    console.log('useOnboarding: updatedData provided:', updatedData);
     
     // If we have updated data, merge it with current data for validation and saving
     let dataForValidation = data;
@@ -187,13 +188,16 @@ export const useOnboarding = () => {
     
     // Validate step requirements before advancing
     const isStepValid = validateStepRequirements(currentStep, dataForValidation);
+    console.log('useOnboarding: Step validation result:', isStepValid);
     if (!isStepValid) {
       console.log('useOnboarding: Step validation failed, not advancing');
       return;
     }
     
     // First save the current step with the provided data
+    console.log('useOnboarding: Attempting to save current step...');
     const saved = await saveCurrentStep(dataForValidation);
+    console.log('useOnboarding: Save result:', saved);
     if (!saved) {
       console.log('useOnboarding: Failed to save, not advancing step');
       return;
@@ -231,6 +235,7 @@ export const useOnboarding = () => {
       case 1:
         const step1Valid = !!(dataToValidate.businessName && dataToValidate.category);
         if (!step1Valid) {
+          console.log('validateStepRequirements: Step 1 validation failed - businessName:', !!dataToValidate.businessName, 'category:', !!dataToValidate.category);
           toast.error('Por favor completa el nombre del negocio y la categoría');
         }
         console.log('validateStepRequirements: Step 1 valid:', step1Valid);
