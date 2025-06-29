@@ -60,6 +60,14 @@ const Dashboard = () => {
     }
   };
 
+  const viewProfile = () => {
+    if (provider?.username) {
+      navigate(`/${provider.username}`);
+    } else {
+      toast.error("Necesitas configurar tu username primero");
+    }
+  };
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
@@ -209,7 +217,7 @@ const Dashboard = () => {
                 <Button 
                   variant="outline"
                   className="w-full border-border text-foreground hover:bg-secondary"
-                  onClick={() => provider.username && window.open(`https://bookeasy.mx/${provider.username}`, '_blank')}
+                  onClick={viewProfile}
                   disabled={!provider.username}
                 >
                   Ver Mi Perfil
