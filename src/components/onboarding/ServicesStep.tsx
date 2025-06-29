@@ -6,9 +6,10 @@ import { ArrowRight, ArrowLeft, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Service, ServiceCategory } from '@/types/service';
 import ServicesList from './ServicesList';
+import { validateStep } from '@/utils/onboardingValidation';
 
 const ServicesStep = () => {
-  const { data, updateData, nextStep, prevStep, loading } = useOnboarding();
+  const { data, updateData, nextStep, prevStep, loading, currentStep } = useOnboarding();
   const [services, setServices] = useState<Service[]>(data.services.length > 0 ? data.services : [
     { name: '', price: 0, duration: 30, description: '', category: 'corte_barberia' as ServiceCategory }
   ]);
@@ -37,7 +38,9 @@ const ServicesStep = () => {
     ));
   };
 
-  const handleNext = async () => {
+  const handleNext = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     const validServices = services.filter(service => 
       service.name.length >= 2 && service.price > 0
     );
@@ -54,7 +57,6 @@ const ServicesStep = () => {
     // Update local data first
     updateData(servicesData);
     
-    // Pass the services data directly to nextStep to ensure it's saved correctly
     try {
       await nextStep(servicesData);
       console.log('ServicesStep: nextStep completed successfully');
@@ -63,10 +65,12 @@ const ServicesStep = () => {
     }
   };
 
-  const isValid = services.some(service => service.name.length >= 2 && service.price > 0);
+  // Create validation data with current services
+  const validationData = { ...data, services };
+  const isValid = validateStep(currentStep, validationData);
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleNext} className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-2">
           Agrega tus Servicios
@@ -83,6 +87,7 @@ const ServicesStep = () => {
       />
 
       <Button
+        type="button"
         onClick={addService}
         variant="outline"
         className="w-full border-border text-foreground"
@@ -93,6 +98,7 @@ const ServicesStep = () => {
 
       <div className="flex justify-between">
         <Button
+          type="button"
           onClick={prevStep}
           variant="outline"
           className="border-border text-foreground"
@@ -101,7 +107,7 @@ const ServicesStep = () => {
           Anterior
         </Button>
         <Button
-          onClick={handleNext}
+          type="submit"
           disabled={!isValid || loading}
           className="btn-primary"
         >
@@ -109,7 +115,7 @@ const ServicesStep = () => {
           <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
       </div>
-    </div>
+    </form>
   );
 };
 

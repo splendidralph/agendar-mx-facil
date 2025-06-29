@@ -32,6 +32,10 @@ export const useOnboarding = () => {
     }
   }, [user?.id, dataLoaded, loading, loadExistingData]);
 
+  // Memoize functions to prevent unnecessary re-renders
+  const memoizedGenerateUsername = useMemo(() => generateUsername, []);
+  const memoizedCheckUsernameAvailability = useMemo(() => checkUsernameAvailability, []);
+
   // Memoize the return value to prevent unnecessary re-renders
   return useMemo(() => ({
     currentStep,
@@ -42,8 +46,8 @@ export const useOnboarding = () => {
     prevStep,
     saveCurrentStep,
     completeOnboarding,
-    generateUsername,
-    checkUsernameAvailability
+    generateUsername: memoizedGenerateUsername,
+    checkUsernameAvailability: memoizedCheckUsernameAvailability
   }), [
     currentStep,
     data,
@@ -52,6 +56,8 @@ export const useOnboarding = () => {
     nextStep,
     prevStep,
     saveCurrentStep,
-    completeOnboarding
+    completeOnboarding,
+    memoizedGenerateUsername,
+    memoizedCheckUsernameAvailability
   ]);
 };

@@ -37,7 +37,6 @@ const ContactStep = () => {
       return;
     }
 
-    // Check if it's a valid E.164 format (starts with + and has at least 10 digits)
     const e164Regex = /^\+[1-9]\d{1,14}$/;
     if (e164Regex.test(phoneValue) && phoneValue.length >= 12) {
       setPhoneValidation({ isValid: true, message: '¡Perfecto! Número válido' });
@@ -54,7 +53,8 @@ const ContactStep = () => {
     }
   };
 
-  const handleNext = async () => {
+  const handleNext = async (e: React.FormEvent) => {
+    e.preventDefault();
     console.log('ContactStep: handleNext called with formData:', formData);
     
     // Validate phone if provided
@@ -84,8 +84,10 @@ const ContactStep = () => {
     validatePhoneNumber(phoneValue);
   };
 
+  const canProceed = !loading && (!formData.whatsappPhone || phoneValidation.isValid);
+
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleNext} className="space-y-6">
       {/* WhatsApp Benefits Card */}
       <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
         <CardHeader className="pb-3">
@@ -236,6 +238,7 @@ const ContactStep = () => {
 
       <div className="flex justify-between">
         <Button
+          type="button"
           onClick={prevStep}
           variant="outline"
           className="border-border text-foreground"
@@ -244,15 +247,15 @@ const ContactStep = () => {
           Anterior
         </Button>
         <Button
-          onClick={handleNext}
-          disabled={loading || (formData.whatsappPhone && !phoneValidation.isValid)}
+          type="submit"
+          disabled={!canProceed}
           className="btn-primary"
         >
           {loading ? 'Guardando...' : 'Continuar'}
           <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
       </div>
-    </div>
+    </form>
   );
 };
 

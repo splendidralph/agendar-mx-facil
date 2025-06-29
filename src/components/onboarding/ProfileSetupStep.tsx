@@ -7,9 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowRight } from 'lucide-react';
+import { validateStep } from '@/utils/onboardingValidation';
 
 const ProfileSetupStep = () => {
-  const { data, updateData, nextStep, loading } = useOnboarding();
+  const { data, updateData, nextStep, loading, currentStep } = useOnboarding();
   const [formData, setFormData] = useState({
     businessName: data.businessName,
     category: data.category,
@@ -51,7 +52,8 @@ const ProfileSetupStep = () => {
     color_alisado: 'Coloración, mechas, alisados, tratamientos capilares'
   };
 
-  const handleNext = async () => {
+  const handleNext = async (e: React.FormEvent) => {
+    e.preventDefault();
     console.log('ProfileSetupStep: handleNext called with formData:', formData);
     
     if (!isValid) {
@@ -62,7 +64,7 @@ const ProfileSetupStep = () => {
     // Update local data first
     updateData(formData);
     
-    // Pass the form data directly to nextStep to ensure it's saved correctly
+    // Pass the form data directly to nextStep
     try {
       await nextStep(formData);
       console.log('ProfileSetupStep: nextStep completed successfully');
@@ -71,17 +73,20 @@ const ProfileSetupStep = () => {
     }
   };
 
-  const isValid = formData.businessName.length >= 2 && formData.category;
+  // Create validation data with current form data
+  const validationData = { ...data, ...formData };
+  const isValid = validateStep(currentStep, validationData);
 
   console.log('ProfileSetupStep render:', { 
     businessName: formData.businessName, 
     category: formData.category, 
     isValid, 
-    loading 
+    loading,
+    currentStep
   });
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleNext} className="space-y-6">
       <div>
         <Label htmlFor="businessName">Nombre del Negocio *</Label>
         <Input
@@ -137,7 +142,7 @@ const ProfileSetupStep = () => {
 
       <div className="flex justify-end">
         <Button
-          onClick={handleNext}
+          type="submit"
           disabled={!isValid || loading}
           className="btn-primary"
         >
@@ -145,7 +150,7 @@ const ProfileSetupStep = () => {
           <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
       </div>
-    </div>
+    </form>
   );
 };
 
