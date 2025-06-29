@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { OnboardingData } from '@/types/onboarding';
@@ -13,15 +13,8 @@ export const useOnboardingSteps = (
   saveCurrentStep: (dataToSave?: OnboardingData, currentStep?: number) => Promise<boolean>
 ) => {
   const navigate = useNavigate();
+  // Initialize from data.step but don't sync after that to avoid conflicts
   const [currentStep, setCurrentStep] = useState(data.step || 1);
-
-  // Sync currentStep with data.step when data changes
-  useEffect(() => {
-    if (data.step && data.step !== currentStep) {
-      console.log('useOnboardingSteps: Syncing step from data. Old:', currentStep, 'New:', data.step);
-      setCurrentStep(data.step);
-    }
-  }, [data.step, currentStep]);
 
   const nextStep = useCallback(async (updatedData?: Partial<OnboardingData>) => {
     console.log('🚀 nextStep START - currentStep:', currentStep, 'userId:', userId);
@@ -77,7 +70,7 @@ export const useOnboardingSteps = (
         await updateProviderStep(userId, nextStepNumber);
         console.log('✅ nextStep: Successfully updated step in database');
         
-        // Update local state
+        // Update local state - single atomic update
         console.log('🔄 nextStep: Updating local state to step:', nextStepNumber);
         setCurrentStep(nextStepNumber);
         updateData({ step: nextStepNumber });
@@ -107,12 +100,12 @@ export const useOnboardingSteps = (
       console.log('⬅️ prevStep: Moving from step', currentStep, 'to step', prevStepNumber);
       
       try {
-        // Update the step in the database FIRST
+        // Update the step in the database
         console.log('📊 prevStep: Updating step in database to:', prevStepNumber);
         await updateProviderStep(userId, prevStepNumber);
         console.log('✅ prevStep: Successfully updated step in database');
         
-        // Update local state
+        // Update local state - single atomic update
         console.log('🔄 prevStep: Updating local state to step:', prevStepNumber);
         setCurrentStep(prevStepNumber);
         updateData({ step: prevStepNumber });
@@ -142,7 +135,7 @@ export const useOnboardingSteps = (
       await updateProviderStep(userId, step);
       console.log('✅ setStep: Successfully updated step in database');
       
-      // Update local state
+      // Update local state - single atomic update
       console.log('🔄 setStep: Updating local state to step:', step);
       setCurrentStep(step);
       updateData({ step });
