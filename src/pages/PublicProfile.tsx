@@ -26,6 +26,12 @@ interface Service {
   category: string;
 }
 
+// Reserved route names that should not be treated as usernames
+const RESERVED_ROUTES = [
+  'auth', 'register', 'setup', 'onboarding', 'dashboard', 
+  'booking', 'explore', 'admin', 'api', 'profile'
+];
+
 const PublicProfile = () => {
   const { username } = useParams();
   const navigate = useNavigate();
@@ -36,8 +42,16 @@ const PublicProfile = () => {
   useEffect(() => {
     console.log('PublicProfile: Route params:', { username });
     console.log('PublicProfile: Current URL:', window.location.href);
+    console.log('PublicProfile: Current pathname:', window.location.pathname);
     
     if (username) {
+      // Check if username is a reserved route
+      if (RESERVED_ROUTES.includes(username.toLowerCase())) {
+        console.log('PublicProfile: Username matches reserved route, redirecting to 404');
+        navigate('/not-found', { replace: true });
+        return;
+      }
+
       // Remove @ symbol if it exists in the username parameter
       const cleanUsername = username.startsWith('@') ? username.slice(1) : username;
       console.log('PublicProfile: Clean username:', cleanUsername);
@@ -46,7 +60,7 @@ const PublicProfile = () => {
       console.error('PublicProfile: No username in route params');
       setLoading(false);
     }
-  }, [username]);
+  }, [username, navigate]);
 
   const fetchProviderData = async (cleanUsername: string) => {
     try {
@@ -66,6 +80,7 @@ const PublicProfile = () => {
       if (providerError) {
         console.error('PublicProfile: Error fetching provider:', providerError);
         if (providerError.code === 'PGRST116') {
+          console.log('PublicProfile: No provider found, showing not found message');
           toast.error('Perfil no encontrado');
         } else {
           toast.error('Error cargando el perfil');

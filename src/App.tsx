@@ -34,6 +34,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/booking/demo" element={<BookingDemo />} />
             <Route path="/explore" element={<Explore />} />
+            {/* Dynamic username route moved here before catch-all */}
             <Route path="/:username" element={<PublicProfile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
