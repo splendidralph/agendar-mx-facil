@@ -10,12 +10,15 @@ import { toast } from "sonner";
 import ProfileSettings from "@/components/dashboard/ProfileSettings";
 import ServicesManager from "@/components/dashboard/ServicesManager";
 import NotificationSettings from "@/components/dashboard/NotificationSettings";
+import BookingsTable from "@/components/dashboard/BookingsTable";
+import { useBookings } from "@/hooks/useBookings";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [provider, setProvider] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { stats, loading: statsLoading } = useBookings(provider?.id || '');
 
   useEffect(() => {
     if (user) {
@@ -136,8 +139,12 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground font-semibold">Citas Hoy</p>
-                    <p className="text-3xl font-bold text-foreground">0</p>
-                    <p className="text-xs text-muted-foreground font-medium">Sin citas programadas</p>
+                    <p className="text-3xl font-bold text-foreground">
+                      {statsLoading ? '...' : stats.todayCount}
+                    </p>
+                    <p className="text-xs text-muted-foreground font-medium">
+                      {stats.todayCount === 0 ? 'Sin citas programadas' : 'citas programadas'}
+                    </p>
                   </div>
                   <div className="gradient-primary p-3 rounded-xl">
                     <Calendar className="h-6 w-6 text-primary-foreground" />
@@ -151,8 +158,12 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground font-semibold">Esta Semana</p>
-                    <p className="text-3xl font-bold text-foreground">0</p>
-                    <p className="text-xs text-muted-foreground font-medium">Sin citas</p>
+                    <p className="text-3xl font-bold text-foreground">
+                      {statsLoading ? '...' : stats.weekCount}
+                    </p>
+                    <p className="text-xs text-muted-foreground font-medium">
+                      {stats.weekCount === 0 ? 'Sin citas' : 'citas esta semana'}
+                    </p>
                   </div>
                   <div className="gradient-accent p-3 rounded-xl">
                     <TrendingUp className="h-6 w-6 text-accent-foreground" />
@@ -166,8 +177,12 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground font-semibold">Clientes</p>
-                    <p className="text-3xl font-bold text-foreground">0</p>
-                    <p className="text-xs text-muted-foreground font-medium">Sin clientes</p>
+                    <p className="text-3xl font-bold text-foreground">
+                      {statsLoading ? '...' : stats.clientCount}
+                    </p>
+                    <p className="text-xs text-muted-foreground font-medium">
+                      {stats.clientCount === 0 ? 'Sin clientes' : 'clientes únicos'}
+                    </p>
                   </div>
                   <div className="bg-primary/10 p-3 rounded-xl">
                     <Users className="h-6 w-6 text-primary" />
@@ -181,7 +196,9 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground font-semibold">Ingresos</p>
-                    <p className="text-3xl font-bold text-foreground">$0</p>
+                    <p className="text-3xl font-bold text-foreground">
+                      ${statsLoading ? '...' : stats.weekRevenue.toLocaleString()}
+                    </p>
                     <p className="text-xs text-muted-foreground font-medium">Esta semana</p>
                   </div>
                   <div className="bg-accent/10 p-3 rounded-xl">
@@ -226,24 +243,10 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Recent Bookings */}
-            <Card className="lg:col-span-2 animate-slide-up border-border/50 shadow-lg" style={{ animationDelay: '0.5s' }}>
-              <CardHeader>
-                <CardTitle className="text-foreground">Citas Recientes</CardTitle>
-                <CardDescription className="font-inter">
-                  Tus próximas citas programadas
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground font-inter">No tienes citas programadas</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Las citas aparecerán aquí cuando los clientes hagan reservas
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Bookings Management Table */}
+            <div className="lg:col-span-2 animate-slide-up" style={{ animationDelay: '0.5s' }}>
+              <BookingsTable providerId={provider.id} />
+            </div>
           </div>
 
           {/* Profile, Services and Notification Management */}
