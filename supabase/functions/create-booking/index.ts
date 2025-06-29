@@ -97,6 +97,24 @@ serve(async (req) => {
       }
     }
 
+    // Send email notification to provider in the background
+    try {
+      console.log('Sending booking notification email...')
+      const { error: notificationError } = await supabase.functions.invoke('send-booking-notification', {
+        body: { bookingId: booking.id }
+      })
+
+      if (notificationError) {
+        console.error('Error sending notification:', notificationError)
+        // Don't fail the booking creation if email fails
+      } else {
+        console.log('Notification email sent successfully')
+      }
+    } catch (emailError) {
+      console.error('Failed to send notification email:', emailError)
+      // Continue without failing the booking
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
