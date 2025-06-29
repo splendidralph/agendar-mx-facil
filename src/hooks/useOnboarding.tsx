@@ -1,28 +1,16 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Database } from '@/integrations/supabase/types';
-
-type ServiceCategory = Database['public']['Enums']['service_category'];
-
-interface OnboardingData {
-  step: number;
-  businessName: string;
-  category: string;
-  bio: string;
-  address: string;
-  instagramHandle: string;
-  username: string;
-  services: Array<{
-    name: string;
-    price: number;
-    duration: number;
-    description: string;
-    category: ServiceCategory;
-  }>;
-}
+import { OnboardingData } from '@/types/onboarding';
+import { generateUsername, checkUsernameAvailability } from '@/utils/usernameUtils';
+import { 
+  loadProviderData, 
+  saveProviderData, 
+  saveServices, 
+  updateProviderStep,
+  completeProviderOnboarding 
+} from '@/services/onboardingService';
 
 export const useOnboarding = () => {
   const { user } = useAuth();
@@ -49,87 +37,29 @@ export const useOnboarding = () => {
   const loadExistingData = async () => {
     if (!user) return;
 
-    try {
-      console.log('useOnboarding: Fetching provider data for user:', user.id);
-      const { data: provider, error } = await supabase
-        .from('providers')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error loading provider data:', error);
-        return;
-      }
-
-      if (provider) {
-        console.log('useOnboarding: Found existing provider data:', provider);
-        const step = provider.onboarding_step || 1;
-        setCurrentStep(step);
-        setData(prev => ({
-          ...prev,
-          step: step,
-          businessName: provider.business_name || '',
-          category: provider.category || '',
-          bio: provider.bio || '',
-          address: provider.address || '',
-          instagramHandle: provider.instagram_handle || '',
-          username: provider.username || ''
-        }));
-
-        // Load services if they exist
-        const { data: services } = await supabase
-          .from('services')
-          .select('*')
-          .eq('provider_id', provider.id);
-
-        if (services && services.length > 0) {
-          console.log('useOnboarding: Found existing services:', services);
-          setData(prev => ({
-            ...prev,
-            services: services.map(service => ({
-              name: service.name,
-              price: service.price,
-              duration: service.duration_minutes,
-              description: service.description || '',
-              category: service.category as ServiceCategory
-            }))
-          }));
-        }
-      } else {
-        console.log('useOnboarding: No existing provider data found');
-      }
-    } catch (error) {
-      console.error('Error loading onboarding data:', error);
-    }
-  };
-
-  const generateUsername = (businessName: string) => {
-    return businessName
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')
-      .replace(/\s+/g, '-')
-      .slice(0, 30);
-  };
-
-  const checkUsernameAvailability = async (username: string): Promise<boolean> => {
-    if (!username) return false;
-
-    try {
-      const { data, error } = await supabase
-        .from('providers')
-        .select('username')
-        .eq('username', username)
-        .single();
-
-      if (error && error.code === 'PGRST116') {
-        return true; // Username is available
-      }
-
-      return false; // Username is taken
-    } catch (error) {
-      console.error('Error checking username availability:', error);
-      return false;
+    const result = await loadProviderData(user.id);
+    
+    if (result) {
+      const { provider, services } = result;
+      const step = provider.onboarding_step || 1;
+      setCurrentStep(step);
+      setData(prev => ({
+        ...prev,
+        step: step,
+        businessName: provider.business_name || '',
+        category: provider.category || '',
+        bio: provider.bio || '',
+        address: provider.address || '',
+        instagramHandle: provider.instagram_handle || '',
+        username: provider.username || '',
+        services: services.map(service => ({
+          name: service.name,
+          price: service.price,
+          duration: service.duration_minutes,
+          description: service.description || '',
+          category: service.category
+        }))
+      }));
     }
   };
 
@@ -148,92 +78,11 @@ export const useOnboarding = () => {
     setLoading(true);
     
     try {
-      // Check if provider exists
-      const { data: existingProvider, error: fetchError } = await supabase
-        .from('providers')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
-
-      let providerId = existingProvider?.id;
-
-      if (fetchError && fetchError.code === 'PGRST116') {
-        console.log('useOnboarding: Creating new provider');
-        // Create new provider
-        const { data: newProvider, error: createError } = await supabase
-          .from('providers')
-          .insert({
-            user_id: user.id,
-            business_name: data.businessName,
-            category: data.category,
-            bio: data.bio,
-            address: data.address,
-            instagram_handle: data.instagramHandle,
-            username: data.username,
-            onboarding_step: currentStep,
-            profile_completed: false
-          })
-          .select('id')
-          .single();
-
-        if (createError) {
-          console.error('useOnboarding: Error creating provider:', createError);
-          throw createError;
-        }
-        providerId = newProvider.id;
-        console.log('useOnboarding: Created new provider with ID:', providerId);
-      } else if (!fetchError) {
-        console.log('useOnboarding: Updating existing provider with ID:', providerId);
-        // Update existing provider
-        const { error: updateError } = await supabase
-          .from('providers')
-          .update({
-            business_name: data.businessName,
-            category: data.category,
-            bio: data.bio,
-            address: data.address,
-            instagram_handle: data.instagramHandle,
-            username: data.username,
-            onboarding_step: currentStep,
-            profile_completed: currentStep >= 5
-          })
-          .eq('user_id', user.id);
-
-        if (updateError) {
-          console.error('useOnboarding: Error updating provider:', updateError);
-          throw updateError;
-        }
-      }
+      const providerId = await saveProviderData(user.id, data, currentStep);
 
       // Save services if we're on step 4 or later and have services
       if (currentStep >= 4 && data.services.length > 0 && providerId) {
-        console.log('useOnboarding: Saving services for provider:', providerId);
-        // Delete existing services
-        await supabase
-          .from('services')
-          .delete()
-          .eq('provider_id', providerId);
-
-        // Insert new services with proper typing
-        const servicesToInsert = data.services.map(service => ({
-          provider_id: providerId,
-          name: service.name,
-          price: service.price,
-          duration_minutes: service.duration,
-          description: service.description,
-          category: service.category as ServiceCategory,
-          is_active: true
-        }));
-
-        const { error: servicesError } = await supabase
-          .from('services')
-          .insert(servicesToInsert);
-
-        if (servicesError) {
-          console.error('useOnboarding: Error saving services:', servicesError);
-          throw servicesError;
-        }
-        console.log('useOnboarding: Successfully saved services');
+        await saveServices(providerId, data.services);
       }
 
       console.log('useOnboarding: Successfully saved step');
@@ -265,15 +114,7 @@ export const useOnboarding = () => {
       // Update the step in the database immediately
       if (user) {
         try {
-          const { error } = await supabase
-            .from('providers')
-            .update({ onboarding_step: newStep })
-            .eq('user_id', user.id);
-            
-          if (error) {
-            console.error('useOnboarding: Error updating step in database:', error);
-            return;
-          }
+          await updateProviderStep(user.id, newStep);
         } catch (error) {
           console.error('useOnboarding: Error updating step:', error);
           return;
@@ -303,16 +144,7 @@ export const useOnboarding = () => {
     if (!saved) return false;
 
     try {
-      const { error } = await supabase
-        .from('providers')
-        .update({
-          profile_completed: true,
-          onboarding_step: 5
-        })
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-
+      await completeProviderOnboarding(user.id);
       toast.success('¡Perfil completado exitosamente!');
       return true;
     } catch (error) {
