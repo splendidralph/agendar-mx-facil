@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -18,7 +17,6 @@ const Auth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
-  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
 
   // Sign up form state
   const [signUpData, setSignUpData] = useState({
@@ -34,21 +32,16 @@ const Auth = () => {
     password: ''
   });
 
-  const checkOnboardingStatus = async () => {
-    if (!user) {
-      console.log('Auth: No user to check status for');
-      return;
-    }
-
-    console.log('Auth: Checking onboarding status for user:', user.id);
-    setIsCheckingStatus(true);
-
+  // Single function to handle user validation and navigation
+  const validateAndNavigate = async (userId: string) => {
+    console.log('Auth: Validating user and navigating for:', userId);
+    
     try {
-      // First check if user exists in our users table
+      // Check if user exists in our users table
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('id')
-        .eq('id', user.id)
+        .eq('id', userId)
         .maybeSingle();
 
       if (userError) {
@@ -67,7 +60,7 @@ const Auth = () => {
       const { data: provider, error } = await supabase
         .from('providers')
         .select('profile_completed')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
@@ -77,35 +70,28 @@ const Auth = () => {
       }
 
       if (!provider) {
-        // No provider found, redirect to onboarding
         console.log('Auth: No provider found, redirecting to onboarding');
         navigate('/onboarding');
       } else if (!provider.profile_completed) {
-        // Provider exists but not completed
         console.log('Auth: Provider not completed, redirecting to onboarding');
         navigate('/onboarding');
       } else {
-        // Profile completed
         console.log('Auth: Profile completed, redirecting to dashboard');
         navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Auth: Error in checkOnboardingStatus:', error);
+      console.error('Auth: Error in validateAndNavigate:', error);
       navigate('/onboarding');
-    } finally {
-      setIsCheckingStatus(false);
     }
   };
 
-  // Redirect if already authenticated
+  // Handle authenticated user redirect
   useEffect(() => {
-    console.log('Auth: useEffect triggered - user:', !!user, 'loading:', loading);
-    
-    if (user && !loading && !isCheckingStatus) {
-      console.log('Auth: User authenticated, checking onboarding status');
-      checkOnboardingStatus();
+    if (user && !loading) {
+      console.log('Auth: User authenticated, validating and navigating');
+      validateAndNavigate(user.id);
     }
-  }, [user, loading, isCheckingStatus]);
+  }, [user, loading]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,7 +115,6 @@ const Auth = () => {
       console.log('Signup completed, error:', error);
       
       if (!error) {
-        // Clear form on success
         setSignUpData({
           email: '',
           password: '',
@@ -157,10 +142,7 @@ const Auth = () => {
     
     try {
       const { error } = await signIn(signInData.email.trim(), signInData.password);
-      
       console.log('Signin completed, error:', error);
-      
-      // Don't manually check status here - let the useEffect handle it
     } catch (err) {
       console.error('Form submission error:', err);
     } finally {
@@ -181,7 +163,6 @@ const Auth = () => {
     
     try {
       const { error } = await resetPassword(resetEmail.trim());
-      
       console.log('Password reset completed, error:', error);
       
       if (!error) {
@@ -195,19 +176,19 @@ const Auth = () => {
     }
   };
 
-  // Show loading while checking auth state or onboarding status
-  if (loading || (user && isCheckingStatus)) {
+  // Show loading only while auth is loading
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>{loading ? 'Cargando...' : 'Verificando cuenta...'}</p>
+          <p>Cargando...</p>
         </div>
       </div>
     );
   }
 
-  // Don't render auth form if user is authenticated (they should be redirected)
+  // If user is authenticated, show redirecting message (they should be navigated away)
   if (user) {
     return (
       <div className="flex items-center justify-center min-h-screen">

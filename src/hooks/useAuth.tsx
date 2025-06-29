@@ -22,54 +22,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Check if user exists in our database
-  const validateUserExists = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('id')
-        .eq('id', userId)
-        .maybeSingle();
-      
-      if (error) {
-        console.error('Error checking user existence:', error);
-        return false;
-      }
-      
-      return !!data;
-    } catch (error) {
-      console.error('Error validating user:', error);
-      return false;
-    }
-  };
-
-  // Clear session when user doesn't exist in database
-  const handleInvalidSession = async () => {
-    console.log('Clearing invalid session - user not found in database');
-    await supabase.auth.signOut();
-    toast({
-      title: "Sesión inválida",
-      description: "Tu cuenta necesita ser reactivada. Por favor, regístrate nuevamente.",
-      variant: "destructive"
-    });
-  };
-
   useEffect(() => {
-    // Set up auth state listener FIRST
+    // Set up auth state listener FIRST - NO ASYNC OPERATIONS HERE
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         
-        if (session?.user) {
-          // Validate that the user exists in our database
-          const userExists = await validateUserExists(session.user.id);
-          if (!userExists) {
-            console.log('User session exists but user not found in database');
-            await handleInvalidSession();
-            return;
-          }
-        }
-        
+        // ONLY synchronous state updates - no async database calls
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -77,18 +36,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Initial session check:', session?.user?.email);
-      
-      if (session?.user) {
-        // Validate that the user exists in our database
-        const userExists = await validateUserExists(session.user.id);
-        if (!userExists) {
-          console.log('Existing session invalid - user not found in database');
-          await handleInvalidSession();
-          return;
-        }
-      }
       
       setSession(session);
       setUser(session?.user ?? null);
@@ -107,15 +56,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email, 
         fullName: fullName || 'Not provided',
         phone: phone || 'Not provided',
-        role: 'provider', // Always default to provider
+        role: 'provider',
         redirectUrl 
       });
 
-      // Prepare metadata with proper field names - default everyone to provider
       const metadata = {
         full_name: fullName || '',
         phone: phone || '',
-        role: 'provider' // Always set to provider by default
+        role: 'provider'
       };
 
       console.log('Sending signup request with metadata:', metadata);
