@@ -5,7 +5,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Link2, Check, Instagram, MapPin, Clock, DollarSign, AlertCircle, MessageCircle, Mail, Smartphone } from 'lucide-react';
+import { ArrowLeft, Link2, Check, Instagram, MapPin, Clock, DollarSign, MessageCircle, Mail, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
 
 const PreviewStep = () => {
@@ -37,46 +37,6 @@ const PreviewStep = () => {
     masajes_relajacion: 'Masajes y Relajación',
     color_alisado: 'Color y Alisado'
   };
-
-  // Check if we have all required data
-  const hasRequiredData = data.businessName && data.category && data.username && data.services.length > 0;
-
-  if (!hasRequiredData) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-2 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <AlertCircle className="h-5 w-5 text-yellow-600" />
-          <div>
-            <h3 className="font-medium text-yellow-800">Información Incompleta</h3>
-            <p className="text-sm text-yellow-700">
-              Faltan algunos datos requeridos para completar tu perfil. Por favor regresa a los pasos anteriores.
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <h4 className="font-medium">Datos faltantes:</h4>
-          <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
-            {!data.businessName && <li>Nombre del negocio</li>}
-            {!data.category && <li>Categoría del servicio</li>}
-            {!data.username && <li>Username</li>}
-            {data.services.length === 0 && <li>Al menos un servicio</li>}
-          </ul>
-        </div>
-
-        <div className="flex justify-between">
-          <Button
-            onClick={prevStep}
-            variant="outline"
-            className="border-border text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Regresar
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -128,15 +88,9 @@ const PreviewStep = () => {
               </p>
             </div>
           ) : (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-amber-700">
-                <Mail className="h-4 w-4" />
-                Solo notificaciones por email
-              </div>
-              <p className="text-sm text-amber-600">
-                Puedes agregar WhatsApp después en tu dashboard para recibir notificaciones más rápidas.
-              </p>
-            </div>
+            <p className="text-sm text-amber-600">
+              Puedes agregar WhatsApp después en tu dashboard para recibir notificaciones más rápidas.
+            </p>
           )}
         </CardContent>
       </Card>

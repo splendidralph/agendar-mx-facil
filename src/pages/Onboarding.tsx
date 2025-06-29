@@ -16,16 +16,14 @@ import PreviewStep from '@/components/onboarding/PreviewStep';
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { currentStep, data, loading: onboardingLoading } = useOnboarding();
+  const { currentStep, loading: onboardingLoading } = useOnboarding();
 
   useEffect(() => {
     if (!authLoading && !user) {
-      console.log('Onboarding: No user found, redirecting to auth');
       navigate('/auth');
     }
   }, [user, authLoading, navigate]);
 
-  // Show loading spinner while auth is loading
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -37,7 +35,6 @@ const Onboarding = () => {
     );
   }
 
-  // Redirect if no user
   if (!user) return null;
 
   const steps = [
@@ -49,9 +46,6 @@ const Onboarding = () => {
   ];
 
   const renderStep = () => {
-    console.log('Onboarding: renderStep called with currentStep:', currentStep, 'data loaded:', !onboardingLoading);
-    
-    // Explicit step rendering based on currentStep
     switch (currentStep) {
       case 1:
         return <ProfileSetupStep />;
@@ -64,30 +58,12 @@ const Onboarding = () => {
       case 5:
         return <PreviewStep />;
       default:
-        console.warn('Onboarding: Invalid currentStep:', currentStep, 'falling back to step 1');
         return <ProfileSetupStep />;
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
-      {/* Debug Banner - Shows current step and data state */}
-      <div 
-        style={{ 
-          position: 'fixed', 
-          top: 0, 
-          right: 0, 
-          zIndex: 9999,
-          background: 'red',
-          color: 'white',
-          padding: '4px 8px',
-          fontSize: '12px',
-          fontWeight: 'bold'
-        }}
-      >
-        STEP: {currentStep} | DATA: {data.businessName ? 'B✓' : 'B✗'} {data.category ? 'C✓' : 'C✗'} {data.username ? 'U✓' : 'U✗'} {data.services?.length || 0}S
-      </div>
-
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-4 flex justify-center items-center">

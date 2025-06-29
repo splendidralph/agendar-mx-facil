@@ -6,23 +6,29 @@ import { ArrowRight, ArrowLeft, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Service, ServiceCategory } from '@/types/service';
 import ServicesList from './ServicesList';
-import { validateStep } from '@/utils/onboardingValidation';
 
 const ServicesStep = () => {
-  const { data, updateData, nextStep, prevStep, loading, currentStep } = useOnboarding();
-  const [services, setServices] = useState<Service[]>(data.services.length > 0 ? data.services : [
-    { name: '', price: 0, duration: 30, description: '', category: 'corte_barberia' as ServiceCategory }
-  ]);
+  const { data, nextStep, prevStep, loading } = useOnboarding();
+  const [services, setServices] = useState<Service[]>(
+    data.services.length > 0 
+      ? data.services 
+      : [{ name: '', price: 0, duration: 30, description: '', category: 'corte_barberia' as ServiceCategory }]
+  );
 
   useEffect(() => {
-    console.log('ServicesStep: Data changed, updating services:', data.services);
     if (data.services.length > 0) {
       setServices(data.services);
     }
   }, [data.services]);
 
   const addService = () => {
-    setServices(prev => [...prev, { name: '', price: 0, duration: 30, description: '', category: 'corte_barberia' as ServiceCategory }]);
+    setServices(prev => [...prev, { 
+      name: '', 
+      price: 0, 
+      duration: 30, 
+      description: '', 
+      category: 'corte_barberia' as ServiceCategory 
+    }]);
   };
 
   const removeService = (index: number) => {
@@ -39,7 +45,7 @@ const ServicesStep = () => {
     ));
   };
 
-  const handleNext = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const validServices = services.filter(service => 
@@ -51,28 +57,15 @@ const ServicesStep = () => {
       return;
     }
 
-    console.log('ServicesStep: handleNext called with services:', validServices);
-    
-    const servicesData = { services: validServices };
-    
-    // Update local data first
-    updateData(servicesData);
-    
-    try {
-      await nextStep(servicesData);
-      console.log('ServicesStep: nextStep completed successfully');
-    } catch (error) {
-      console.error('ServicesStep: Error in nextStep:', error);
-      toast.error('Error guardando los servicios. Inténtalo de nuevo.');
-    }
+    await nextStep({ services: validServices });
   };
 
-  // Create validation data with current services
-  const validationData = { ...data, services };
-  const isValid = validateStep(currentStep, validationData);
+  const isValid = services.some(service => 
+    service.name.length >= 2 && service.price > 0
+  );
 
   return (
-    <form onSubmit={handleNext} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-2">
           Agrega tus Servicios

@@ -5,13 +5,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, ArrowLeft, MessageCircle, MapPin, Instagram, CheckCircle, AlertCircle, Smartphone } from 'lucide-react';
-import { toast } from 'sonner';
 import PhoneInput from 'react-phone-number-input/input';
 import { Input } from '@/components/ui/input';
 import 'react-phone-number-input/style.css';
 
 const ContactStep = () => {
-  const { data, updateData, nextStep, prevStep, loading } = useOnboarding();
+  const { data, nextStep, prevStep, loading } = useOnboarding();
   const [formData, setFormData] = useState({
     address: data.address,
     instagramHandle: data.instagramHandle,
@@ -23,11 +22,6 @@ const ContactStep = () => {
   }>({ isValid: true, message: '' });
 
   useEffect(() => {
-    console.log('ContactStep: Data changed, updating form:', {
-      address: data.address,
-      instagramHandle: data.instagramHandle,
-      whatsappPhone: data.whatsappPhone
-    });
     setFormData({
       address: data.address,
       instagramHandle: data.instagramHandle,
@@ -57,26 +51,11 @@ const ContactStep = () => {
     }
   };
 
-  const handleNext = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('ContactStep: handleNext called with formData:', formData);
     
-    // Validate phone if provided
-    if (formData.whatsappPhone && !phoneValidation.isValid) {
-      toast.error('Por favor corrige el número de WhatsApp');
-      return;
-    }
-    
-    console.log('ContactStep: Validation passed, updating data and proceeding');
-    updateData(formData);
-    
-    try {
-      await nextStep(formData);
-      console.log('ContactStep: nextStep completed successfully');
-    } catch (error) {
-      console.error('ContactStep: Error in nextStep:', error);
-      toast.error('Error guardando los datos. Inténtalo de nuevo.');
-    }
+    // Contact info is optional, so just proceed
+    await nextStep(formData);
   };
 
   const handleInstagramChange = (value: string) => {
@@ -93,7 +72,7 @@ const ContactStep = () => {
   const canProceed = !loading && (!formData.whatsappPhone || phoneValidation.isValid);
 
   return (
-    <form onSubmit={handleNext} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {/* WhatsApp Benefits Card */}
       <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
         <CardHeader className="pb-3">
@@ -166,11 +145,6 @@ const ContactStep = () => {
                 {phoneValidation.message}
               </p>
             )}
-            {!formData.whatsappPhone && (
-              <p className="text-sm text-green-600 mt-1">
-                El número se guardará automáticamente con el código de país (+52 para México)
-              </p>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -195,9 +169,6 @@ const ContactStep = () => {
             placeholder="Ej: Av. Principal 123, Colonia Centro"
             className="mt-1"
           />
-          <p className="text-sm text-muted-foreground mt-1">
-            Ayuda a los clientes a encontrarte fácilmente
-          </p>
         </div>
 
         <div>
@@ -217,30 +188,8 @@ const ContactStep = () => {
               className="pl-8"
             />
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            Conecta con tus clientes en redes sociales
-          </p>
         </div>
       </div>
-
-      {/* Skip Warning */}
-      {!formData.whatsappPhone && (
-        <Card className="border-amber-200 bg-amber-50">
-          <CardContent className="pt-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-amber-800">
-                  Sin WhatsApp te perderás notificaciones importantes
-                </p>
-                <p className="text-sm text-amber-700 mt-1">
-                  Solo recibirás notificaciones por email, que pueden llegar a spam o tardar más en ser vistas.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       <div className="flex justify-between">
         <Button
