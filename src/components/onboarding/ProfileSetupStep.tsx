@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowRight } from 'lucide-react';
+import { toast } from 'sonner';
 import { validateStep } from '@/utils/onboardingValidation';
 
 const ProfileSetupStep = () => {
@@ -18,12 +19,17 @@ const ProfileSetupStep = () => {
   });
 
   useEffect(() => {
+    console.log('ProfileSetupStep: Data changed, updating form:', {
+      businessName: data.businessName,
+      category: data.category,
+      bio: data.bio
+    });
     setFormData({
       businessName: data.businessName,
       category: data.category,
       bio: data.bio
     });
-  }, [data]);
+  }, [data.businessName, data.category, data.bio]);
 
   const categories = [
     'corte_barberia',
@@ -56,10 +62,17 @@ const ProfileSetupStep = () => {
     e.preventDefault();
     console.log('ProfileSetupStep: handleNext called with formData:', formData);
     
+    // Validate form data before proceeding
+    const validationData = { ...data, ...formData };
+    const isValid = validateStep(1, validationData);
+    
     if (!isValid) {
-      console.log('ProfileSetupStep: Form is not valid, not proceeding');
+      console.log('ProfileSetupStep: Validation failed');
+      toast.error('Por favor completa el nombre del negocio y selecciona una categoría');
       return;
     }
+    
+    console.log('ProfileSetupStep: Validation passed, updating data and proceeding');
     
     // Update local data first
     updateData(formData);
@@ -70,17 +83,18 @@ const ProfileSetupStep = () => {
       console.log('ProfileSetupStep: nextStep completed successfully');
     } catch (error) {
       console.error('ProfileSetupStep: Error in nextStep:', error);
+      toast.error('Error guardando los datos. Inténtalo de nuevo.');
     }
   };
 
-  // Create validation data with current form data
+  // Create validation data with current form data for UI state
   const validationData = { ...data, ...formData };
-  const isValid = validateStep(currentStep, validationData);
+  const isFormValid = validateStep(1, validationData);
 
   console.log('ProfileSetupStep render:', { 
     businessName: formData.businessName, 
     category: formData.category, 
-    isValid, 
+    isFormValid, 
     loading,
     currentStep
   });
@@ -143,7 +157,7 @@ const ProfileSetupStep = () => {
       <div className="flex justify-end">
         <Button
           type="submit"
-          disabled={!isValid || loading}
+          disabled={!isFormValid || loading}
           className="btn-primary"
         >
           {loading ? 'Guardando...' : 'Continuar'}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
@@ -24,12 +23,17 @@ const ContactStep = () => {
   }>({ isValid: true, message: '' });
 
   useEffect(() => {
+    console.log('ContactStep: Data changed, updating form:', {
+      address: data.address,
+      instagramHandle: data.instagramHandle,
+      whatsappPhone: data.whatsappPhone
+    });
     setFormData({
       address: data.address,
       instagramHandle: data.instagramHandle,
       whatsappPhone: data.whatsappPhone || ''
     });
-  }, [data]);
+  }, [data.address, data.instagramHandle, data.whatsappPhone]);
 
   const validatePhoneNumber = (phoneValue?: string) => {
     if (!phoneValue) {
@@ -63,6 +67,7 @@ const ContactStep = () => {
       return;
     }
     
+    console.log('ContactStep: Validation passed, updating data and proceeding');
     updateData(formData);
     
     try {
@@ -70,6 +75,7 @@ const ContactStep = () => {
       console.log('ContactStep: nextStep completed successfully');
     } catch (error) {
       console.error('ContactStep: Error in nextStep:', error);
+      toast.error('Error guardando los datos. Inténtalo de nuevo.');
     }
   };
 

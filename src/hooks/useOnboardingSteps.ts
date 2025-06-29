@@ -54,12 +54,13 @@ export const useOnboardingSteps = (
       updateData(updatedData);
     }
     
-    // Validate current step with the updated data
+    // Validate current step with the updated data - but don't show toast here
     const isValid = validateStep(currentStep, dataForValidation);
     console.log('✅ nextStep: Validation result for step', currentStep, ':', isValid);
     
     if (!isValid) {
       console.warn('❌ Validation failed for step', currentStep);
+      // Don't show toast here - let the form components handle error display
       return;
     }
     

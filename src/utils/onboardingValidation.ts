@@ -1,5 +1,4 @@
 import { OnboardingData } from '@/types/onboarding';
-import { toast } from 'sonner';
 
 export const validateStep = (step: number, data: OnboardingData): boolean => {
   console.log('validateStep: Validating step', step, 'with data:', {
@@ -12,10 +11,7 @@ export const validateStep = (step: number, data: OnboardingData): boolean => {
   switch (step) {
     case 1:
       const step1Valid = !!(data.businessName && data.businessName.trim() && data.category);
-      if (!step1Valid) {
-        console.log('validateStep: Step 1 validation failed');
-        toast.error('Por favor completa el nombre del negocio y la categoría');
-      }
+      console.log('validateStep: Step 1 validation result:', step1Valid);
       return step1Valid;
       
     case 2:
@@ -25,10 +21,7 @@ export const validateStep = (step: number, data: OnboardingData): boolean => {
       
     case 3:
       const step3Valid = !!(data.username && data.username.trim() && data.username.length >= 3);
-      if (!step3Valid) {
-        console.log('validateStep: Step 3 validation failed - username:', data.username);
-        toast.error('Por favor elige un username válido');
-      }
+      console.log('validateStep: Step 3 validation result:', step3Valid);
       return step3Valid;
       
     case 4:
@@ -36,10 +29,7 @@ export const validateStep = (step: number, data: OnboardingData): boolean => {
         service.name && service.name.trim().length >= 2 && service.price > 0
       );
       const step4Valid = validServices.length > 0;
-      if (!step4Valid) {
-        console.log('validateStep: Step 4 validation failed');
-        toast.error('Por favor agrega al menos un servicio válido');
-      }
+      console.log('validateStep: Step 4 validation result:', step4Valid, 'valid services:', validServices.length);
       return step4Valid;
       
     default:

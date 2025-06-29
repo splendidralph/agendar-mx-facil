@@ -15,6 +15,7 @@ const ServicesStep = () => {
   ]);
 
   useEffect(() => {
+    console.log('ServicesStep: Data changed, updating services:', data.services);
     if (data.services.length > 0) {
       setServices(data.services);
     }
@@ -62,6 +63,7 @@ const ServicesStep = () => {
       console.log('ServicesStep: nextStep completed successfully');
     } catch (error) {
       console.error('ServicesStep: Error in nextStep:', error);
+      toast.error('Error guardando los servicios. Inténtalo de nuevo.');
     }
   };
 
