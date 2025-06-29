@@ -50,7 +50,7 @@ const Dashboard = () => {
 
   const copyLink = () => {
     if (provider?.username) {
-      const bookingUrl = `https://bookeasy.mx/@${provider.username}`;
+      const bookingUrl = `https://bookeasy.mx/${provider.username}`;
       navigator.clipboard.writeText(bookingUrl);
       toast.success("¡Link copiado al portapapeles!");
     }
@@ -187,7 +187,7 @@ const Dashboard = () => {
               <CardContent className="space-y-4">
                 <div className="p-4 bg-secondary/50 rounded-xl border border-border/50">
                   <p className="text-sm font-mono text-foreground break-all">
-                    bookeasy.mx/@{provider.username}
+                    bookeasy.mx/{provider.username}
                   </p>
                 </div>
                 <Button 
@@ -200,7 +200,7 @@ const Dashboard = () => {
                 <Button 
                   variant="outline"
                   className="w-full border-border text-foreground hover:bg-secondary"
-                  onClick={() => window.open(`https://bookeasy.mx/@${provider.username}`, '_blank')}
+                  onClick={() => window.open(`https://bookeasy.mx/${provider.username}`, '_blank')}
                 >
                   Ver Mi Perfil
                 </Button>
