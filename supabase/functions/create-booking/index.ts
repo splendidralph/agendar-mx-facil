@@ -28,7 +28,43 @@ serve(async (req) => {
       isGuest = true 
     } = await req.json()
 
-    console.log('Creating booking:', { providerId, serviceId, bookingDate, bookingTime, clientData, isGuest })
+    console.log('Creating booking with data:', { 
+      providerId, 
+      serviceId, 
+      bookingDate, 
+      bookingTime, 
+      clientData: { ...clientData, phone: clientData?.phone ? 'provided' : 'missing' },
+      isGuest 
+    })
+
+    // Validate required fields
+    if (!providerId || !serviceId || !bookingDate || !bookingTime) {
+      console.error('Missing required booking fields')
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Missing required booking information' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400 
+        }
+      )
+    }
+
+    if (isGuest && (!clientData?.name || !clientData?.phone)) {
+      console.error('Missing required guest information')
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Name and phone are required for guest bookings' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400 
+        }
+      )
+    }
 
     // Get the service details to calculate total price
     const { data: service, error: serviceError } = await supabase
@@ -39,7 +75,16 @@ serve(async (req) => {
 
     if (serviceError) {
       console.error('Service fetch error:', serviceError)
-      throw new Error('Service not found')
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Service not found' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 404 
+        }
+      )
     }
 
     let clientId = null
@@ -56,32 +101,44 @@ serve(async (req) => {
       }
     }
 
+    console.log('Creating booking record with clientId:', clientId)
+
     // Create the booking record
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
       .insert({
         provider_id: providerId,
         service_id: serviceId,
-        client_id: clientId, // null for guest bookings
+        client_id: clientId, // This can now be null for guest bookings
         booking_date: bookingDate,
         booking_time: bookingTime,
         total_price: service.price,
         status: 'pending',
         source_type: 'web',
-        client_notes: clientData.notes || null
+        client_notes: clientData?.notes || null
       })
       .select()
       .single()
 
     if (bookingError) {
       console.error('Booking creation error:', bookingError)
-      throw new Error('Failed to create booking')
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Failed to create booking. Please try again.' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500 
+        }
+      )
     }
 
-    console.log('Booking created:', booking)
+    console.log('Booking created successfully:', booking.id)
 
     // If it's a guest booking, create the guest booking details
-    if (isGuest) {
+    if (isGuest && clientData) {
+      console.log('Creating guest booking details')
       const { error: guestError } = await supabase
         .from('guest_bookings')
         .insert({
@@ -93,7 +150,9 @@ serve(async (req) => {
 
       if (guestError) {
         console.error('Guest booking details error:', guestError)
-        // Don't throw here, booking is already created
+        // Continue anyway as the main booking was created
+      } else {
+        console.log('Guest booking details created successfully')
       }
     }
 
@@ -114,20 +173,20 @@ serve(async (req) => {
     const notificationPromises = []
 
     if (shouldSendEmail) {
-      console.log('Sending email notification...')
+      console.log('Queuing email notification...')
       notificationPromises.push(
         supabase.functions.invoke('send-booking-notification', {
           body: { bookingId: booking.id }
-        }).then(result => ({ type: 'email', result }))
+        }).then(result => ({ type: 'email', result })).catch(error => ({ type: 'email', error }))
       )
     }
 
     if (shouldSendWhatsApp) {
-      console.log('Sending WhatsApp notification...')
+      console.log('Queuing WhatsApp notification...')
       notificationPromises.push(
         supabase.functions.invoke('send-whatsapp-notification', {
           body: { bookingId: booking.id }
-        }).then(result => ({ type: 'whatsapp', result }))
+        }).then(result => ({ type: 'whatsapp', result })).catch(error => ({ type: 'whatsapp', error }))
       )
     }
 
@@ -138,8 +197,10 @@ serve(async (req) => {
         
         results.forEach((result, index) => {
           if (result.status === 'fulfilled') {
-            const { type, result: notificationResult } = result.value
-            if (notificationResult.error) {
+            const { type, result: notificationResult, error } = result.value
+            if (error) {
+              console.error(`Error sending ${type} notification:`, error)
+            } else if (notificationResult?.error) {
               console.error(`Error sending ${type} notification:`, notificationResult.error)
             } else {
               console.log(`${type} notification sent successfully`)
@@ -167,15 +228,15 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error creating booking:', error)
+    console.error('Unexpected error creating booking:', error)
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: 'An unexpected error occurred. Please try again.' 
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400 
+        status: 500 
       }
     )
   }

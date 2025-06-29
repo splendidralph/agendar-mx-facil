@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, ChevronLeft, Clock, Phone, Instagram, CheckCircle, Star, MapPin } from "lucide-react";
+import { Calendar, ChevronLeft, Clock, Phone, Instagram, CheckCircle, Star, MapPin, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { categoryLabels } from "@/utils/serviceCategories";
 
@@ -41,6 +42,7 @@ const Booking = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [clientData, setClientData] = useState({
     name: "",
     phone: "",
@@ -119,19 +121,26 @@ const Booking = () => {
 
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     
     if (!selectedService || !provider) {
-      toast.error('Por favor selecciona un servicio');
+      const errorMsg = 'Por favor selecciona un servicio';
+      setError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
     if (!selectedDate || !selectedTime) {
-      toast.error('Por favor selecciona fecha y hora');
+      const errorMsg = 'Por favor selecciona fecha y hora';
+      setError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
     if (!clientData.name || !clientData.phone) {
-      toast.error('Por favor completa tu nombre y teléfono');
+      const errorMsg = 'Por favor completa tu nombre y teléfono';
+      setError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
@@ -143,7 +152,7 @@ const Booking = () => {
         service: selectedService.name,
         date: selectedDate,
         time: selectedTime,
-        client: clientData
+        client: { name: clientData.name, phone: clientData.phone, hasEmail: !!clientData.email }
       });
 
       const { data, error } = await supabase.functions.invoke('create-booking', {
@@ -153,26 +162,32 @@ const Booking = () => {
           bookingDate: selectedDate,
           bookingTime: selectedTime,
           clientData: clientData,
-          isGuest: true // For now, all bookings are guest bookings
+          isGuest: true
         }
       });
 
+      console.log('Edge function response:', { data, error });
+
       if (error) {
-        console.error('Booking submission error:', error);
-        throw error;
+        console.error('Edge function error:', error);
+        throw new Error(error.message || 'Error connecting to booking service');
       }
 
-      if (!data.success) {
-        throw new Error(data.error || 'Error al crear la reserva');
+      if (!data || !data.success) {
+        const errorMessage = data?.error || 'Error al crear la reserva';
+        console.error('Booking creation failed:', errorMessage);
+        throw new Error(errorMessage);
       }
 
       console.log('Booking created successfully:', data);
       setShowConfirmation(true);
       toast.success("¡Reserva creada exitosamente!");
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating booking:', error);
-      toast.error(error.message || 'Error al crear la reserva. Inténtalo de nuevo.');
+      const errorMessage = error.message || 'Error al crear la reserva. Inténtalo de nuevo.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -376,6 +391,13 @@ const Booking = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                {error && (
+                  <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-destructive" />
+                    <span className="text-sm text-destructive">{error}</span>
+                  </div>
+                )}
+                
                 <form onSubmit={handleBooking} className="space-y-6">
                   <div>
                     <Label className="text-foreground font-semibold">Fecha Preferida *</Label>
