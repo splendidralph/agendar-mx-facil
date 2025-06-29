@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, ArrowLeft } from 'lucide-react';
+import { Calendar, ArrowLeft, AlertCircle } from 'lucide-react';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
@@ -17,6 +18,9 @@ const Auth = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [navigationError, setNavigationError] = useState<string | null>(null);
+  const navigationAttempted = useRef(false);
 
   // Sign up form state
   const [signUpData, setSignUpData] = useState({
@@ -32,64 +36,87 @@ const Auth = () => {
     password: ''
   });
 
-  // Single function to handle user validation and navigation
+  // Enhanced user validation with proper error handling
   const validateAndNavigate = async (userId: string) => {
-    console.log('Auth: Validating user and navigating for:', userId);
+    console.log('Auth: Starting navigation for user:', userId);
+    setIsNavigating(true);
+    setNavigationError(null);
     
     try {
-      // Check if user exists in our users table
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('id', userId)
-        .maybeSingle();
+      // Set a timeout to prevent infinite waiting
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Navigation timeout')), 10000);
+      });
 
-      if (userError) {
-        console.error('Auth: Error checking user existence:', userError);
-        navigate('/onboarding');
-        return;
-      }
+      const validationPromise = (async () => {
+        // Check if user exists in our users table
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('id', userId)
+          .maybeSingle();
 
-      if (!userData) {
-        console.log('Auth: User not found in database, signing out');
-        await supabase.auth.signOut();
-        return;
-      }
+        if (userError) {
+          console.error('Auth: Error checking user existence:', userError);
+          throw new Error('Failed to verify user');
+        }
 
-      // Check provider onboarding status
-      const { data: provider, error } = await supabase
-        .from('providers')
-        .select('profile_completed')
-        .eq('user_id', userId)
-        .maybeSingle();
+        if (!userData) {
+          console.log('Auth: User not found in database, navigating to onboarding');
+          navigate('/onboarding');
+          return;
+        }
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Auth: Error checking provider status:', error);
-        navigate('/onboarding');
-        return;
-      }
+        // Check provider onboarding status
+        const { data: provider, error: providerError } = await supabase
+          .from('providers')
+          .select('profile_completed')
+          .eq('user_id', userId)
+          .maybeSingle();
 
-      if (!provider) {
-        console.log('Auth: No provider found, redirecting to onboarding');
-        navigate('/onboarding');
-      } else if (!provider.profile_completed) {
-        console.log('Auth: Provider not completed, redirecting to onboarding');
-        navigate('/onboarding');
-      } else {
-        console.log('Auth: Profile completed, redirecting to dashboard');
-        navigate('/dashboard');
-      }
+        if (providerError && providerError.code !== 'PGRST116') {
+          console.error('Auth: Error checking provider status:', providerError);
+          throw new Error('Failed to check provider status');
+        }
+
+        if (!provider) {
+          console.log('Auth: No provider found, redirecting to onboarding');
+          navigate('/onboarding');
+        } else if (!provider.profile_completed) {
+          console.log('Auth: Provider not completed, redirecting to onboarding');
+          navigate('/onboarding');
+        } else {
+          console.log('Auth: Profile completed, redirecting to dashboard');
+          navigate('/dashboard');
+        }
+      })();
+
+      await Promise.race([validationPromise, timeoutPromise]);
+      
     } catch (error) {
-      console.error('Auth: Error in validateAndNavigate:', error);
+      console.error('Auth: Navigation error:', error);
+      setNavigationError(error instanceof Error ? error.message : 'Navigation failed');
+      // Fallback navigation - assume new user needs onboarding
+      console.log('Auth: Falling back to onboarding due to error');
       navigate('/onboarding');
+    } finally {
+      setIsNavigating(false);
     }
   };
 
-  // Handle authenticated user redirect
+  // Handle authenticated user redirect with proper state management
   useEffect(() => {
-    if (user && !loading) {
-      console.log('Auth: User authenticated, validating and navigating');
+    if (user && !loading && !navigationAttempted.current) {
+      console.log('Auth: User authenticated, starting navigation process');
+      navigationAttempted.current = true;
       validateAndNavigate(user.id);
+    }
+    
+    // Reset navigation flag if user changes
+    if (!user) {
+      navigationAttempted.current = false;
+      setIsNavigating(false);
+      setNavigationError(null);
     }
   }, [user, loading]);
 
@@ -176,6 +203,12 @@ const Auth = () => {
     }
   };
 
+  const handleManualNavigation = () => {
+    console.log('Auth: Manual navigation triggered');
+    setNavigationError(null);
+    navigate('/onboarding');
+  };
+
   // Show loading only while auth is loading
   if (loading) {
     return (
@@ -188,13 +221,43 @@ const Auth = () => {
     );
   }
 
-  // If user is authenticated, show redirecting message (they should be navigated away)
-  if (user) {
+  // If user is authenticated and we're navigating, show navigation screen
+  if (user && isNavigating) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Redirigiendo...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is authenticated but navigation failed, show error with manual option
+  if (user && navigationError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-md mx-auto p-6">
+          <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold mb-2">Error de Navegación</h2>
+          <p className="text-muted-foreground mb-4">
+            Hubo un problema al redirigirte. Puedes continuar manualmente.
+          </p>
+          <Button onClick={handleManualNavigation} className="btn-primary">
+            Continuar al Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is authenticated but we haven't started navigation yet, show brief loading
+  if (user && !navigationAttempted.current) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Verificando...</p>
         </div>
       </div>
     );
