@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, Phone, Instagram, CheckCircle, Menu, X, LogOut } from "lucide-react";
+import { Calendar, Clock, Phone, Instagram, CheckCircle, Menu, X, LogOut, Link2, Share2, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,37 +13,37 @@ const Index = () => {
 
   const features = [
     {
+      icon: Link2,
+      title: "Tu Link Personal",
+      description: "Obtén tu URL única bookeasy.mx/@tuusername para compartir"
+    },
+    {
+      icon: Share2,
+      title: "Fácil de Compartir",
+      description: "Comparte tu link en WhatsApp, Instagram y redes sociales"
+    },
+    {
       icon: Calendar,
       title: "Gestión de Citas",
-      description: "Agenda y administra tus citas de forma profesional"
+      description: "Administra tus reservas desde tu dashboard personal"
     },
     {
       icon: Clock,
-      title: "Horarios Flexibles",
-      description: "Define tu disponibilidad según tu conveniencia"
-    },
-    {
-      icon: Phone,
-      title: "Notificaciones SMS",
-      description: "Confirmaciones y recordatorios automáticos"
-    },
-    {
-      icon: Instagram,
-      title: "Integración Social",
-      description: "Conecta con tus redes sociales existentes"
+      title: "Disponibilidad Flexible",
+      description: "Define tus horarios según tu conveniencia"
     }
   ];
 
   const benefits = [
+    "Link personalizado bookeasy.mx/@tuusername",
     "Sin costos de configuración",
-    "Cobros automáticos",
-    "Recordatorios por SMS",
+    "Perfil profesional completo",
+    "Integración con WhatsApp",
     "Dashboard móvil",
-    "Link personalizado",
     "Soporte en español"
   ];
 
-  const handleAuthClick = () => {
+  const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
     } else {
@@ -65,20 +66,13 @@ const Index = () => {
             
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-4">
-              <Button 
-                variant="ghost"
-                onClick={() => navigate('/explore')}
-                className="text-foreground hover:text-primary"
-              >
-                Explorar
-              </Button>
               {user ? (
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-muted-foreground">
                     Hola, {user.user_metadata?.full_name || user.email}
                   </span>
                   <Button 
-                    onClick={handleAuthClick}
+                    onClick={() => navigate('/dashboard')}
                     variant="outline"
                   >
                     Dashboard
@@ -93,7 +87,7 @@ const Index = () => {
                 </div>
               ) : (
                 <Button 
-                  onClick={handleAuthClick}
+                  onClick={() => navigate('/auth')}
                   variant="outline"
                 >
                   Iniciar Sesión
@@ -113,16 +107,6 @@ const Index = () => {
           {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="md:hidden mt-4 pb-4 border-t border-border/20 pt-4 space-y-3">
-              <Button 
-                variant="ghost"
-                onClick={() => {
-                  navigate('/explore');
-                  setIsMenuOpen(false);
-                }}
-                className="w-full justify-start text-foreground hover:text-primary"
-              >
-                Explorar Profesionales
-              </Button>
               {user ? (
                 <>
                   <div className="text-sm text-muted-foreground px-3">
@@ -130,7 +114,7 @@ const Index = () => {
                   </div>
                   <Button 
                     onClick={() => {
-                      handleAuthClick();
+                      navigate('/dashboard');
                       setIsMenuOpen(false);
                     }}
                     variant="outline"
@@ -153,7 +137,7 @@ const Index = () => {
               ) : (
                 <Button 
                   onClick={() => {
-                    handleAuthClick();
+                    navigate('/auth');
                     setIsMenuOpen(false);
                   }}
                   variant="outline"
@@ -178,25 +162,23 @@ const Index = () => {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed font-inter">
-              Dile adiós a los DMs de Instagram y WhatsApp. Crea tu perfil profesional 
-              y deja que tus clientes reserven contigo de forma fácil y rápida.
+              Obtén tu link personalizado <span className="font-semibold">bookeasy.mx/@tuusername</span> y deja que tus clientes 
+              reserven contigo directamente. Comparte tu link en WhatsApp, Instagram y todas tus redes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Button 
                 size="lg" 
                 className="btn-accent shadow-xl px-8 py-6 text-lg font-semibold w-full sm:w-auto"
-                onClick={() => navigate('/auth')}
+                onClick={handleGetStarted}
               >
-                {user ? 'Ir al Dashboard' : 'Crear Mi Perfil Gratis'}
+                {user ? 'Ir al Dashboard' : 'Obtener Mi Link Gratis'}
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-2 border-primary text-primary px-8 py-6 text-lg font-semibold hover:bg-primary hover:text-primary-foreground w-full sm:w-auto"
-                onClick={() => navigate('/explore')}
-              >
-                Explorar Profesionales
-              </Button>
+
+              {/* Example Link Preview */}
+              <div className="bg-card/50 border border-border/50 rounded-lg px-4 py-2 text-sm text-muted-foreground">
+                <span className="text-xs">Tu link será:</span><br />
+                <span className="font-mono text-primary">bookeasy.mx/@tuusername</span>
+              </div>
             </div>
             
             {/* Trust indicators */}
@@ -216,10 +198,10 @@ const Index = () => {
       <section className="py-16 px-4 bg-card/30">
         <div className="container mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-4">
-            Perfecto para profesionales de la belleza
+            Perfecto para profesionales independientes
           </h2>
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Diseñado especialmente para barberos, estilistas y profesionales de la belleza en México
+            Diseñado para barberos, estilistas, cosmetólogos y profesionales de la belleza en México
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
@@ -241,28 +223,22 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Waitlist Section */}
+      {/* Marketplace Coming Soon Section */}
       <section className="py-16 px-4">
         <div className="container mx-auto text-center">
           <div className="bg-card rounded-3xl p-8 border border-border/50 shadow-xl max-w-4xl mx-auto">
             <div className="gradient-primary text-primary-foreground p-4 rounded-2xl w-fit mx-auto mb-6 shadow-lg">
-              <Calendar className="h-8 w-8" />
+              <Users className="h-8 w-8" />
             </div>
             <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              ¡Próximamente en Julio 2025!
+              Marketplace - Próximamente
             </h3>
             <p className="text-muted-foreground mb-6 text-lg">
-              Únete a nuestra lista de espera y sé de los primeros en revolucionar tu negocio
+              Pronto podrás ser descubierto por nuevos clientes en nuestro marketplace. 
+              Por ahora, enfócate en compartir tu link personal.
             </p>
-            <Button 
-              size="lg" 
-              className="btn-accent shadow-xl px-8 py-6 text-lg font-semibold mb-6"
-              onClick={() => navigate('/auth')}
-            >
-              Unirme a la Lista de Espera
-            </Button>
             <div className="text-sm text-muted-foreground">
-              Recibe notificaciones exclusivas sobre el lanzamiento y ofertas especiales
+              Mientras tanto, comparte tu link bookeasy.mx/@tuusername en todas tus redes sociales
             </div>
           </div>
         </div>
@@ -272,18 +248,18 @@ const Index = () => {
       <section className="py-20 px-4 gradient-primary text-primary-foreground">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            ¿Listo para profesionalizar tu negocio?
+            ¿Listo para obtener tu link profesional?
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto font-inter">
-            Prepárate para el futuro de las reservas online. 
-            Únete a nuestra lista de espera y obtén acceso temprano.
+            Crea tu perfil en minutos y comienza a recibir reservas a través de tu link personalizado. 
+            Compártelo en WhatsApp, Instagram y donde quieras.
           </p>
           <Button 
             size="lg" 
             className="bg-card text-primary hover:bg-card/90 px-8 py-6 text-lg font-semibold shadow-xl"
-            onClick={() => navigate('/auth')}
+            onClick={handleGetStarted}
           >
-            Reservar Mi Lugar - Gratis
+            Crear Mi Perfil - Gratis
           </Button>
         </div>
       </section>
@@ -299,7 +275,7 @@ const Index = () => {
               <span className="text-2xl font-bold">Bookeasy.mx</span>
             </div>
             <p className="text-muted mb-6 max-w-md mx-auto">
-              La plataforma de reservas online diseñada para México
+              Links de reserva profesionales para México
             </p>
           </div>
           <div className="border-t border-border/20 pt-6 text-center">

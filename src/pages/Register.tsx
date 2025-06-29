@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar, ChevronLeft } from "lucide-react";
+import { Calendar, ChevronLeft, Link2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -19,19 +19,20 @@ const Register = () => {
 
   const categories = [
     "Barbería",
-    "Salón de Belleza",
-    "Spa",
-    "Estética",
+    "Salón de Belleza", 
+    "Cosmetología",
     "Manicure y Pedicure",
     "Masajes",
+    "Maquillaje",
+    "Estética",
     "Otro"
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Registro:", formData);
-    toast.success("¡Perfil creado exitosamente! Ahora configura tus servicios.");
-    navigate('/setup');
+    toast.success("¡Perfil creado exitosamente! Ahora configura tu link personalizado.");
+    navigate('/onboarding');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -66,11 +67,14 @@ const Register = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8 animate-fade-in">
+            <div className="gradient-primary text-primary-foreground p-3 rounded-xl w-fit mx-auto mb-4">
+              <Link2 className="h-6 w-6" />
+            </div>
             <h1 className="text-3xl font-bold text-bookeasy-900 mb-2">
-              Crea Tu Perfil
+              Obtén Tu Link Personal
             </h1>
             <p className="text-bookeasy-600">
-              Comienza a recibir reservas en minutos
+              Crea tu perfil y obtén tu bookeasy.mx/@username en minutos
             </p>
           </div>
 
@@ -78,25 +82,11 @@ const Register = () => {
             <CardHeader>
               <CardTitle className="text-bookeasy-800">Información Básica</CardTitle>
               <CardDescription>
-                Cuéntanos sobre ti
+                Cuéntanos sobre ti para crear tu link personalizado
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="name" className="text-bookeasy-700">Tu Nombre *</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="border-bookeasy-200 focus:border-bookeasy-400"
-                    placeholder="Ej. María González"
-                  />
-                </div>
-
                 <div>
                   <Label htmlFor="email" className="text-bookeasy-700">Email *</Label>
                   <Input
@@ -112,7 +102,21 @@ const Register = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="category" className="text-bookeasy-700">Categoría *</Label>
+                  <Label htmlFor="name" className="text-bookeasy-700">Tu Nombre *</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="border-bookeasy-200 focus:border-bookeasy-400"
+                    placeholder="Ej. María González"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="category" className="text-bookeasy-700">Tu Especialidad *</Label>
                   <select
                     id="category"
                     name="category"
@@ -121,7 +125,7 @@ const Register = () => {
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-bookeasy-200 rounded-md focus:outline-none focus:border-bookeasy-400 bg-white"
                   >
-                    <option value="">Selecciona tu categoría</option>
+                    <option value="">Selecciona tu especialidad</option>
                     {categories.map(cat => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
@@ -146,14 +150,24 @@ const Register = () => {
                   type="submit" 
                   className="w-full bg-gradient-primary hover:opacity-90 text-white smooth-transition"
                 >
-                  Crear Mi Perfil
+                  Crear Mi Link Personal
                 </Button>
               </form>
             </CardContent>
           </Card>
 
-          <div className="text-center mt-6 text-sm text-bookeasy-600">
-            Al crear tu perfil, aceptas nuestros términos y condiciones
+          <div className="text-center mt-6">
+            <div className="bg-bookeasy-50 border border-bookeasy-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-bookeasy-700 font-medium mb-1">
+                Tu link será algo como:
+              </p>
+              <p className="font-mono text-bookeasy-900 bg-white px-3 py-1 rounded border">
+                bookeasy.mx/@tuusername
+              </p>
+            </div>
+            <p className="text-sm text-bookeasy-600">
+              Al crear tu perfil, aceptas nuestros términos y condiciones
+            </p>
           </div>
         </div>
       </div>
