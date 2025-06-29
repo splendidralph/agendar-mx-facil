@@ -41,31 +41,39 @@ export const loadProviderData = async (userId: string) => {
 
 export const saveProviderData = async (userId: string, data: OnboardingData, currentStep: number) => {
   try {
+    console.log('onboardingService: Saving provider data for user:', userId, 'step:', currentStep);
+    
     // Check if provider exists
     const { data: existingProvider, error: fetchError } = await supabase
       .from('providers')
-      .select('id')
+      .select('id, username')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
     let providerId = existingProvider?.id;
 
-    if (fetchError && fetchError.code === 'PGRST116') {
+    if (!existingProvider) {
       console.log('onboardingService: Creating new provider');
-      // Create new provider
+      // Create new provider - only set username if it's provided and not empty
+      const providerData: any = {
+        user_id: userId,
+        business_name: data.businessName,
+        category: data.category,
+        bio: data.bio,
+        address: data.address,
+        instagram_handle: data.instagramHandle,
+        onboarding_step: currentStep,
+        profile_completed: false
+      };
+
+      // Only include username if it's provided and not empty
+      if (data.username && data.username.trim()) {
+        providerData.username = data.username;
+      }
+
       const { data: newProvider, error: createError } = await supabase
         .from('providers')
-        .insert({
-          user_id: userId,
-          business_name: data.businessName,
-          category: data.category,
-          bio: data.bio,
-          address: data.address,
-          instagram_handle: data.instagramHandle,
-          username: data.username,
-          onboarding_step: currentStep,
-          profile_completed: false
-        })
+        .insert(providerData)
         .select('id')
         .single();
 
@@ -75,21 +83,27 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       }
       providerId = newProvider.id;
       console.log('onboardingService: Created new provider with ID:', providerId);
-    } else if (!fetchError) {
+    } else {
       console.log('onboardingService: Updating existing provider with ID:', providerId);
-      // Update existing provider
+      // Update existing provider - be careful with username updates
+      const updateData: any = {
+        business_name: data.businessName,
+        category: data.category,
+        bio: data.bio,
+        address: data.address,
+        instagram_handle: data.instagramHandle,
+        onboarding_step: currentStep,
+        profile_completed: currentStep >= 5
+      };
+
+      // Only update username if it's different from existing and not empty
+      if (data.username && data.username.trim() && data.username !== existingProvider.username) {
+        updateData.username = data.username;
+      }
+
       const { error: updateError } = await supabase
         .from('providers')
-        .update({
-          business_name: data.businessName,
-          category: data.category,
-          bio: data.bio,
-          address: data.address,
-          instagram_handle: data.instagramHandle,
-          username: data.username,
-          onboarding_step: currentStep,
-          profile_completed: currentStep >= 5
-        })
+        .update(updateData)
         .eq('user_id', userId);
 
       if (updateError) {
@@ -98,6 +112,7 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       }
     }
 
+    console.log('onboardingService: Successfully saved provider data');
     return providerId;
   } catch (error) {
     console.error('Error saving provider data:', error);
