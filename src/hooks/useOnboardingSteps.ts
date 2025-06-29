@@ -25,12 +25,6 @@ export const useOnboardingSteps = (
 
   const nextStep = useCallback(async (updatedData?: Partial<OnboardingData>) => {
     console.log('🚀 nextStep START - currentStep:', currentStep, 'userId:', userId);
-    console.log('🚀 nextStep data before:', {
-      businessName: data.businessName,
-      category: data.category,
-      username: data.username,
-      servicesCount: data.services?.length || 0
-    });
     
     if (!userId) {
       console.error('❌ nextStep: No userId provided');
@@ -54,13 +48,12 @@ export const useOnboardingSteps = (
       updateData(updatedData);
     }
     
-    // Validate current step with the updated data - but don't show toast here
+    // Validate current step with the updated data
     const isValid = validateStep(currentStep, dataForValidation);
     console.log('✅ nextStep: Validation result for step', currentStep, ':', isValid);
     
     if (!isValid) {
       console.warn('❌ Validation failed for step', currentStep);
-      // Don't show toast here - let the form components handle error display
       return;
     }
     
@@ -100,24 +93,67 @@ export const useOnboardingSteps = (
     }
   }, [currentStep, data, updateData, saveCurrentStep, userId]);
 
-  const prevStep = useCallback(() => {
-    console.log('⬅️ prevStep: Current step:', currentStep);
+  const prevStep = useCallback(async () => {
+    console.log('⬅️ prevStep START - currentStep:', currentStep, 'userId:', userId);
+    
+    if (!userId) {
+      console.error('❌ prevStep: No userId provided');
+      toast.error('Error: Usuario no identificado');
+      return;
+    }
+    
     if (currentStep > 1) {
-      const newStep = currentStep - 1;
-      console.log('⬅️ prevStep: Moving to previous step:', newStep);
-      setCurrentStep(newStep);
-      updateData({ step: newStep });
-      console.log('✅ prevStep: Successfully moved to step', newStep);
+      const prevStepNumber = currentStep - 1;
+      console.log('⬅️ prevStep: Moving from step', currentStep, 'to step', prevStepNumber);
+      
+      try {
+        // Update the step in the database FIRST
+        console.log('📊 prevStep: Updating step in database to:', prevStepNumber);
+        await updateProviderStep(userId, prevStepNumber);
+        console.log('✅ prevStep: Successfully updated step in database');
+        
+        // Update local state
+        console.log('🔄 prevStep: Updating local state to step:', prevStepNumber);
+        setCurrentStep(prevStepNumber);
+        updateData({ step: prevStepNumber });
+        
+        console.log('🎉 prevStep SUCCESS: Moved to step', prevStepNumber);
+        
+      } catch (error) {
+        console.error('❌ prevStep error:', error);
+        toast.error('Error retrocediendo al paso anterior');
+      }
     } else {
       console.log('⬅️ prevStep: Already at first step, cannot go back');
     }
-  }, [currentStep, updateData]);
+  }, [currentStep, updateData, userId]);
 
-  const setStep = useCallback((step: number) => {
-    console.log('🎯 setStep: Setting step to:', step);
-    setCurrentStep(step);
-    updateData({ step });
-  }, [updateData]);
+  const setStep = useCallback(async (step: number) => {
+    console.log('🎯 setStep START - setting step to:', step, 'userId:', userId);
+    
+    if (!userId) {
+      console.error('❌ setStep: No userId provided');
+      return;
+    }
+    
+    try {
+      // Update the step in the database
+      console.log('📊 setStep: Updating step in database to:', step);
+      await updateProviderStep(userId, step);
+      console.log('✅ setStep: Successfully updated step in database');
+      
+      // Update local state
+      console.log('🔄 setStep: Updating local state to step:', step);
+      setCurrentStep(step);
+      updateData({ step });
+      
+      console.log('🎉 setStep SUCCESS: Set to step', step);
+      
+    } catch (error) {
+      console.error('❌ setStep error:', error);
+      toast.error('Error cambiando de paso');
+    }
+  }, [updateData, userId]);
 
   return {
     currentStep,
