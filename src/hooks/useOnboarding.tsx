@@ -14,13 +14,20 @@ import {
 } from '@/services/onboardingService';
 
 // Helper function to determine the correct step based on data completeness
-const determineStepFromData = (data: OnboardingData): number => {
+const determineStepFromData = (data: OnboardingData, dbStep?: number): number => {
   console.log('determineStepFromData: Evaluating data:', {
     businessName: !!data.businessName,
     category: !!data.category,
     username: !!data.username,
-    servicesCount: data.services.length
+    servicesCount: data.services.length,
+    dbStep
   });
+
+  // If we have a database step and it's valid, prioritize it for consistency
+  if (dbStep && dbStep >= 1 && dbStep <= 5) {
+    console.log('determineStepFromData: Using database step:', dbStep);
+    return dbStep;
+  }
 
   // Step 1: Requires business_name and category
   if (!data.businessName || !data.category) {
@@ -28,7 +35,7 @@ const determineStepFromData = (data: OnboardingData): number => {
     return 1;
   }
   
-  // Step 2: If we have basic info but no username, go to contact step
+  // Step 2: Contact step (optional fields)
   if (data.businessName && data.category && !data.username) {
     console.log('determineStepFromData: Have basic info, no username, returning step 2');
     return 2;
@@ -108,9 +115,11 @@ export const useOnboarding = () => {
           }))
         };
         
-        // Determine the correct step based on data completeness
-        const correctStep = determineStepFromData(loadedData);
-        console.log('useOnboarding: Calculated correct step:', correctStep);
+        // Use database step as primary source of truth, with data-based fallback
+        const dbStep = provider.onboarding_step || 1;
+        const correctStep = determineStepFromData(loadedData, dbStep);
+        
+        console.log('useOnboarding: Database step:', dbStep, 'Calculated step:', correctStep);
         
         // Update both data and step state
         setData({
@@ -119,11 +128,16 @@ export const useOnboarding = () => {
         });
         setCurrentStep(correctStep);
         console.log('useOnboarding: Set current step to:', correctStep);
+      } else {
+        // No existing data, start from step 1
+        console.log('useOnboarding: No existing data, starting from step 1');
+        setCurrentStep(1);
       }
       
       setDataLoaded(true);
     } catch (error) {
       console.error('useOnboarding: Error loading data:', error);
+      toast.error('Error cargando datos del perfil');
       setDataLoaded(true);
     } finally {
       setLoading(false);
@@ -206,20 +220,20 @@ export const useOnboarding = () => {
       return;
     }
     
-    // First save the current step with the provided data
-    console.log('useOnboarding: Attempting to save current step...');
-    const saved = await saveCurrentStep(dataForValidation);
-    console.log('useOnboarding: Save result:', saved);
-    if (!saved) {
-      console.log('useOnboarding: Failed to save, not advancing step');
-      return;
-    }
-
     // Only advance if we're not at the final step
     if (currentStep < 5) {
       const newStep = currentStep + 1;
       console.log('useOnboarding: Advancing to step:', newStep);
       
+      // First save the current step with the provided data
+      console.log('useOnboarding: Attempting to save current step...');
+      const saved = await saveCurrentStep(dataForValidation);
+      console.log('useOnboarding: Save result:', saved);
+      if (!saved) {
+        console.log('useOnboarding: Failed to save, not advancing step');
+        return;
+      }
+
       // Update the step in the database immediately
       if (user) {
         try {
