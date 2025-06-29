@@ -33,7 +33,7 @@ export const useOnboardingData = (userId: string | undefined) => {
     }
 
     if (dataLoaded) {
-      console.log('useOnboardingData: Data already loaded');
+      console.log('useOnboardingData: Data already loaded, current step:', data.step);
       return data.step;
     }
 
@@ -65,23 +65,23 @@ export const useOnboardingData = (userId: string | undefined) => {
           }))
         };
         
-        // Use database step as primary source of truth, with data-based fallback
+        // Calculate the correct step based on data completeness
         const dbStep = provider.onboarding_step || 1;
-        const correctStep = determineStepFromData(loadedData, dbStep);
+        const calculatedStep = determineStepFromData(loadedData, dbStep);
         
-        console.log('useOnboardingData: Database step:', dbStep, 'Calculated step:', correctStep);
+        console.log('useOnboardingData: DB step:', dbStep, 'Calculated step:', calculatedStep);
         
-        // Update data with correct step
+        // Use the calculated step as the source of truth
         const finalData = {
           ...loadedData,
-          step: correctStep
+          step: calculatedStep
         };
         
         setData(finalData);
         setDataLoaded(true);
-        console.log('useOnboardingData: Loaded data successfully:', finalData);
+        console.log('useOnboardingData: Loaded data successfully, final step:', calculatedStep);
         
-        return correctStep;
+        return calculatedStep;
       } else {
         // No existing data, start from step 1
         console.log('useOnboardingData: No existing data, starting from step 1');
@@ -96,13 +96,19 @@ export const useOnboardingData = (userId: string | undefined) => {
     } finally {
       setLoading(false);
     }
-  }, [userId]); // Removed dataLoaded and data.step from deps to prevent loops
+  }, [userId, dataLoaded, data.step]);
 
   const updateData = useCallback((updates: Partial<OnboardingData>) => {
     console.log('useOnboardingData: Updating data with:', updates);
     setData(prev => {
       const newData = { ...prev, ...updates };
-      console.log('useOnboardingData: New data state:', newData);
+      console.log('useOnboardingData: New data state:', {
+        step: newData.step,
+        businessName: newData.businessName,
+        category: newData.category,
+        username: newData.username,
+        servicesCount: newData.services?.length || 0
+      });
       return newData;
     });
   }, []);

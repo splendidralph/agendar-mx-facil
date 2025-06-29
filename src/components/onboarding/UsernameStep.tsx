@@ -28,7 +28,7 @@ const UsernameStep = () => {
       setUsername(data.username);
       checkAvailability(data.username);
     }
-  }, [data.businessName, data.username]);
+  }, [data.businessName, data.username, username, updateData, generateUsername]);
 
   const checkAvailability = async (usernameToCheck: string) => {
     if (!usernameToCheck || usernameToCheck.length < 3) {
@@ -75,13 +75,27 @@ const UsernameStep = () => {
   };
 
   const handleNext = async () => {
-    console.log('→ Clicking Continuar step', currentStep, 'valid:', validateStep(currentStep, { ...data, username }));
+    const currentData = { ...data, username };
+    const isValid = validateStep(currentStep, currentData);
     
-    const usernameData = { username };
-    updateData(usernameData);
+    console.log('→ UsernameStep: Clicking Continuar', {
+      currentStep,
+      username,
+      isValid,
+      isAvailable,
+      data: currentData
+    });
+    
+    if (!isValid || isAvailable !== true) {
+      console.warn('✋ UsernameStep: Cannot proceed - validation failed or username not available');
+      if (isAvailable === false) {
+        toast.error('El username no está disponible');
+      }
+      return;
+    }
     
     try {
-      await nextStep(usernameData);
+      await nextStep({ username });
       console.log('UsernameStep: Successfully advanced to next step');
     } catch (error) {
       console.error('UsernameStep: Error in nextStep:', error);
@@ -89,16 +103,18 @@ const UsernameStep = () => {
     }
   };
 
-  // Simple validation check
+  // Check if current step data is valid
   const currentData = { ...data, username };
-  const isValidStep = validateStep(currentStep, currentData) && isAvailable === true;
+  const isValidStep = validateStep(currentStep, currentData);
+  const canProceed = isValidStep && isAvailable === true && !loading && !isChecking;
 
   console.log('UsernameStep: Render state:', {
+    currentStep,
     username,
     isAvailable,
     isValidStep,
+    canProceed,
     loading,
-    currentStep,
     globalUsername: data.username
   });
 
@@ -164,7 +180,7 @@ const UsernameStep = () => {
         </Button>
         <Button
           onClick={handleNext}
-          disabled={loading || !isValidStep}
+          disabled={!canProceed}
           className="btn-primary"
           type="button"
         >

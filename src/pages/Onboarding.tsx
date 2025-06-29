@@ -16,7 +16,7 @@ import PreviewStep from '@/components/onboarding/PreviewStep';
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { currentStep, loading: onboardingLoading } = useOnboarding();
+  const { currentStep, data, loading: onboardingLoading } = useOnboarding();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -49,22 +49,29 @@ const Onboarding = () => {
   ];
 
   const renderStep = () => {
-    console.log('Onboarding: renderStep called with currentStep:', currentStep);
+    console.log('Onboarding: renderStep called with currentStep:', currentStep, 'data loaded:', !onboardingLoading);
     
-    if (currentStep === 1) return <ProfileSetupStep />;
-    if (currentStep === 2) return <ContactStep />;
-    if (currentStep === 3) return <UsernameStep />;
-    if (currentStep === 4) return <ServicesStep />;
-    if (currentStep === 5) return <PreviewStep />;
-    
-    // Fallback to step 1 if invalid step
-    console.warn('Onboarding: Invalid currentStep, falling back to step 1');
-    return <ProfileSetupStep />;
+    // Explicit step rendering based on currentStep
+    switch (currentStep) {
+      case 1:
+        return <ProfileSetupStep />;
+      case 2:
+        return <ContactStep />;
+      case 3:
+        return <UsernameStep />;
+      case 4:
+        return <ServicesStep />;
+      case 5:
+        return <PreviewStep />;
+      default:
+        console.warn('Onboarding: Invalid currentStep:', currentStep, 'falling back to step 1');
+        return <ProfileSetupStep />;
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
-      {/* Debug Banner */}
+      {/* Debug Banner - Shows current step and data state */}
       <div 
         style={{ 
           position: 'fixed', 
@@ -78,7 +85,7 @@ const Onboarding = () => {
           fontWeight: 'bold'
         }}
       >
-        DEBUG STEP: {currentStep}
+        STEP: {currentStep} | DATA: {data.businessName ? 'B✓' : 'B✗'} {data.category ? 'C✓' : 'C✗'} {data.username ? 'U✓' : 'U✗'} {data.services?.length || 0}S
       </div>
 
       {/* Header */}

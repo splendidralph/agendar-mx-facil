@@ -18,35 +18,39 @@ export const useOnboardingSteps = (
   // Sync currentStep with data.step when data changes
   useEffect(() => {
     if (data.step && data.step !== currentStep) {
-      console.log('useOnboardingSteps: Syncing step from data:', data.step);
+      console.log('useOnboardingSteps: Syncing step from data. Old:', currentStep, 'New:', data.step);
       setCurrentStep(data.step);
     }
-  }, [data.step]);
+  }, [data.step, currentStep]);
 
   const nextStep = useCallback(async (updatedData?: Partial<OnboardingData>) => {
-    console.log('► nextStep start—step:', currentStep, 'data before:', {
+    console.log('► nextStep start - currentStep:', currentStep, 'data before:', {
       businessName: data.businessName,
       category: data.category,
       username: data.username,
       servicesCount: data.services?.length || 0
     });
     
-    // Prepare data for validation and saving
-    const newData = { ...data, ...updatedData };
-    console.log('nextStep: Merged data for validation:', {
-      businessName: newData.businessName,
-      category: newData.category,
-      username: newData.username,
-      servicesCount: newData.services?.length || 0
+    // Prepare data for validation
+    const dataForValidation = { ...data, ...updatedData };
+    console.log('nextStep: Data for validation:', {
+      step: currentStep,
+      businessName: dataForValidation.businessName,
+      category: dataForValidation.category,
+      username: dataForValidation.username,
+      servicesCount: dataForValidation.services?.length || 0
     });
     
-    // Update local data state immediately to ensure UI sync
+    // Update local data state first
     if (updatedData) {
       updateData(updatedData);
     }
     
-    // Validate current step with the merged data
-    if (!validateStep(currentStep, newData)) {
+    // Validate current step with the updated data
+    const isValid = validateStep(currentStep, dataForValidation);
+    console.log('nextStep: Validation result for step', currentStep, ':', isValid);
+    
+    if (!isValid) {
       console.warn('✋ Validation failed for step', currentStep);
       return;
     }
@@ -54,12 +58,12 @@ export const useOnboardingSteps = (
     // Only advance if we're not at the final step
     if (currentStep < 5) {
       const nextStepNumber = currentStep + 1;
-      console.log('✔️ Validation passed. Advancing to step', nextStepNumber);
+      console.log('✔️ Validation passed. Advancing from step', currentStep, 'to step', nextStepNumber);
       
       try {
-        // Save the current step with the validated data
+        // Save the current step data
         console.log('nextStep: Saving current step data...');
-        const saved = await saveCurrentStep(newData, currentStep);
+        const saved = await saveCurrentStep(dataForValidation, currentStep);
         
         if (!saved) {
           console.log('nextStep: Save failed, not advancing');
@@ -69,20 +73,20 @@ export const useOnboardingSteps = (
         // Update the step in the database
         if (userId) {
           await updateProviderStep(userId, nextStepNumber);
-          console.log('nextStep: Successfully updated step in database');
+          console.log('nextStep: Successfully updated step in database to:', nextStepNumber);
         }
         
         // Update local state
+        console.log('nextStep: Updating local state to step:', nextStepNumber);
         setCurrentStep(nextStepNumber);
         updateData({ step: nextStepNumber });
-        console.log('nextStep: Successfully advanced to step:', nextStepNumber);
         
       } catch (error) {
         console.error('❌ nextStep error:', error);
         toast.error('Error avanzando al siguiente paso');
       }
     } else {
-      console.log('nextStep: Already at final step');
+      console.log('nextStep: Already at final step (5)');
     }
   }, [currentStep, data, updateData, saveCurrentStep, userId]);
 
