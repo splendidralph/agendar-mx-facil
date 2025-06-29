@@ -19,7 +19,11 @@ const determineStepFromData = (data: OnboardingData): number => {
     return 1;
   }
   
-  // Step 2: Address and Instagram are optional, so we can skip to step 3
+  // Step 2: If we have basic info but no username and no services, go to contact step
+  if (data.businessName && data.category && !data.username && data.services.length === 0) {
+    return 2;
+  }
+  
   // Step 3: Requires username
   if (!data.username) {
     return 3;
@@ -151,24 +155,22 @@ export const useOnboarding = () => {
   const nextStep = async (updatedData?: Partial<OnboardingData>) => {
     console.log('useOnboarding: nextStep called, current step:', currentStep);
     
-    // If we have updated data, merge it with current data for saving
-    let dataForSaving = data;
+    // If we have updated data, merge it with current data for validation and saving
+    let dataForValidation = data;
     if (updatedData) {
-      dataForSaving = { ...data, ...updatedData };
-      console.log('useOnboarding: Using updated data for saving:', dataForSaving);
+      dataForValidation = { ...data, ...updatedData };
+      console.log('useOnboarding: Using updated data for validation:', dataForValidation);
     }
     
-    console.log('useOnboarding: Data to save:', dataForSaving);
-    
     // Validate step requirements before advancing
-    const isStepValid = validateStepRequirements(currentStep, dataForSaving);
+    const isStepValid = validateStepRequirements(currentStep, dataForValidation);
     if (!isStepValid) {
       console.log('useOnboarding: Step validation failed, not advancing');
       return;
     }
     
     // First save the current step with the provided data
-    const saved = await saveCurrentStep(dataForSaving);
+    const saved = await saveCurrentStep(dataForValidation);
     if (!saved) {
       console.log('useOnboarding: Failed to save, not advancing step');
       return;
@@ -211,6 +213,9 @@ export const useOnboarding = () => {
           return false;
         }
         break;
+      case 2:
+        // Contact info is optional, but make this an explicit "always pass" step
+        return true;
       case 3:
         if (!dataToValidate.username) {
           toast.error('Por favor elige un username');
