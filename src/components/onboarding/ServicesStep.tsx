@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
@@ -48,7 +47,13 @@ const ServicesStep = () => {
     maquillaje_cejas: 'Maquillaje y Cejas',
     cuidado_facial: 'Cuidado Facial',
     masajes_relajacion: 'Masajes y Relajación',
-    color_alisado: 'Color y Alisado'
+    color_alisado: 'Color y Alisado',
+    haircut: 'Corte de Cabello',
+    beard: 'Barbería',
+    nails: 'Uñas',
+    eyebrows: 'Cejas',
+    massage: 'Masajes',
+    other: 'Otros'
   };
 
   const addService = () => {
