@@ -14,18 +14,28 @@ import {
 
 // Helper function to determine the correct step based on data completeness
 const determineStepFromData = (data: OnboardingData): number => {
+  console.log('determineStepFromData: Evaluating data:', {
+    businessName: !!data.businessName,
+    category: !!data.category,
+    username: !!data.username,
+    servicesCount: data.services.length
+  });
+
   // Step 1: Requires business_name and category
   if (!data.businessName || !data.category) {
+    console.log('determineStepFromData: Missing basic info, returning step 1');
     return 1;
   }
   
-  // Step 2: If we have basic info but no username and no services, go to contact step
-  if (data.businessName && data.category && !data.username && data.services.length === 0) {
+  // Step 2: If we have basic info but no username, go to contact step
+  if (data.businessName && data.category && !data.username) {
+    console.log('determineStepFromData: Have basic info, no username, returning step 2');
     return 2;
   }
   
   // Step 3: Requires username
   if (!data.username) {
+    console.log('determineStepFromData: Missing username, returning step 3');
     return 3;
   }
   
@@ -34,16 +44,19 @@ const determineStepFromData = (data: OnboardingData): number => {
     service.name && service.name.length >= 2 && service.price > 0
   );
   if (validServices.length === 0) {
+    console.log('determineStepFromData: No valid services, returning step 4');
     return 4;
   }
   
   // Step 5: All data complete, show preview
+  console.log('determineStepFromData: All data complete, returning step 5');
   return 5;
 };
 
 export const useOnboarding = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<OnboardingData>({
     step: 1,
@@ -57,53 +70,59 @@ export const useOnboarding = () => {
   });
 
   useEffect(() => {
-    if (user) {
+    if (user && !dataLoaded) {
       console.log('useOnboarding: Loading existing data for user:', user.id);
       loadExistingData();
     }
-  }, [user]);
+  }, [user, dataLoaded]);
 
   const loadExistingData = async () => {
     if (!user) return;
 
-    const result = await loadProviderData(user.id);
-    
-    if (result) {
-      const { provider, services } = result;
+    setLoading(true);
+    try {
+      const result = await loadProviderData(user.id);
       
-      // Build the data object from provider and services
-      const loadedData: OnboardingData = {
-        step: 1, // Will be calculated below
-        businessName: provider.business_name || '',
-        category: provider.category || '',
-        bio: provider.bio || '',
-        address: provider.address || '',
-        instagramHandle: provider.instagram_handle || '',
-        username: provider.username || '',
-        services: services.map(service => ({
-          name: service.name,
-          price: service.price,
-          duration: service.duration_minutes,
-          description: service.description || '',
-          category: service.category
-        }))
-      };
+      if (result) {
+        const { provider, services } = result;
+        
+        // Build the data object from provider and services
+        const loadedData: OnboardingData = {
+          step: 1, // Will be calculated below
+          businessName: provider.business_name || '',
+          category: provider.category || '',
+          bio: provider.bio || '',
+          address: provider.address || '',
+          instagramHandle: provider.instagram_handle || '',
+          username: provider.username || '',
+          services: services.map(service => ({
+            name: service.name,
+            price: service.price,
+            duration: service.duration_minutes,
+            description: service.description || '',
+            category: service.category
+          }))
+        };
+        
+        // Determine the correct step based on data completeness
+        const correctStep = determineStepFromData(loadedData);
+        console.log('useOnboarding: Calculated correct step:', correctStep);
+        
+        // Update both data and step state
+        setData({
+          ...loadedData,
+          step: correctStep
+        });
+        setCurrentStep(correctStep);
+        console.log('useOnboarding: Set current step to:', correctStep);
+      }
       
-      // Determine the correct step based on data completeness
-      const correctStep = determineStepFromData(loadedData);
-      console.log('useOnboarding: Calculated correct step:', correctStep, 'from data:', {
-        hasBusinessName: !!loadedData.businessName,
-        hasCategory: !!loadedData.category,
-        hasUsername: !!loadedData.username,
-        servicesCount: loadedData.services.length
-      });
-      
-      setCurrentStep(correctStep);
-      setData(prev => ({
-        ...prev,
-        ...loadedData,
-        step: correctStep
-      }));
+      setDataLoaded(true);
+    } catch (error) {
+      console.error('useOnboarding: Error loading data:', error);
+      setDataLoaded(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -160,6 +179,8 @@ export const useOnboarding = () => {
     if (updatedData) {
       dataForValidation = { ...data, ...updatedData };
       console.log('useOnboarding: Using updated data for validation:', dataForValidation);
+      // Update local data state immediately
+      setData(dataForValidation);
     }
     
     // Validate step requirements before advancing
@@ -179,7 +200,7 @@ export const useOnboarding = () => {
     // Only advance if we're not at the final step
     if (currentStep < 5) {
       const newStep = currentStep + 1;
-      console.log('useOnboarding: Moving to next step:', newStep);
+      console.log('useOnboarding: Advancing to step:', newStep);
       
       // Update the step in the database immediately
       if (user) {
@@ -194,43 +215,45 @@ export const useOnboarding = () => {
       }
       
       setCurrentStep(newStep);
-      // Update local data state with the provided updates
-      if (updatedData) {
-        setData(prev => ({ ...prev, ...updatedData, step: newStep }));
-      } else {
-        setData(prev => ({ ...prev, step: newStep }));
-      }
+      setData(prev => ({ ...prev, step: newStep }));
+      console.log('useOnboarding: Step state updated to:', newStep);
     } else {
       console.log('useOnboarding: Already at final step');
     }
   };
 
   const validateStepRequirements = (step: number, dataToValidate: OnboardingData): boolean => {
+    console.log('validateStepRequirements: Validating step', step, 'with data:', dataToValidate);
+    
     switch (step) {
       case 1:
-        if (!dataToValidate.businessName || !dataToValidate.category) {
+        const step1Valid = !!(dataToValidate.businessName && dataToValidate.category);
+        if (!step1Valid) {
           toast.error('Por favor completa el nombre del negocio y la categoría');
-          return false;
         }
-        break;
+        console.log('validateStepRequirements: Step 1 valid:', step1Valid);
+        return step1Valid;
       case 2:
-        // Contact info is optional, but make this an explicit "always pass" step
+        // Contact info is optional, so always pass
+        console.log('validateStepRequirements: Step 2 always valid (optional fields)');
         return true;
       case 3:
-        if (!dataToValidate.username) {
+        const step3Valid = !!dataToValidate.username;
+        if (!step3Valid) {
           toast.error('Por favor elige un username');
-          return false;
         }
-        break;
+        console.log('validateStepRequirements: Step 3 valid:', step3Valid);
+        return step3Valid;
       case 4:
         const validServices = dataToValidate.services.filter(service => 
           service.name && service.name.length >= 2 && service.price > 0
         );
-        if (validServices.length === 0) {
+        const step4Valid = validServices.length > 0;
+        if (!step4Valid) {
           toast.error('Por favor agrega al menos un servicio válido');
-          return false;
         }
-        break;
+        console.log('validateStepRequirements: Step 4 valid:', step4Valid, 'validServices:', validServices.length);
+        return step4Valid;
     }
     return true;
   };
@@ -264,7 +287,7 @@ export const useOnboarding = () => {
   return {
     currentStep,
     data,
-    loading,
+    loading: loading || !dataLoaded,
     updateData,
     nextStep,
     prevStep,
