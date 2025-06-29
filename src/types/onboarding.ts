@@ -10,6 +10,7 @@ export interface OnboardingData {
   bio: string;
   address: string;
   instagramHandle: string;
+  whatsappPhone: string;
   username: string;
   services: Array<{
     name: string;

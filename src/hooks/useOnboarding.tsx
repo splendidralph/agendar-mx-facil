@@ -65,6 +65,7 @@ export const useOnboarding = () => {
     bio: '',
     address: '',
     instagramHandle: '',
+    whatsappPhone: '',
     username: '',
     services: []
   });
@@ -94,6 +95,7 @@ export const useOnboarding = () => {
           bio: provider.bio || '',
           address: provider.address || '',
           instagramHandle: provider.instagram_handle || '',
+          whatsappPhone: provider.whatsapp_phone || '',
           username: provider.username || '',
           services: services.map(service => ({
             name: service.name,

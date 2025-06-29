@@ -97,22 +97,61 @@ serve(async (req) => {
       }
     }
 
-    // Send email notification to provider in the background
-    try {
-      console.log('Sending booking notification email...')
-      const { error: notificationError } = await supabase.functions.invoke('send-booking-notification', {
-        body: { bookingId: booking.id }
-      })
+    // Get provider notification preferences
+    const { data: preferences } = await supabase
+      .from('notification_preferences')
+      .select('*')
+      .eq('provider_id', providerId)
+      .single()
 
-      if (notificationError) {
-        console.error('Error sending notification:', notificationError)
-        // Don't fail the booking creation if email fails
-      } else {
-        console.log('Notification email sent successfully')
+    // Default to both email and WhatsApp if no preferences found
+    const shouldSendEmail = !preferences || preferences.email_enabled
+    const shouldSendWhatsApp = !preferences || preferences.whatsapp_enabled
+
+    console.log('Notification preferences:', { shouldSendEmail, shouldSendWhatsApp })
+
+    // Send notifications based on preferences
+    const notificationPromises = []
+
+    if (shouldSendEmail) {
+      console.log('Sending email notification...')
+      notificationPromises.push(
+        supabase.functions.invoke('send-booking-notification', {
+          body: { bookingId: booking.id }
+        }).then(result => ({ type: 'email', result }))
+      )
+    }
+
+    if (shouldSendWhatsApp) {
+      console.log('Sending WhatsApp notification...')
+      notificationPromises.push(
+        supabase.functions.invoke('send-whatsapp-notification', {
+          body: { bookingId: booking.id }
+        }).then(result => ({ type: 'whatsapp', result }))
+      )
+    }
+
+    // Send notifications and handle results
+    if (notificationPromises.length > 0) {
+      try {
+        const results = await Promise.allSettled(notificationPromises)
+        
+        results.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            const { type, result: notificationResult } = result.value
+            if (notificationResult.error) {
+              console.error(`Error sending ${type} notification:`, notificationResult.error)
+            } else {
+              console.log(`${type} notification sent successfully`)
+            }
+          } else {
+            console.error('Notification promise rejected:', result.reason)
+          }
+        })
+      } catch (error) {
+        console.error('Error sending notifications:', error)
+        // Don't fail the booking creation if notifications fail
       }
-    } catch (emailError) {
-      console.error('Failed to send notification email:', emailError)
-      // Continue without failing the booking
     }
 
     return new Response(

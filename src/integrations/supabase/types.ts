@@ -189,6 +189,44 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          email_enabled: boolean
+          id: string
+          preferred_method: string
+          provider_id: string
+          updated_at: string | null
+          whatsapp_enabled: boolean
+        }
+        Insert: {
+          created_at?: string | null
+          email_enabled?: boolean
+          id?: string
+          preferred_method?: string
+          provider_id: string
+          updated_at?: string | null
+          whatsapp_enabled?: boolean
+        }
+        Update: {
+          created_at?: string | null
+          email_enabled?: boolean
+          id?: string
+          preferred_method?: string
+          provider_id?: string
+          updated_at?: string | null
+          whatsapp_enabled?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       providers: {
         Row: {
           address: string | null
@@ -209,6 +247,7 @@ export type Database = {
           updated_at: string | null
           user_id: string
           username: string | null
+          whatsapp_phone: string | null
         }
         Insert: {
           address?: string | null
@@ -229,6 +268,7 @@ export type Database = {
           updated_at?: string | null
           user_id: string
           username?: string | null
+          whatsapp_phone?: string | null
         }
         Update: {
           address?: string | null
@@ -249,6 +289,7 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
           username?: string | null
+          whatsapp_phone?: string | null
         }
         Relationships: [
           {

@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { OnboardingData, ServiceCategory } from '@/types/onboarding';
 
@@ -44,6 +45,7 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       businessName: data.businessName,
       category: data.category,
       username: data.username,
+      whatsappPhone: data.whatsappPhone,
       hasServices: data.services?.length || 0
     });
     
@@ -71,6 +73,7 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
         bio: data.bio || '',
         address: data.address || '',
         instagram_handle: data.instagramHandle || '',
+        whatsapp_phone: data.whatsappPhone || '',
         onboarding_step: currentStep,
         profile_completed: false
       };
@@ -101,6 +104,7 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
         bio: data.bio || '',
         address: data.address || '',
         instagram_handle: data.instagramHandle || '',
+        whatsapp_phone: data.whatsappPhone || '',
         onboarding_step: currentStep,
         profile_completed: currentStep >= 5
       };

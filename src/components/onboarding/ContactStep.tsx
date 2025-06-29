@@ -4,19 +4,21 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ArrowLeft, MessageCircle } from 'lucide-react';
 
 const ContactStep = () => {
   const { data, updateData, nextStep, prevStep, loading } = useOnboarding();
   const [formData, setFormData] = useState({
     address: data.address,
-    instagramHandle: data.instagramHandle
+    instagramHandle: data.instagramHandle,
+    whatsappPhone: data.whatsappPhone || ''
   });
 
   useEffect(() => {
     setFormData({
       address: data.address,
-      instagramHandle: data.instagramHandle
+      instagramHandle: data.instagramHandle,
+      whatsappPhone: data.whatsappPhone || ''
     });
   }, [data]);
 
@@ -41,6 +43,12 @@ const ContactStep = () => {
     setFormData(prev => ({ ...prev, instagramHandle: cleanValue }));
   };
 
+  const handleWhatsAppChange = (value: string) => {
+    // Clean phone number format
+    const cleanValue = value.replace(/[^\d+]/g, '');
+    setFormData(prev => ({ ...prev, whatsappPhone: cleanValue }));
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -54,6 +62,23 @@ const ContactStep = () => {
         />
         <p className="text-sm text-muted-foreground mt-1">
           Ayuda a los clientes a encontrarte (opcional)
+        </p>
+      </div>
+
+      <div>
+        <Label htmlFor="whatsapp">WhatsApp</Label>
+        <div className="relative mt-1">
+          <MessageCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            id="whatsapp"
+            value={formData.whatsappPhone}
+            onChange={(e) => handleWhatsAppChange(e.target.value)}
+            placeholder="+52 55 1234 5678"
+            className="pl-10"
+          />
+        </div>
+        <p className="text-sm text-muted-foreground mt-1">
+          Para recibir notificaciones de reservas por WhatsApp (recomendado)
         </p>
       </div>
 
