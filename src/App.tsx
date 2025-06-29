@@ -15,6 +15,7 @@ import Explore from "./pages/Explore";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import PublicProfile from "./pages/PublicProfile";
+import Booking from "./pages/Booking";
 
 const queryClient = new QueryClient();
 
@@ -34,7 +35,10 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/booking/demo" element={<BookingDemo />} />
             <Route path="/explore" element={<Explore />} />
-            {/* Dynamic username route moved here before catch-all */}
+            {/* Booking routes - must come before username route */}
+            <Route path="/:username/booking" element={<Booking />} />
+            <Route path="/:username/booking/:serviceId" element={<Booking />} />
+            {/* Dynamic username route */}
             <Route path="/:username" element={<PublicProfile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

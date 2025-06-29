@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -119,7 +118,7 @@ const PublicProfile = () => {
   };
 
   const handleBookService = (service: Service) => {
-    toast.success(`Próximamente podrás reservar: ${service.name}`);
+    navigate(`/${provider?.username}/booking/${service.id}`);
   };
 
   if (loading) {
