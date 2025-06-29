@@ -41,6 +41,7 @@ export const useOnboarding = () => {
 
   useEffect(() => {
     if (user) {
+      console.log('useOnboarding: Loading existing data for user:', user.id);
       loadExistingData();
     }
   }, [user]);
@@ -49,6 +50,7 @@ export const useOnboarding = () => {
     if (!user) return;
 
     try {
+      console.log('useOnboarding: Fetching provider data for user:', user.id);
       const { data: provider, error } = await supabase
         .from('providers')
         .select('*')
@@ -61,6 +63,7 @@ export const useOnboarding = () => {
       }
 
       if (provider) {
+        console.log('useOnboarding: Found existing provider data:', provider);
         setCurrentStep(provider.onboarding_step || 1);
         setData(prev => ({
           ...prev,
@@ -80,6 +83,7 @@ export const useOnboarding = () => {
           .eq('provider_id', provider.id);
 
         if (services && services.length > 0) {
+          console.log('useOnboarding: Found existing services:', services);
           setData(prev => ({
             ...prev,
             services: services.map(service => ({
@@ -91,6 +95,8 @@ export const useOnboarding = () => {
             }))
           }));
         }
+      } else {
+        console.log('useOnboarding: No existing provider data found');
       }
     } catch (error) {
       console.error('Error loading onboarding data:', error);
@@ -127,13 +133,19 @@ export const useOnboarding = () => {
   };
 
   const updateData = (updates: Partial<OnboardingData>) => {
+    console.log('useOnboarding: Updating data with:', updates);
     setData(prev => ({ ...prev, ...updates }));
   };
 
   const saveCurrentStep = async () => {
-    if (!user) return false;
+    if (!user) {
+      console.log('useOnboarding: No user, cannot save step');
+      return false;
+    }
 
+    console.log('useOnboarding: Saving current step:', currentStep, 'with data:', data);
     setLoading(true);
+    
     try {
       // Check if provider exists
       const { data: existingProvider, error: fetchError } = await supabase
@@ -145,6 +157,7 @@ export const useOnboarding = () => {
       let providerId = existingProvider?.id;
 
       if (fetchError && fetchError.code === 'PGRST116') {
+        console.log('useOnboarding: Creating new provider');
         // Create new provider
         const { data: newProvider, error: createError } = await supabase
           .from('providers')
@@ -162,9 +175,14 @@ export const useOnboarding = () => {
           .select('id')
           .single();
 
-        if (createError) throw createError;
+        if (createError) {
+          console.error('useOnboarding: Error creating provider:', createError);
+          throw createError;
+        }
         providerId = newProvider.id;
+        console.log('useOnboarding: Created new provider with ID:', providerId);
       } else if (!fetchError) {
+        console.log('useOnboarding: Updating existing provider with ID:', providerId);
         // Update existing provider
         const { error: updateError } = await supabase
           .from('providers')
@@ -180,11 +198,15 @@ export const useOnboarding = () => {
           })
           .eq('user_id', user.id);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error('useOnboarding: Error updating provider:', updateError);
+          throw updateError;
+        }
       }
 
       // Save services if we're on step 4 or later and have services
       if (currentStep >= 4 && data.services.length > 0 && providerId) {
+        console.log('useOnboarding: Saving services for provider:', providerId);
         // Delete existing services
         await supabase
           .from('services')
@@ -206,9 +228,14 @@ export const useOnboarding = () => {
           .from('services')
           .insert(servicesToInsert);
 
-        if (servicesError) throw servicesError;
+        if (servicesError) {
+          console.error('useOnboarding: Error saving services:', servicesError);
+          throw servicesError;
+        }
+        console.log('useOnboarding: Successfully saved services');
       }
 
+      console.log('useOnboarding: Successfully saved step');
       return true;
     } catch (error) {
       console.error('Error saving onboarding data:', error);
@@ -220,15 +247,22 @@ export const useOnboarding = () => {
   };
 
   const nextStep = async () => {
+    console.log('useOnboarding: nextStep called, current step:', currentStep);
     const saved = await saveCurrentStep();
     if (saved && currentStep < 5) {
+      console.log('useOnboarding: Moving to next step');
       setCurrentStep(prev => prev + 1);
       setData(prev => ({ ...prev, step: currentStep + 1 }));
+    } else if (!saved) {
+      console.log('useOnboarding: Failed to save, not advancing step');
+    } else {
+      console.log('useOnboarding: Already at final step');
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
+      console.log('useOnboarding: Moving to previous step');
       setCurrentStep(prev => prev - 1);
       setData(prev => ({ ...prev, step: currentStep - 1 }));
     }

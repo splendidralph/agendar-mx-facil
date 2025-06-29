@@ -52,11 +52,34 @@ const ProfileSetupStep = () => {
   };
 
   const handleNext = async () => {
+    console.log('ProfileSetupStep: handleNext called');
+    console.log('FormData:', formData);
+    console.log('Is valid:', isValid);
+    
+    if (!isValid) {
+      console.log('ProfileSetupStep: Form is not valid, not proceeding');
+      return;
+    }
+    
+    console.log('ProfileSetupStep: Updating data and calling nextStep');
     updateData(formData);
-    await nextStep();
+    
+    try {
+      await nextStep();
+      console.log('ProfileSetupStep: nextStep completed successfully');
+    } catch (error) {
+      console.error('ProfileSetupStep: Error in nextStep:', error);
+    }
   };
 
   const isValid = formData.businessName.length >= 2 && formData.category;
+
+  console.log('ProfileSetupStep render:', { 
+    businessName: formData.businessName, 
+    category: formData.category, 
+    isValid, 
+    loading 
+  });
 
   return (
     <div className="space-y-6">
