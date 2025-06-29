@@ -5,7 +5,7 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Link2, Check, Instagram, MapPin, Clock, DollarSign, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Link2, Check, Instagram, MapPin, Clock, DollarSign, AlertCircle, MessageCircle, Mail, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
 
 const PreviewStep = () => {
@@ -88,6 +88,58 @@ const PreviewStep = () => {
           Revisa cómo se verá tu perfil para los clientes
         </p>
       </div>
+
+      {/* Notification Setup Status */}
+      <Card className={`${data.whatsappPhone ? 'border-green-200 bg-green-50' : 'border-amber-200 bg-amber-50'}`}>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm flex items-center gap-2">
+            {data.whatsappPhone ? (
+              <>
+                <MessageCircle className="h-4 w-4 text-green-600" />
+                <span className="text-green-800">Notificaciones Configuradas</span>
+                <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                  ¡Perfecto!
+                </Badge>
+              </>
+            ) : (
+              <>
+                <Mail className="h-4 w-4 text-amber-600" />
+                <span className="text-amber-800">Solo Email Configurado</span>
+                <Badge variant="secondary" className="bg-amber-100 text-amber-700 border-amber-200">
+                  Mejorable
+                </Badge>
+              </>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {data.whatsappPhone ? (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-green-700">
+                <Smartphone className="h-4 w-4" />
+                WhatsApp: {data.whatsappPhone}
+              </div>
+              <div className="flex items-center gap-2 text-sm text-green-700">
+                <Mail className="h-4 w-4" />
+                Email: Habilitado
+              </div>
+              <p className="text-sm text-green-600">
+                Recibirás notificaciones instantáneas de nuevas citas por WhatsApp y email.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-amber-700">
+                <Mail className="h-4 w-4" />
+                Solo notificaciones por email
+              </div>
+              <p className="text-sm text-amber-600">
+                Puedes agregar WhatsApp después en tu dashboard para recibir notificaciones más rápidas.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Link Preview */}
       <Card className="border-primary/20 bg-primary/5">
