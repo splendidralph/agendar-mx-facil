@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,41 +34,54 @@ const PublicProfile = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('PublicProfile: Route params:', { username });
+    console.log('PublicProfile: Current URL:', window.location.href);
+    
     if (username) {
-      fetchProviderData();
+      // Remove @ symbol if it exists in the username parameter
+      const cleanUsername = username.startsWith('@') ? username.slice(1) : username;
+      console.log('PublicProfile: Clean username:', cleanUsername);
+      fetchProviderData(cleanUsername);
+    } else {
+      console.error('PublicProfile: No username in route params');
+      setLoading(false);
     }
   }, [username]);
 
-  const fetchProviderData = async () => {
-    if (!username) return;
-
+  const fetchProviderData = async (cleanUsername: string) => {
     try {
-      console.log('Fetching provider data for username:', username);
+      console.log('PublicProfile: Fetching provider data for username:', cleanUsername);
       
       // Fetch provider data
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
         .select('*')
-        .eq('username', username)
+        .eq('username', cleanUsername)
         .eq('profile_completed', true)
         .eq('is_active', true)
         .single();
 
+      console.log('PublicProfile: Provider query result:', { providerData, providerError });
+
       if (providerError) {
-        console.error('Error fetching provider:', providerError);
+        console.error('PublicProfile: Error fetching provider:', providerError);
         if (providerError.code === 'PGRST116') {
           toast.error('Perfil no encontrado');
         } else {
           toast.error('Error cargando el perfil');
         }
+        setLoading(false);
         return;
       }
 
       if (!providerData) {
+        console.log('PublicProfile: No provider data found');
         toast.error('Perfil no encontrado');
+        setLoading(false);
         return;
       }
 
+      console.log('PublicProfile: Provider found:', providerData);
       setProvider(providerData);
 
       // Fetch services
@@ -79,16 +91,19 @@ const PublicProfile = () => {
         .eq('provider_id', providerData.id)
         .eq('is_active', true);
 
+      console.log('PublicProfile: Services query result:', { servicesData, servicesError });
+
       if (servicesError) {
-        console.error('Error fetching services:', servicesError);
+        console.error('PublicProfile: Error fetching services:', servicesError);
         toast.error('Error cargando los servicios');
+        setLoading(false);
         return;
       }
 
       setServices(servicesData || []);
-      console.log('Successfully loaded provider and services');
+      console.log('PublicProfile: Successfully loaded provider and services');
     } catch (error) {
-      console.error('Unexpected error:', error);
+      console.error('PublicProfile: Unexpected error:', error);
       toast.error('Error inesperado cargando el perfil');
     } finally {
       setLoading(false);
