@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { OnboardingData } from '@/types/onboarding';
@@ -14,6 +14,14 @@ export const useOnboardingSteps = (
 ) => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(data.step || 1);
+
+  // Sync currentStep with data.step when data changes
+  useEffect(() => {
+    if (data.step && data.step !== currentStep) {
+      console.log('useOnboardingSteps: Syncing step from data:', data.step);
+      setCurrentStep(data.step);
+    }
+  }, [data.step]); // Remove currentStep from deps to prevent loop
 
   const nextStep = useCallback(async (updatedData?: Partial<OnboardingData>) => {
     console.log('useOnboardingSteps: nextStep called, current step:', currentStep);
@@ -84,13 +92,6 @@ export const useOnboardingSteps = (
     setCurrentStep(step);
     updateData({ step });
   }, [updateData]);
-
-  // Update currentStep when data.step changes
-  useState(() => {
-    if (data.step && data.step !== currentStep) {
-      setCurrentStep(data.step);
-    }
-  });
 
   return {
     currentStep,

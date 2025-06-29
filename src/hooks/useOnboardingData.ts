@@ -27,9 +27,19 @@ export const useOnboardingData = (userId: string | undefined) => {
   });
 
   const loadExistingData = useCallback(async () => {
-    if (!userId || dataLoaded) return;
+    if (!userId) {
+      console.log('useOnboardingData: No userId provided');
+      return 1;
+    }
 
+    if (dataLoaded) {
+      console.log('useOnboardingData: Data already loaded');
+      return data.step;
+    }
+
+    console.log('useOnboardingData: Loading data for user:', userId);
     setLoading(true);
+    
     try {
       const result = await loadProviderData(userId);
       
@@ -68,23 +78,25 @@ export const useOnboardingData = (userId: string | undefined) => {
         };
         
         setData(finalData);
-        console.log('useOnboardingData: Loaded data:', finalData);
+        setDataLoaded(true);
+        console.log('useOnboardingData: Loaded data successfully:', finalData);
         
         return correctStep;
       } else {
         // No existing data, start from step 1
         console.log('useOnboardingData: No existing data, starting from step 1');
+        setDataLoaded(true);
         return 1;
       }
     } catch (error) {
       console.error('useOnboardingData: Error loading data:', error);
       toast.error('Error cargando datos del perfil');
+      setDataLoaded(true);
       return 1;
     } finally {
       setLoading(false);
-      setDataLoaded(true);
     }
-  }, [userId, dataLoaded]);
+  }, [userId]); // Removed dataLoaded and data.step from deps to prevent loops
 
   const updateData = useCallback((updates: Partial<OnboardingData>) => {
     console.log('useOnboardingData: Updating data with:', updates);

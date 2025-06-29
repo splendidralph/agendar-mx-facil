@@ -28,13 +28,9 @@ export const useOnboarding = () => {
   useEffect(() => {
     if (user?.id && !dataLoaded && !loading) {
       console.log('useOnboarding: Loading existing data for user:', user.id);
-      loadExistingData().then((step) => {
-        if (step && step !== currentStep) {
-          setStep(step);
-        }
-      });
+      loadExistingData();
     }
-  }, [user?.id, dataLoaded, loading, loadExistingData, setStep, currentStep]);
+  }, [user?.id, dataLoaded, loading, loadExistingData]);
 
   // Memoize the return value to prevent unnecessary re-renders
   return useMemo(() => ({

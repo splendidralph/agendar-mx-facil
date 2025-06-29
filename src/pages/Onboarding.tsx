@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar } from 'lucide-react';
 import ProfileSetupStep from '@/components/onboarding/ProfileSetupStep';
 import ContactStep from '@/components/onboarding/ContactStep';
@@ -15,14 +16,16 @@ import PreviewStep from '@/components/onboarding/PreviewStep';
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { currentStep } = useOnboarding();
+  const { currentStep, loading: onboardingLoading } = useOnboarding();
 
   useEffect(() => {
     if (!authLoading && !user) {
+      console.log('Onboarding: No user found, redirecting to auth');
       navigate('/auth');
     }
   }, [user, authLoading, navigate]);
 
+  // Show loading spinner while auth is loading
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -34,6 +37,7 @@ const Onboarding = () => {
     );
   }
 
+  // Redirect if no user
   if (!user) return null;
 
   const steps = [
@@ -113,7 +117,19 @@ const Onboarding = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {renderStep()}
+              {onboardingLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <div className="flex justify-end">
+                    <Skeleton className="h-10 w-24" />
+                  </div>
+                </div>
+              ) : (
+                renderStep()
+              )}
             </CardContent>
           </Card>
         </div>
