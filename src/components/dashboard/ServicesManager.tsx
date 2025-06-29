@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, DollarSign, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { ServiceCategory } from '@/types/service';
+import { categories, categoryLabels } from '@/utils/serviceCategories';
 
 interface Service {
   id: string;
@@ -18,7 +20,7 @@ interface Service {
   description: string;
   price: number;
   duration_minutes: number;
-  category: string;
+  category: ServiceCategory;
 }
 
 interface ServicesManagerProps {
@@ -35,26 +37,8 @@ const ServicesManager = ({ providerId }: ServicesManagerProps) => {
     description: '',
     price: '',
     duration_minutes: '',
-    category: ''
+    category: '' as ServiceCategory | ''
   });
-
-  const categories = [
-    { value: 'corte_barberia', label: 'Corte y Barbería' },
-    { value: 'unas', label: 'Uñas y Manicure' },
-    { value: 'maquillaje_cejas', label: 'Maquillaje y Cejas' },
-    { value: 'cuidado_facial', label: 'Cuidado Facial' },
-    { value: 'masajes_relajacion', label: 'Masajes y Relajación' },
-    { value: 'color_alisado', label: 'Color y Alisado' }
-  ];
-
-  const categoryLabels = {
-    corte_barberia: 'Corte y Barbería',
-    unas: 'Uñas y Manicure',
-    maquillaje_cejas: 'Maquillaje y Cejas',
-    cuidado_facial: 'Cuidado Facial',
-    masajes_relajacion: 'Masajes y Relajación',
-    color_alisado: 'Color y Alisado'
-  };
 
   useEffect(() => {
     fetchServices();
@@ -103,12 +87,18 @@ const ServicesManager = ({ providerId }: ServicesManagerProps) => {
 
   const handleSave = async () => {
     try {
+      // Validate that category is selected
+      if (!formData.category) {
+        toast.error('Por favor selecciona una categoría');
+        return;
+      }
+
       const serviceData = {
         name: formData.name,
         description: formData.description,
         price: parseFloat(formData.price),
         duration_minutes: parseInt(formData.duration_minutes),
-        category: formData.category,
+        category: formData.category as ServiceCategory,
         provider_id: providerId,
         is_active: true
       };
@@ -199,14 +189,17 @@ const ServicesManager = ({ providerId }: ServicesManagerProps) => {
 
                 <div>
                   <Label htmlFor="category">Categoría</Label>
-                  <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+                  <Select 
+                    value={formData.category} 
+                    onValueChange={(value: ServiceCategory) => setFormData(prev => ({ ...prev, category: value }))}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecciona una categoría" />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((cat) => (
-                        <SelectItem key={cat.value} value={cat.value}>
-                          {cat.label}
+                        <SelectItem key={cat} value={cat}>
+                          {categoryLabels[cat]}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -282,7 +275,7 @@ const ServicesManager = ({ providerId }: ServicesManagerProps) => {
                       {service.duration_minutes} min
                     </div>
                     <Badge variant="outline" className="text-xs">
-                      {categoryLabels[service.category as keyof typeof categoryLabels] || service.category}
+                      {categoryLabels[service.category] || service.category}
                     </Badge>
                   </div>
                 </div>
