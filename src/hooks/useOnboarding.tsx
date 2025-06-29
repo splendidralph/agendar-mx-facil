@@ -12,6 +12,31 @@ import {
   completeProviderOnboarding 
 } from '@/services/onboardingService';
 
+// Helper function to determine the correct step based on data completeness
+const determineStepFromData = (data: OnboardingData): number => {
+  // Step 1: Requires business_name and category
+  if (!data.businessName || !data.category) {
+    return 1;
+  }
+  
+  // Step 2: Address and Instagram are optional, so we can skip to step 3
+  // Step 3: Requires username
+  if (!data.username) {
+    return 3;
+  }
+  
+  // Step 4: Requires at least one valid service
+  const validServices = data.services.filter(service => 
+    service.name && service.name.length >= 2 && service.price > 0
+  );
+  if (validServices.length === 0) {
+    return 4;
+  }
+  
+  // Step 5: All data complete, show preview
+  return 5;
+};
+
 export const useOnboarding = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -41,12 +66,10 @@ export const useOnboarding = () => {
     
     if (result) {
       const { provider, services } = result;
-      const step = provider.onboarding_step || 1;
-      console.log('useOnboarding: Setting step to:', step);
-      setCurrentStep(step);
-      setData(prev => ({
-        ...prev,
-        step: step,
+      
+      // Build the data object from provider and services
+      const loadedData: OnboardingData = {
+        step: 1, // Will be calculated below
         businessName: provider.business_name || '',
         category: provider.category || '',
         bio: provider.bio || '',
@@ -60,6 +83,22 @@ export const useOnboarding = () => {
           description: service.description || '',
           category: service.category
         }))
+      };
+      
+      // Determine the correct step based on data completeness
+      const correctStep = determineStepFromData(loadedData);
+      console.log('useOnboarding: Calculated correct step:', correctStep, 'from data:', {
+        hasBusinessName: !!loadedData.businessName,
+        hasCategory: !!loadedData.category,
+        hasUsername: !!loadedData.username,
+        servicesCount: loadedData.services.length
+      });
+      
+      setCurrentStep(correctStep);
+      setData(prev => ({
+        ...prev,
+        ...loadedData,
+        step: correctStep
       }));
     }
   };
@@ -121,6 +160,13 @@ export const useOnboarding = () => {
     
     console.log('useOnboarding: Data to save:', dataForSaving);
     
+    // Validate step requirements before advancing
+    const isStepValid = validateStepRequirements(currentStep, dataForSaving);
+    if (!isStepValid) {
+      console.log('useOnboarding: Step validation failed, not advancing');
+      return;
+    }
+    
     // First save the current step with the provided data
     const saved = await saveCurrentStep(dataForSaving);
     if (!saved) {
@@ -155,6 +201,33 @@ export const useOnboarding = () => {
     } else {
       console.log('useOnboarding: Already at final step');
     }
+  };
+
+  const validateStepRequirements = (step: number, dataToValidate: OnboardingData): boolean => {
+    switch (step) {
+      case 1:
+        if (!dataToValidate.businessName || !dataToValidate.category) {
+          toast.error('Por favor completa el nombre del negocio y la categoría');
+          return false;
+        }
+        break;
+      case 3:
+        if (!dataToValidate.username) {
+          toast.error('Por favor elige un username');
+          return false;
+        }
+        break;
+      case 4:
+        const validServices = dataToValidate.services.filter(service => 
+          service.name && service.name.length >= 2 && service.price > 0
+        );
+        if (validServices.length === 0) {
+          toast.error('Por favor agrega al menos un servicio válido');
+          return false;
+        }
+        break;
+    }
+    return true;
   };
 
   const prevStep = () => {
