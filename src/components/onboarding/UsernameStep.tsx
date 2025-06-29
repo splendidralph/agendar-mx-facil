@@ -11,25 +11,22 @@ import { generateUsername, checkUsernameAvailability } from '@/utils/usernameUti
 
 const UsernameStep = () => {
   const { data, updateData, nextStep, prevStep, loading, currentStep } = useOnboarding();
-  const [username, setUsername] = useState(data.username || '');
   const [isChecking, setIsChecking] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [checkTimeout, setCheckTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  // Sync username with global data and generate if needed
+  // Initialize username once on mount if needed
   useEffect(() => {
-    if (!data.username && data.businessName && !username) {
+    if (!data.username && data.businessName) {
       const generated = generateUsername(data.businessName);
-      console.log('UsernameStep: Generated username:', generated);
-      setUsername(generated);
+      console.log('UsernameStep: Generating initial username:', generated);
       updateData({ username: generated });
       checkAvailability(generated);
-    } else if (data.username && data.username !== username) {
-      console.log('UsernameStep: Syncing username from global data:', data.username);
-      setUsername(data.username);
+    } else if (data.username) {
+      console.log('UsernameStep: Checking existing username:', data.username);
       checkAvailability(data.username);
     }
-  }, [data.businessName, data.username, username, updateData]);
+  }, []); // Run only once on mount
 
   const checkAvailability = async (usernameToCheck: string) => {
     if (!usernameToCheck || usernameToCheck.length < 3) {
@@ -58,7 +55,6 @@ const UsernameStep = () => {
       .slice(0, 30);
     
     console.log('UsernameStep: Username changed to:', cleanUsername);
-    setUsername(cleanUsername);
     updateData({ username: cleanUsername });
     
     setIsAvailable(null);
@@ -76,27 +72,30 @@ const UsernameStep = () => {
   };
 
   const handleNext = async () => {
-    const currentData = { ...data, username };
-    const isValid = validateStep(currentStep, currentData);
-    
-    console.log('→ UsernameStep: Clicking Continuar', {
-      currentStep,
-      username,
-      isValid,
+    console.log('UsernameStep: Clicking Continuar', { 
+      username: data.username, 
       isAvailable,
-      data: currentData
+      currentStep 
     });
     
-    if (!isValid || isAvailable !== true) {
-      console.warn('✋ UsernameStep: Cannot proceed - validation failed or username not available');
+    // Validate step requirements
+    if (!validateStep(currentStep, data)) {
+      console.warn('UsernameStep: Step validation failed');
+      return;
+    }
+    
+    if (isAvailable !== true) {
+      console.warn('UsernameStep: Username not available');
       if (isAvailable === false) {
         toast.error('El username no está disponible');
+      } else {
+        toast.error('Verifica que el username esté disponible');
       }
       return;
     }
     
     try {
-      await nextStep({ username });
+      await nextStep();
       console.log('UsernameStep: Successfully advanced to next step');
     } catch (error) {
       console.error('UsernameStep: Error in nextStep:', error);
@@ -104,19 +103,17 @@ const UsernameStep = () => {
     }
   };
 
-  // Check if current step data is valid
-  const currentData = { ...data, username };
-  const isValidStep = validateStep(currentStep, currentData);
-  const canProceed = isValidStep && isAvailable === true && !loading && !isChecking;
+  // Simple validation for button state
+  const isValid = data.username && data.username.length >= 3;
+  const canProceed = isValid && isAvailable === true && !loading && !isChecking;
 
   console.log('UsernameStep: Render state:', {
-    currentStep,
-    username,
+    username: data.username,
     isAvailable,
-    isValidStep,
+    isValid,
     canProceed,
     loading,
-    globalUsername: data.username
+    isChecking
   });
 
   return (
@@ -129,7 +126,7 @@ const UsernameStep = () => {
           </span>
           <Input
             id="username"
-            value={username}
+            value={data.username || ''}
             onChange={(e) => handleUsernameChange(e.target.value)}
             placeholder="tu-username"
             className="pl-32"
@@ -143,10 +140,10 @@ const UsernameStep = () => {
         
         <div className="mt-2 space-y-1">
           <p className="text-sm text-muted-foreground">
-            Este será tu link personalizado: <span className="font-mono">bookeasy.mx/@{username || 'tu-username'}</span>
+            Este será tu link personalizado: <span className="font-mono">bookeasy.mx/@{data.username || 'tu-username'}</span>
           </p>
           
-          {username && username.length > 0 && username.length < 3 && (
+          {data.username && data.username.length > 0 && data.username.length < 3 && (
             <p className="text-sm text-red-500">El username debe tener al menos 3 caracteres</p>
           )}
           
