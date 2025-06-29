@@ -94,8 +94,15 @@ export const useOnboarding = () => {
       console.log('useOnboarding: Successfully saved step');
       return true;
     } catch (error) {
-      console.error('Error saving onboarding data:', error);
-      toast.error('Error guardando los datos. Inténtalo de nuevo.');
+      console.error('useOnboarding: Error saving onboarding data:', error);
+      // More specific error messages
+      if (error.message.includes('duplicate key')) {
+        toast.error('El username ya está en uso. Por favor elige otro.');
+      } else if (error.message.includes('violates check constraint')) {
+        toast.error('Por favor completa todos los campos requeridos.');
+      } else {
+        toast.error('Error guardando los datos. Inténtalo de nuevo.');
+      }
       return false;
     } finally {
       setLoading(false);

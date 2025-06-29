@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { OnboardingData, ServiceCategory } from '@/types/onboarding';
 
@@ -41,7 +40,12 @@ export const loadProviderData = async (userId: string) => {
 
 export const saveProviderData = async (userId: string, data: OnboardingData, currentStep: number) => {
   try {
-    console.log('onboardingService: Saving provider data for user:', userId, 'step:', currentStep);
+    console.log('onboardingService: Saving provider data for user:', userId, 'step:', currentStep, 'data:', {
+      businessName: data.businessName,
+      category: data.category,
+      username: data.username,
+      hasServices: data.services?.length || 0
+    });
     
     // Check if provider exists
     const { data: existingProvider, error: fetchError } = await supabase
@@ -50,6 +54,11 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       .eq('user_id', userId)
       .maybeSingle();
 
+    if (fetchError) {
+      console.error('onboardingService: Error fetching provider:', fetchError);
+      throw fetchError;
+    }
+
     let providerId = existingProvider?.id;
 
     if (!existingProvider) {
@@ -57,18 +66,18 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       // Create new provider - only set username if it's provided and not empty
       const providerData: any = {
         user_id: userId,
-        business_name: data.businessName,
-        category: data.category,
-        bio: data.bio,
-        address: data.address,
-        instagram_handle: data.instagramHandle,
+        business_name: data.businessName || '',
+        category: data.category || '',
+        bio: data.bio || '',
+        address: data.address || '',
+        instagram_handle: data.instagramHandle || '',
         onboarding_step: currentStep,
         profile_completed: false
       };
 
       // Only include username if it's provided and not empty
       if (data.username && data.username.trim()) {
-        providerData.username = data.username;
+        providerData.username = data.username.trim();
       }
 
       const { data: newProvider, error: createError } = await supabase
@@ -87,18 +96,18 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       console.log('onboardingService: Updating existing provider with ID:', providerId);
       // Update existing provider - be careful with username updates
       const updateData: any = {
-        business_name: data.businessName,
-        category: data.category,
-        bio: data.bio,
-        address: data.address,
-        instagram_handle: data.instagramHandle,
+        business_name: data.businessName || '',
+        category: data.category || '',
+        bio: data.bio || '',
+        address: data.address || '',
+        instagram_handle: data.instagramHandle || '',
         onboarding_step: currentStep,
         profile_completed: currentStep >= 5
       };
 
       // Only update username if it's different from existing and not empty
-      if (data.username && data.username.trim() && data.username !== existingProvider.username) {
-        updateData.username = data.username;
+      if (data.username && data.username.trim() && data.username.trim() !== existingProvider.username) {
+        updateData.username = data.username.trim();
       }
 
       const { error: updateError } = await supabase
@@ -115,8 +124,9 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
     console.log('onboardingService: Successfully saved provider data');
     return providerId;
   } catch (error) {
-    console.error('Error saving provider data:', error);
-    throw error;
+    console.error('onboardingService: Error saving provider data:', error);
+    // Re-throw with more context
+    throw new Error(`Failed to save provider data: ${error.message || 'Unknown error'}`);
   }
 };
 
