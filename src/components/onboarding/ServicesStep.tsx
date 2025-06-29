@@ -49,18 +49,18 @@ const ServicesStep = () => {
 
     console.log('ServicesStep: handleNext called with services:', validServices);
     
-    // Update data first, then proceed
-    updateData({ services: validServices });
+    const servicesData = { services: validServices };
     
-    // Wait a bit for state to update, then proceed
-    setTimeout(async () => {
-      try {
-        await nextStep();
-        console.log('ServicesStep: nextStep completed successfully');
-      } catch (error) {
-        console.error('ServicesStep: Error in nextStep:', error);
-      }
-    }, 100);
+    // Update local data first
+    updateData(servicesData);
+    
+    // Pass the services data directly to nextStep to ensure it's saved correctly
+    try {
+      await nextStep(servicesData);
+      console.log('ServicesStep: nextStep completed successfully');
+    } catch (error) {
+      console.error('ServicesStep: Error in nextStep:', error);
+    }
   };
 
   const isValid = services.some(service => service.name.length >= 2 && service.price > 0);

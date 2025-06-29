@@ -59,18 +59,16 @@ const ProfileSetupStep = () => {
       return;
     }
     
-    // Update data first, then proceed
+    // Update local data first
     updateData(formData);
     
-    // Wait a bit for state to update, then proceed
-    setTimeout(async () => {
-      try {
-        await nextStep();
-        console.log('ProfileSetupStep: nextStep completed successfully');
-      } catch (error) {
-        console.error('ProfileSetupStep: Error in nextStep:', error);
-      }
-    }, 100);
+    // Pass the form data directly to nextStep to ensure it's saved correctly
+    try {
+      await nextStep(formData);
+      console.log('ProfileSetupStep: nextStep completed successfully');
+    } catch (error) {
+      console.error('ProfileSetupStep: Error in nextStep:', error);
+    }
   };
 
   const isValid = formData.businessName.length >= 2 && formData.category;

@@ -77,18 +77,18 @@ const UsernameStep = () => {
 
     console.log('UsernameStep: handleNext called with username:', username);
     
-    // Update data first, then proceed
-    updateData({ username });
+    const usernameData = { username };
     
-    // Wait a bit for state to update, then proceed
-    setTimeout(async () => {
-      try {
-        await nextStep();
-        console.log('UsernameStep: nextStep completed successfully');
-      } catch (error) {
-        console.error('UsernameStep: Error in nextStep:', error);
-      }
-    }, 100);
+    // Update local data first
+    updateData(usernameData);
+    
+    // Pass the username data directly to nextStep to ensure it's saved correctly
+    try {
+      await nextStep(usernameData);
+      console.log('UsernameStep: nextStep completed successfully');
+    } catch (error) {
+      console.error('UsernameStep: Error in nextStep:', error);
+    }
   };
 
   const isValid = username.length >= 3 && isAvailable === true;

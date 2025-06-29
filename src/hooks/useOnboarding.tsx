@@ -102,12 +102,20 @@ export const useOnboarding = () => {
     }
   };
 
-  const nextStep = async () => {
+  const nextStep = async (updatedData?: Partial<OnboardingData>) => {
     console.log('useOnboarding: nextStep called, current step:', currentStep);
-    console.log('useOnboarding: Current data:', data);
     
-    // First save the current step with current data
-    const saved = await saveCurrentStep();
+    // If we have updated data, merge it with current data for saving
+    let dataForSaving = data;
+    if (updatedData) {
+      dataForSaving = { ...data, ...updatedData };
+      console.log('useOnboarding: Using updated data for saving:', dataForSaving);
+    }
+    
+    console.log('useOnboarding: Data to save:', dataForSaving);
+    
+    // First save the current step with the provided data
+    const saved = await saveCurrentStep(dataForSaving);
     if (!saved) {
       console.log('useOnboarding: Failed to save, not advancing step');
       return;
@@ -131,7 +139,12 @@ export const useOnboarding = () => {
       }
       
       setCurrentStep(newStep);
-      setData(prev => ({ ...prev, step: newStep }));
+      // Update local data state with the provided updates
+      if (updatedData) {
+        setData(prev => ({ ...prev, ...updatedData, step: newStep }));
+      } else {
+        setData(prev => ({ ...prev, step: newStep }));
+      }
     } else {
       console.log('useOnboarding: Already at final step');
     }

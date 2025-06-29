@@ -23,18 +23,16 @@ const ContactStep = () => {
   const handleNext = async () => {
     console.log('ContactStep: handleNext called with formData:', formData);
     
-    // Update data first, then proceed
+    // Update local data first
     updateData(formData);
     
-    // Wait a bit for state to update, then proceed
-    setTimeout(async () => {
-      try {
-        await nextStep();
-        console.log('ContactStep: nextStep completed successfully');
-      } catch (error) {
-        console.error('ContactStep: Error in nextStep:', error);
-      }
-    }, 100);
+    // Pass the form data directly to nextStep to ensure it's saved correctly
+    try {
+      await nextStep(formData);
+      console.log('ContactStep: nextStep completed successfully');
+    } catch (error) {
+      console.error('ContactStep: Error in nextStep:', error);
+    }
   };
 
   const handleInstagramChange = (value: string) => {
