@@ -7,9 +7,10 @@ import { Label } from '@/components/ui/label';
 import { ArrowRight, ArrowLeft, Check, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { validateStep } from '@/utils/onboardingValidation';
+import { generateUsername, checkUsernameAvailability } from '@/utils/usernameUtils';
 
 const UsernameStep = () => {
-  const { data, updateData, nextStep, prevStep, loading, generateUsername, checkUsernameAvailability, currentStep } = useOnboarding();
+  const { data, updateData, nextStep, prevStep, loading, currentStep } = useOnboarding();
   const [username, setUsername] = useState(data.username || '');
   const [isChecking, setIsChecking] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
@@ -28,7 +29,7 @@ const UsernameStep = () => {
       setUsername(data.username);
       checkAvailability(data.username);
     }
-  }, [data.businessName, data.username, username, updateData, generateUsername]);
+  }, [data.businessName, data.username, username, updateData]);
 
   const checkAvailability = async (usernameToCheck: string) => {
     if (!usernameToCheck || usernameToCheck.length < 3) {
