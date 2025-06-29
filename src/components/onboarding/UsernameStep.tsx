@@ -9,21 +9,24 @@ import { toast } from 'sonner';
 
 const UsernameStep = () => {
   const { data, updateData, nextStep, prevStep, loading, generateUsername, checkUsernameAvailability } = useOnboarding();
-  const [username, setUsername] = useState(data.username);
+  const [username, setUsername] = useState(data.username || '');
   const [isChecking, setIsChecking] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [checkTimeout, setCheckTimeout] = useState<NodeJS.Timeout | null>(null);
 
+  // Sync username with global data and generate if needed
   useEffect(() => {
-    if (!data.username && data.businessName) {
+    if (!data.username && data.businessName && !username) {
       const generated = generateUsername(data.businessName);
+      console.log('UsernameStep: Generated username:', generated);
       setUsername(generated);
+      // Immediately sync to global state
+      updateData({ username: generated });
       checkAvailability(generated);
-    } else {
+    } else if (data.username && data.username !== username) {
+      console.log('UsernameStep: Syncing username from global data:', data.username);
       setUsername(data.username);
-      if (data.username) {
-        checkAvailability(data.username);
-      }
+      checkAvailability(data.username);
     }
   }, [data.businessName, data.username]);
 
@@ -33,12 +36,14 @@ const UsernameStep = () => {
       return;
     }
 
+    console.log('UsernameStep: Checking availability for:', usernameToCheck);
     setIsChecking(true);
     try {
       const available = await checkUsernameAvailability(usernameToCheck);
+      console.log('UsernameStep: Availability result:', available);
       setIsAvailable(available);
     } catch (error) {
-      console.error('Error checking username:', error);
+      console.error('UsernameStep: Error checking username:', error);
       setIsAvailable(null);
     } finally {
       setIsChecking(false);
@@ -52,7 +57,12 @@ const UsernameStep = () => {
       .replace(/[^a-z0-9-]/g, '')
       .slice(0, 30);
     
+    console.log('UsernameStep: Username changed to:', cleanUsername);
     setUsername(cleanUsername);
+    
+    // Immediately sync to global state
+    updateData({ username: cleanUsername });
+    
     setIsAvailable(null);
 
     // Clear existing timeout
@@ -70,28 +80,52 @@ const UsernameStep = () => {
   };
 
   const handleNext = async () => {
-    if (!isAvailable) {
+    console.log('UsernameStep: handleNext called');
+    console.log('UsernameStep: Current username:', username);
+    console.log('UsernameStep: Is available:', isAvailable);
+    console.log('UsernameStep: Global data username:', data.username);
+    
+    // Validate username
+    if (!username || username.length < 3) {
+      console.log('UsernameStep: Username too short');
+      toast.error('El username debe tener al menos 3 caracteres');
+      return;
+    }
+
+    if (isAvailable !== true) {
+      console.log('UsernameStep: Username not available');
       toast.error('Por favor elige un username disponible');
       return;
     }
 
-    console.log('UsernameStep: handleNext called with username:', username);
-    
+    // Ensure global state has the latest username before proceeding
     const usernameData = { username };
+    console.log('UsernameStep: Updating global data and proceeding with:', usernameData);
     
-    // Update local data first
-    updateData(usernameData);
-    
-    // Pass the username data directly to nextStep to ensure it's saved correctly
     try {
+      // Update local data first to ensure sync
+      updateData(usernameData);
+      
+      // Add small delay to ensure state is updated
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       await nextStep(usernameData);
-      console.log('UsernameStep: nextStep completed successfully');
+      console.log('UsernameStep: Successfully advanced to next step');
     } catch (error) {
       console.error('UsernameStep: Error in nextStep:', error);
+      toast.error('Error avanzando al siguiente paso');
     }
   };
 
-  const isValid = username.length >= 3 && isAvailable === true;
+  const isValid = username && username.length >= 3 && isAvailable === true;
+
+  console.log('UsernameStep: Render state:', {
+    username,
+    isAvailable,
+    isValid,
+    loading,
+    globalUsername: data.username
+  });
 
   return (
     <div className="space-y-6">
@@ -120,7 +154,7 @@ const UsernameStep = () => {
             Este será tu link personalizado: <span className="font-mono">bookeasy.mx/@{username || 'tu-username'}</span>
           </p>
           
-          {username.length > 0 && username.length < 3 && (
+          {username && username.length > 0 && username.length < 3 && (
             <p className="text-sm text-red-500">El username debe tener al menos 3 caracteres</p>
           )}
           
