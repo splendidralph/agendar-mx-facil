@@ -30,12 +30,12 @@ const PreviewStep = () => {
   };
 
   const categoryLabels = {
-    haircut: 'Corte de Cabello',
-    beard: 'Barba',
-    nails: 'Uñas',
-    eyebrows: 'Cejas',
-    massage: 'Masajes',
-    other: 'Otro'
+    corte_barberia: 'Corte y Barbería',
+    unas: 'Uñas y Manicure',
+    maquillaje_cejas: 'Maquillaje y Cejas',
+    cuidado_facial: 'Cuidado Facial',
+    masajes_relajacion: 'Masajes y Relajación',
+    color_alisado: 'Color y Alisado'
   };
 
   return (

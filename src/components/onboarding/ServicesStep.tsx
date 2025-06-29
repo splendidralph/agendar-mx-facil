@@ -24,7 +24,7 @@ interface Service {
 const ServicesStep = () => {
   const { data, updateData, nextStep, prevStep, loading } = useOnboarding();
   const [services, setServices] = useState<Service[]>(data.services.length > 0 ? data.services : [
-    { name: '', price: 0, duration: 30, description: '', category: 'haircut' as ServiceCategory }
+    { name: '', price: 0, duration: 30, description: '', category: 'corte_barberia' as ServiceCategory }
   ]);
 
   useEffect(() => {
@@ -34,25 +34,25 @@ const ServicesStep = () => {
   }, [data.services]);
 
   const categories: ServiceCategory[] = [
-    'haircut',
-    'beard',
-    'nails',
-    'eyebrows',
-    'massage',
-    'other'
+    'corte_barberia',
+    'unas',
+    'maquillaje_cejas',
+    'cuidado_facial',
+    'masajes_relajacion',
+    'color_alisado'
   ];
 
   const categoryLabels: Record<ServiceCategory, string> = {
-    haircut: 'Corte de Cabello',
-    beard: 'Barba',
-    nails: 'Uñas',
-    eyebrows: 'Cejas',
-    massage: 'Masajes',
-    other: 'Otro'
+    corte_barberia: 'Corte y Barbería',
+    unas: 'Uñas y Manicure',
+    maquillaje_cejas: 'Maquillaje y Cejas',
+    cuidado_facial: 'Cuidado Facial',
+    masajes_relajacion: 'Masajes y Relajación',
+    color_alisado: 'Color y Alisado'
   };
 
   const addService = () => {
-    setServices(prev => [...prev, { name: '', price: 0, duration: 30, description: '', category: 'haircut' as ServiceCategory }]);
+    setServices(prev => [...prev, { name: '', price: 0, duration: 30, description: '', category: 'corte_barberia' as ServiceCategory }]);
   };
 
   const removeService = (index: number) => {

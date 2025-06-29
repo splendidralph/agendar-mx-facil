@@ -325,6 +325,12 @@ export type Database = {
         | "eyebrows"
         | "massage"
         | "other"
+        | "corte_barberia"
+        | "unas"
+        | "maquillaje_cejas"
+        | "cuidado_facial"
+        | "masajes_relajacion"
+        | "color_alisado"
       user_role: "provider" | "client"
     }
     CompositeTypes: {
@@ -449,6 +455,12 @@ export const Constants = {
         "eyebrows",
         "massage",
         "other",
+        "corte_barberia",
+        "unas",
+        "maquillaje_cejas",
+        "cuidado_facial",
+        "masajes_relajacion",
+        "color_alisado",
       ],
       user_role: ["provider", "client"],
     },

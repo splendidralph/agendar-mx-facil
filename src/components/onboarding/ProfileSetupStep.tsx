@@ -25,21 +25,30 @@ const ProfileSetupStep = () => {
   }, [data]);
 
   const categories = [
-    'haircut',
-    'beard',
-    'nails',
-    'eyebrows',
-    'massage',
-    'other'
+    'corte_barberia',
+    'unas',
+    'maquillaje_cejas',
+    'cuidado_facial',
+    'masajes_relajacion',
+    'color_alisado'
   ];
 
   const categoryLabels = {
-    haircut: 'Corte de Cabello',
-    beard: 'Barba',
-    nails: 'Uñas',
-    eyebrows: 'Cejas',
-    massage: 'Masajes',
-    other: 'Otro'
+    corte_barberia: 'Corte y Barbería',
+    unas: 'Uñas y Manicure',
+    maquillaje_cejas: 'Maquillaje y Cejas',
+    cuidado_facial: 'Cuidado Facial',
+    masajes_relajacion: 'Masajes y Relajación',
+    color_alisado: 'Color y Alisado'
+  };
+
+  const categoryDescriptions = {
+    corte_barberia: 'Cortes de cabello, barba, bigote y servicios de barbería tradicional',
+    unas: 'Manicure, pedicure, esmaltado, decoración y cuidado de uñas',
+    maquillaje_cejas: 'Maquillaje profesional, diseño de cejas, micropigmentación',
+    cuidado_facial: 'Tratamientos faciales, limpiezas, hidratación y cuidado de la piel',
+    masajes_relajacion: 'Masajes terapéuticos, relajantes y tratamientos corporales',
+    color_alisado: 'Coloración, mechas, alisados, tratamientos capilares'
   };
 
   const handleNext = async () => {
@@ -77,7 +86,12 @@ const ProfileSetupStep = () => {
           <SelectContent>
             {categories.map((category) => (
               <SelectItem key={category} value={category}>
-                {categoryLabels[category as keyof typeof categoryLabels]}
+                <div className="flex flex-col">
+                  <span className="font-medium">{categoryLabels[category as keyof typeof categoryLabels]}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {categoryDescriptions[category as keyof typeof categoryDescriptions]}
+                  </span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
