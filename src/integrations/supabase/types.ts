@@ -412,6 +412,36 @@ export type Database = {
           },
         ]
       }
+      security_events: {
+        Row: {
+          created_at: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           category: Database["public"]["Enums"]["service_category"]
@@ -553,6 +583,10 @@ export type Database = {
       calculate_distance_km: {
         Args: { lat1: number; lng1: number; lat2: number; lng2: number }
         Returns: number
+      }
+      log_security_event: {
+        Args: { event_type: string; event_data?: Json; target_user_id?: string }
+        Returns: undefined
       }
     }
     Enums: {
