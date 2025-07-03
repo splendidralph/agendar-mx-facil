@@ -24,52 +24,45 @@ const HeroSection = () => {
       <div className="container mx-auto text-center relative z-10">
         <div className="max-w-5xl mx-auto">
           {/* Beta Badge */}
-          <div className="inline-flex items-center gap-2 accent-gradient text-accent-foreground px-6 py-3 rounded-full mb-6 shadow-lg">
+          <div className="inline-flex items-center gap-2 accent-gradient text-accent-foreground px-6 py-3 rounded-full mb-8 shadow-lg">
             <TrendingUp className="h-4 w-4" />
             <span className="text-sm font-bold">🚀 OPEN FOR BETA TESTING NOW</span>
           </div>
 
           {/* Main headline */}
-          <h1 className="text-4xl md:text-7xl font-bold text-white mb-4 leading-tight">
+          <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight">
             Tu link de reservas
             <span className="block mt-2 bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
               profesional
             </span>
           </h1>
 
-          {/* Beta subheadline */}
-          <p className="text-lg text-muted-foreground mb-2">
-            ✨ <span className="font-semibold text-primary">Join the Next Hottest Startup</span> ✨
-          </p>
+          {/* Main value proposition */}
+          <div className="mb-10 max-w-5xl mx-auto">
+            <p className="text-2xl md:text-3xl text-white mb-4 font-medium leading-relaxed">
+              Crea tu perfil <span className="font-bold bg-gradient-to-r from-white to-white bg-clip-text text-transparent text-3xl md:text-4xl">GRATIS</span> en 2 minutos
+            </p>
+            <p className="text-xl md:text-2xl text-white/90 mb-6 leading-relaxed">
+              y empieza a recibir reservas al instante
+            </p>
+            
+            {/* Link preview */}
+            <div className="glassmorphism rounded-xl px-6 py-4 text-lg border-white/20 inline-block">
+              <span className="text-sm block text-white/70 mb-1">Tu link será:</span>
+              <span className="font-mono text-white font-semibold text-lg">bookeasy.mx/@tuusername</span>
+            </div>
+          </div>
 
-          {/* Beta subheadline */}
-          <p className="text-lg text-white/90 mb-2">
-            ✨ <span className="font-semibold text-white">Join the Next Hottest Startup</span> ✨
-          </p>
-
-          {/* Subheadline */}
-          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-4xl mx-auto leading-relaxed">
-            Crea tu perfil <span className="font-bold text-accent">GRATIS</span> en 2 minutos, 
-            obtén tu link <span className="font-mono bg-white/20 px-3 py-1 rounded-lg text-white font-semibold">bookeasy.mx/@tuusername</span> 
-            y empieza a recibir reservas al instante
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          {/* CTA Button */}
+          <div className="flex justify-center">
             <Button 
               size="lg" 
-              className="floating-cta btn-accent shadow-xl px-8 py-6 text-lg font-semibold w-full sm:w-auto group"
+              className="bg-white text-primary hover:bg-white/90 shadow-xl px-10 py-6 text-xl font-bold group border-0 hover-lift"
               onClick={handleGetStarted}
             >
               {user ? 'Ir al Dashboard' : 'Crear Mi Perfil - Gratis'}
-              <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-6 w-6 ml-3 group-hover:translate-x-1 transition-transform" />
             </Button>
-
-            {/* Preview link */}
-            <div className="glassmorphism rounded-xl px-6 py-4 text-sm border-white/20">
-              <span className="text-xs block text-white/70">Tu link será:</span>
-              <span className="font-mono text-white font-medium">bookeasy.mx/@tuusername</span>
-            </div>
           </div>
         </div>
       </div>
