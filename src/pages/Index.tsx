@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import HeroSection from "@/components/homepage/HeroSection";
-import SocialProofSection from "@/components/homepage/SocialProofSection";
 import InteractiveDemoSection from "@/components/homepage/InteractiveDemoSection";
 import ModernFeaturesSection from "@/components/homepage/ModernFeaturesSection";
 import FloatingCTA from "@/components/homepage/FloatingCTA";
@@ -127,7 +126,6 @@ const Index = () => {
 
       {/* Main Content */}
       <HeroSection />
-      <SocialProofSection />
       <InteractiveDemoSection />
       <ModernFeaturesSection />
 

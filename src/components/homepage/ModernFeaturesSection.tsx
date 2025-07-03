@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link2, Share2, Calendar, Clock, Smartphone, MessageCircle, Star, BarChart3 } from "lucide-react";
+import { Link2, Share2, Calendar } from "lucide-react";
 
 const ModernFeaturesSection = () => {
   const mainFeatures = [
@@ -27,33 +27,6 @@ const ModernFeaturesSection = () => {
     }
   ];
 
-  const additionalFeatures = [
-    {
-      icon: Smartphone,
-      title: "100% Móvil",
-      description: "Diseñado para que tus clientes reserven desde su celular"
-    },
-    {
-      icon: MessageCircle,
-      title: "WhatsApp Integrado",
-      description: "Confirmaciones automáticas directo al WhatsApp"
-    },
-    {
-      icon: Star,
-      title: "Sistema de Reseñas",
-      description: "Construye tu reputación con reseñas verificadas"
-    },
-    {
-      icon: BarChart3,
-      title: "Estadísticas",
-      description: "Ve cuántas personas visitan tu perfil y reservan"
-    },
-    {
-      icon: Clock,
-      title: "Disponibilidad 24/7",
-      description: "Tus clientes pueden reservar cuando les convenga"
-    }
-  ];
 
   return (
     <section className="py-16 px-4">
@@ -104,24 +77,6 @@ const ModernFeaturesSection = () => {
           ))}
         </div>
 
-        {/* Additional features grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {additionalFeatures.map((feature, index) => (
-            <div 
-              key={index}
-              className="bento-card text-center hover-lift animate-scale-in"
-              style={{ animationDelay: `${(index + 3) * 0.1}s` }}
-            >
-              <div className="gradient-primary text-primary-foreground p-3 rounded-xl w-fit mx-auto mb-4">
-                <feature.icon className="h-6 w-6" />
-              </div>
-              <h4 className="font-semibold text-foreground mb-2">{feature.title}</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
 
         {/* Comparison hint */}
         <div className="mt-16 text-center">

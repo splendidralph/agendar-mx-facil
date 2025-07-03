@@ -15,11 +15,6 @@ const HeroSection = () => {
     }
   };
 
-  const stats = [
-    { icon: Users, label: "Beta Testers", value: "150+" },
-    { icon: Calendar, label: "Early Adopters", value: "50+" },
-    { icon: Star, label: "Growing Community", value: "🚀" },
-  ];
 
   return (
     <section className="relative py-20 px-4 overflow-hidden">
@@ -35,9 +30,9 @@ const HeroSection = () => {
           </div>
 
           {/* Main headline */}
-          <h1 className="text-4xl md:text-7xl font-bold text-foreground mb-4 leading-tight">
+          <h1 className="text-4xl md:text-7xl font-bold text-white mb-4 leading-tight">
             Tu link de reservas
-            <span className="block mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="block mt-2 bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
               profesional
             </span>
           </h1>
@@ -47,15 +42,20 @@ const HeroSection = () => {
             ✨ <span className="font-semibold text-primary">Join the Next Hottest Startup</span> ✨
           </p>
 
+          {/* Beta subheadline */}
+          <p className="text-lg text-white/90 mb-2">
+            ✨ <span className="font-semibold text-white">Join the Next Hottest Startup</span> ✨
+          </p>
+
           {/* Subheadline */}
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-4xl mx-auto leading-relaxed">
             Crea tu perfil <span className="font-bold text-accent">GRATIS</span> en 2 minutos, 
-            obtén tu link <span className="font-mono bg-primary/15 px-3 py-1 rounded-lg text-primary font-semibold">bookeasy.mx/@tuusername</span> 
+            obtén tu link <span className="font-mono bg-white/20 px-3 py-1 rounded-lg text-white font-semibold">bookeasy.mx/@tuusername</span> 
             y empieza a recibir reservas al instante
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
               size="lg" 
               className="floating-cta btn-accent shadow-xl px-8 py-6 text-lg font-semibold w-full sm:w-auto group"
@@ -66,27 +66,10 @@ const HeroSection = () => {
             </Button>
 
             {/* Preview link */}
-            <div className="glassmorphism rounded-xl px-6 py-4 text-sm text-muted-foreground">
-              <span className="text-xs block">Tu link será:</span>
-              <span className="font-mono text-primary font-medium">bookeasy.mx/@tuusername</span>
+            <div className="glassmorphism rounded-xl px-6 py-4 text-sm border-white/20">
+              <span className="text-xs block text-white/70">Tu link será:</span>
+              <span className="font-mono text-white font-medium">bookeasy.mx/@tuusername</span>
             </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            {stats.map((stat, index) => (
-              <div 
-                key={index} 
-                className="bento-card text-center hover-lift animate-scale-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="gradient-primary text-primary-foreground p-3 rounded-xl w-fit mx-auto mb-3">
-                  <stat.icon className="h-6 w-6" />
-                </div>
-                <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
-            ))}
           </div>
         </div>
       </div>
