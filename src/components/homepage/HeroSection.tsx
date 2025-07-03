@@ -16,9 +16,9 @@ const HeroSection = () => {
   };
 
   const stats = [
-    { icon: Users, label: "Profesionales activos", value: "2,500+" },
-    { icon: Calendar, label: "Citas programadas", value: "50,000+" },
-    { icon: Star, label: "Calificación promedio", value: "4.9" },
+    { icon: Users, label: "Beta Testers", value: "150+" },
+    { icon: Calendar, label: "Early Adopters", value: "50+" },
+    { icon: Star, label: "Growing Community", value: "🚀" },
   ];
 
   return (
@@ -44,24 +44,29 @@ const HeroSection = () => {
 
       <div className="container mx-auto text-center relative z-10">
         <div className="max-w-5xl mx-auto">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6 border border-primary/20">
+          {/* Beta Badge */}
+          <div className="inline-flex items-center gap-2 accent-gradient text-accent-foreground px-6 py-3 rounded-full mb-6 shadow-lg">
             <TrendingUp className="h-4 w-4" />
-            <span className="text-sm font-medium">Plataforma #1 para profesionales de belleza</span>
+            <span className="text-sm font-bold">🚀 OPEN FOR BETA TESTING NOW</span>
           </div>
 
           {/* Main headline */}
-          <h1 className="text-4xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
+          <h1 className="text-4xl md:text-7xl font-bold text-foreground mb-4 leading-tight">
             Tu link de reservas
-            <span className="block mt-2 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-glow">
+            <span className="block mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               profesional
             </span>
           </h1>
 
+          {/* Beta subheadline */}
+          <p className="text-lg text-muted-foreground mb-2">
+            ✨ <span className="font-semibold text-primary">Join the Next Hottest Startup</span> ✨
+          </p>
+
           {/* Subheadline */}
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
-            Crea tu perfil en <span className="font-semibold text-foreground">2 minutos</span>, 
-            obtén tu link <span className="font-mono bg-primary/10 px-2 py-1 rounded text-primary">bookeasy.mx/@tuusername</span> 
+            Crea tu perfil <span className="font-bold text-accent">GRATIS</span> en 2 minutos, 
+            obtén tu link <span className="font-mono bg-primary/15 px-3 py-1 rounded-lg text-primary font-semibold">bookeasy.mx/@tuusername</span> 
             y empieza a recibir reservas al instante
           </p>
 

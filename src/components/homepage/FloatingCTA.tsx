@@ -45,10 +45,10 @@ const FloatingCTA = () => {
         </button>
         
         <div className="text-sm text-foreground font-medium mb-2">
-          ¿Listo para empezar?
+          🚀 Beta Testing - ¡GRATIS!
         </div>
         <div className="text-xs text-muted-foreground mb-4">
-          Crea tu perfil en menos de 2 minutos
+          Crea tu perfil profesional en 2 minutos
         </div>
         
         <Button 

@@ -30,7 +30,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
-              <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg animate-glow">
+              <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg">
                 <Calendar className="h-6 w-6" />
               </div>
               <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
@@ -136,11 +136,11 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-float"></div>
         <div className="container mx-auto text-center relative z-10">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            ¿Listo para obtener tu link profesional?
+            ¿Listo para tu link profesional GRATIS?
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed">
-            Únete a miles de profesionales que ya confían en Bookeasy para gestionar sus reservas. 
-            <span className="block mt-2 font-semibold">Tu éxito está a un click de distancia.</span>
+            Únete al beta testing y obtén acceso gratuito de por vida. 
+            <span className="block mt-2 font-semibold">🚀 Sé parte de la próxima revolución en reservas</span>
           </p>
           <Button 
             size="lg" 

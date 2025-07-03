@@ -45,12 +45,12 @@ const SocialProofSection = () => {
               ))}
             </div>
             <span className="text-lg font-semibold text-foreground">4.9/5</span>
-            <span className="text-muted-foreground">de 1,200+ reseñas</span>
+            <span className="text-muted-foreground">de beta feedback</span>
           </div>
           
           <p className="text-muted-foreground">
-            Únete a <span className="font-semibold text-foreground">2,500+ profesionales</span> que 
-            ya confían en Bookeasy para gestionar sus reservas
+            Únete a <span className="font-semibold text-primary">150+ beta testers</span> que 
+            ya están probando la próxima revolución en reservas
           </p>
         </div>
 

@@ -59,8 +59,8 @@ const ModernFeaturesSection = () => {
     <section className="py-16 px-4">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">
-            Características Premium - Gratis
+          <Badge className="mb-4 accent-gradient text-accent-foreground border-0">
+            ✨ Características Premium - GRATIS en Beta ✨
           </Badge>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
             Todo lo que necesitas para crecer
@@ -83,8 +83,8 @@ const ModernFeaturesSection = () => {
             >
               <CardHeader className="pb-4">
                 <div className={`${
-                  feature.color === 'primary' ? 'gradient-primary' : 'gradient-accent'
-                } text-primary-foreground p-4 rounded-2xl w-fit mb-4 shadow-lg animate-glow`}>
+                  feature.color === 'primary' ? 'gradient-primary' : 'accent-gradient'
+                } text-primary-foreground p-4 rounded-2xl w-fit mb-4 shadow-lg`}>
                   <feature.icon className="h-8 w-8" />
                 </div>
                 <CardTitle className="text-foreground text-xl">{feature.title}</CardTitle>
