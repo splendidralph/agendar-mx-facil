@@ -10,6 +10,8 @@ import 'react-phone-number-input/style.css';
 import { StepNavigation } from '../StepNavigation';
 import { OnboardingData } from '@/types/onboarding';
 import { supabase } from '@/integrations/supabase/client';
+import { validateInstagramHandle, validatePostalCode, sanitizeInput } from '@/utils/securityValidation';
+import { toast } from 'sonner';
 
 interface ContactStepProps {
   data: OnboardingData;
@@ -135,21 +137,48 @@ export const ContactStep = ({
   };
 
   const handleChange = (field: keyof typeof formData, value: string) => {
-    const newData = { ...formData, [field]: value };
+    // Sanitize input to prevent XSS
+    let sanitizedValue = sanitizeInput(value, 255);
+    
+    // Additional validation based on field type
+    if (field === 'postalCode' && sanitizedValue && !validatePostalCode(sanitizedValue)) {
+      toast.error('El código postal debe tener 5 dígitos');
+      return;
+    }
+    
+    const newData = { ...formData, [field]: sanitizedValue };
     setFormData(newData);
     onUpdate(newData);
     
     if (field === 'whatsappPhone') {
-      validatePhoneNumber(value);
+      validatePhoneNumber(sanitizedValue);
     }
   };
 
   const handleInstagramChange = (value: string) => {
     const cleanValue = value.replace('@', '');
+    
+    // Validate Instagram handle format
+    if (cleanValue && !validateInstagramHandle(cleanValue)) {
+      toast.error('El Instagram solo puede contener letras, números, puntos y guiones bajos');
+      return;
+    }
+    
     handleChange('instagramHandle', cleanValue);
   };
 
   const handleNext = async () => {
+    // Final validation before proceeding
+    if (formData.postalCode && !validatePostalCode(formData.postalCode)) {
+      toast.error('El código postal debe tener 5 dígitos');
+      return;
+    }
+    
+    if (formData.instagramHandle && !validateInstagramHandle(formData.instagramHandle)) {
+      toast.error('El formato del Instagram no es válido');
+      return;
+    }
+    
     await onNext(formData);
   };
 

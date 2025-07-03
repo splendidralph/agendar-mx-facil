@@ -584,6 +584,16 @@ export type Database = {
         Args: { lat1: number; lng1: number; lat2: number; lng2: number }
         Returns: number
       }
+      check_booking_conflicts: {
+        Args: {
+          provider_id_param: string
+          service_id_param: string
+          booking_date_param: string
+          booking_time_param: string
+          duration_minutes_param: number
+        }
+        Returns: boolean
+      }
       log_security_event: {
         Args: { event_type: string; event_data?: Json; target_user_id?: string }
         Returns: undefined

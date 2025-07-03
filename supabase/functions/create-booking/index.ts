@@ -37,13 +37,49 @@ serve(async (req) => {
       isGuest 
     })
 
-    // Validate required fields
+    // Enhanced validation for required fields
     if (!providerId || !serviceId || !bookingDate || !bookingTime) {
       console.error('Missing required booking fields')
+      await supabase.rpc('log_security_event', {
+        event_type: 'booking_creation_failed',
+        event_data: { reason: 'missing_fields', providerId, serviceId }
+      })
       return new Response(
         JSON.stringify({ 
           success: false, 
           error: 'Missing required booking information' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400 
+        }
+      )
+    }
+
+    // Validate booking date is not in the past
+    const today = new Date().toISOString().split('T')[0]
+    if (bookingDate < today) {
+      console.error('Booking date is in the past')
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Cannot book appointments in the past' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400 
+        }
+      )
+    }
+
+    // Validate booking time format
+    const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
+    if (!timeRegex.test(bookingTime)) {
+      console.error('Invalid booking time format')
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Invalid time format' 
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -66,11 +102,57 @@ serve(async (req) => {
       )
     }
 
-    // Get the service details to calculate total price
+    // Validate guest data format if provided
+    if (isGuest && clientData) {
+      if (clientData.name && (clientData.name.length < 2 || clientData.name.length > 100)) {
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Invalid name length' 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 400 
+          }
+        )
+      }
+
+      const phoneRegex = /^\+?[1-9]\d{1,14}$/
+      if (clientData.phone && !phoneRegex.test(clientData.phone)) {
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Invalid phone number format' 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 400 
+          }
+        )
+      }
+
+      const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+      if (clientData.email && !emailRegex.test(clientData.email)) {
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Invalid email format' 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 400 
+          }
+        )
+      }
+    }
+
+    // Get the service details and verify it belongs to provider
     const { data: service, error: serviceError } = await supabase
       .from('services')
-      .select('price')
+      .select('price, duration_minutes, provider_id')
       .eq('id', serviceId)
+      .eq('provider_id', providerId)
+      .eq('is_active', true)
       .single()
 
     if (serviceError) {
@@ -99,6 +181,48 @@ serve(async (req) => {
           clientId = user.id
         }
       }
+    }
+
+    // Check for booking conflicts
+    const { data: conflictCheck, error: conflictError } = await supabase
+      .rpc('check_booking_conflicts', {
+        provider_id_param: providerId,
+        service_id_param: serviceId,
+        booking_date_param: bookingDate,
+        booking_time_param: bookingTime,
+        duration_minutes_param: service.duration_minutes
+      })
+
+    if (conflictError) {
+      console.error('Error checking booking conflicts:', conflictError)
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Unable to verify booking availability' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500 
+        }
+      )
+    }
+
+    if (!conflictCheck) {
+      console.log('Booking time conflict detected')
+      await supabase.rpc('log_security_event', {
+        event_type: 'booking_conflict_attempt',
+        event_data: { providerId, serviceId, bookingDate, bookingTime }
+      })
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'This time slot is no longer available' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 409 
+        }
+      )
     }
 
     console.log('Creating booking record with clientId:', clientId)
