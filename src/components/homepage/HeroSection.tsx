@@ -57,7 +57,7 @@ const HeroSection = () => {
           <div className="flex justify-center">
             <Button 
               size="lg" 
-              className="bg-white text-primary hover:bg-white/90 shadow-xl px-10 py-6 text-xl font-bold group border-0 hover-lift"
+              className="bg-white text-slate-900 hover:bg-white/90 shadow-xl px-10 py-6 text-xl font-bold group border-0 hover-lift"
               onClick={handleGetStarted}
             >
               {user ? 'Ir al Dashboard' : 'Crear Mi Perfil - Gratis'}

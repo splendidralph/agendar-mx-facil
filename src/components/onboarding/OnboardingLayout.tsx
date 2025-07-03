@@ -36,14 +36,14 @@ export const OnboardingLayout = ({
   return (
     <div className="min-h-screen gradient-hero">
       {/* Header */}
-      <header className="glassmorphism border-b border-white/20 sticky top-0 z-50">
+      <header className="bg-white/10 backdrop-blur-lg border-b border-white/30 sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="bg-white/20 backdrop-blur-sm text-white p-3 rounded-2xl shadow-xl">
-                <Calendar className="h-7 w-7" />
+              <div className="bg-white/40 backdrop-blur-md text-white p-3 rounded-2xl shadow-xl border border-white/20">
+                <Calendar className="h-7 w-7 drop-shadow-sm" />
               </div>
-              <span className="text-3xl font-bold text-white font-poppins tracking-tight">Bookeasy.mx</span>
+              <span className="text-3xl font-bold text-white font-poppins tracking-tight drop-shadow-sm">Bookeasy.mx</span>
             </div>
             
             {canGoBack && onGoBack && (
