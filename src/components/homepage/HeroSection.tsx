@@ -25,22 +25,6 @@ const HeroSection = () => {
     <section className="relative py-20 px-4 overflow-hidden">
       <div className="absolute inset-0 gradient-hero"></div>
       
-      {/* Floating elements */}
-      <div className="absolute top-20 left-10 hidden lg:block">
-        <div className="glassmorphism rounded-2xl p-4 animate-float">
-          <Calendar className="h-8 w-8 text-primary" />
-        </div>
-      </div>
-      <div className="absolute top-32 right-20 hidden lg:block">
-        <div className="glassmorphism rounded-2xl p-4 animate-float" style={{ animationDelay: '1s' }}>
-          <Phone className="h-8 w-8 text-accent" />
-        </div>
-      </div>
-      <div className="absolute bottom-20 left-20 hidden lg:block">
-        <div className="glassmorphism rounded-2xl p-4 animate-float" style={{ animationDelay: '2s' }}>
-          <Instagram className="h-8 w-8 text-primary" />
-        </div>
-      </div>
 
       <div className="container mx-auto text-center relative z-10">
         <div className="max-w-5xl mx-auto">
