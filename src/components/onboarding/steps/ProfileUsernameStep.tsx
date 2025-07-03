@@ -162,7 +162,7 @@ export const ProfileUsernameStep = ({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-foreground mb-4">
+        <h3 className="text-xl font-bold text-foreground mb-6 font-poppins">
           Información Básica
         </h3>
         

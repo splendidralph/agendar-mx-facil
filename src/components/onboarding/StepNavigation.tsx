@@ -21,15 +21,15 @@ export const StepNavigation = ({
   previousLabel = 'Anterior'
 }: StepNavigationProps) => {
   return (
-    <div className="flex justify-between items-center pt-4 border-t border-border/50">
+    <div className="flex justify-between items-center pt-6 border-t border-border/20">
       {canGoBack && onPrevious ? (
         <Button
           onClick={onPrevious}
           variant="outline"
-          className="border-border text-foreground"
+          size="lg"
           disabled={loading}
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-5 w-5 mr-2" />
           {previousLabel}
         </Button>
       ) : (
@@ -39,17 +39,19 @@ export const StepNavigation = ({
       <Button
         onClick={onNext}
         disabled={!canProceed || loading}
-        className="btn-primary min-w-[120px]"
+        variant="accent"
+        size="lg"
+        className="min-w-[140px] font-semibold"
       >
         {loading ? (
           <>
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
             Guardando...
           </>
         ) : (
           <>
             {nextLabel}
-            <ArrowRight className="h-4 w-4 ml-2" />
+            <ArrowRight className="h-5 w-5 ml-2" />
           </>
         )}
       </Button>

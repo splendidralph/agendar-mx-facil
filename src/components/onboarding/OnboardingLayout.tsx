@@ -34,16 +34,16 @@ export const OnboardingLayout = ({
   const progressPercentage = (currentStep / totalSteps) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
+    <div className="min-h-screen gradient-hero">
       {/* Header */}
-      <header className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <header className="glassmorphism border-b border-white/20 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg">
-                <Calendar className="h-6 w-6" />
+            <div className="flex items-center space-x-4">
+              <div className="bg-white/20 backdrop-blur-sm text-white p-3 rounded-2xl shadow-xl">
+                <Calendar className="h-7 w-7" />
               </div>
-              <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
+              <span className="text-3xl font-bold text-white font-poppins tracking-tight">Bookeasy.mx</span>
             </div>
             
             {canGoBack && onGoBack && (
@@ -51,9 +51,9 @@ export const OnboardingLayout = ({
                 onClick={onGoBack}
                 variant="ghost"
                 size="sm"
-                className="md:hidden"
+                className="md:hidden text-white hover:bg-white/20"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-5 w-5" />
               </Button>
             )}
           </div>
@@ -63,43 +63,61 @@ export const OnboardingLayout = ({
       <div className="container mx-auto px-4 py-6 md:py-8">
         <div className="max-w-2xl mx-auto">
           {/* Progress Section */}
-          <div className="mb-6 md:mb-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2 text-center">
-              Configura tu Perfil
-            </h1>
-            <p className="text-muted-foreground text-center mb-4 md:mb-6">
-              Paso {currentStep} de {totalSteps}: {stepTitle}
-            </p>
+          <div className="mb-8 md:mb-12">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 font-poppins">
+                Configura tu Perfil
+              </h1>
+              <p className="text-white/80 text-lg mb-6">
+                Paso {currentStep} de {totalSteps}: {stepTitle}
+              </p>
+            </div>
             
-            <div className="space-y-2">
-              <Progress value={progressPercentage} className="h-2 md:h-3" />
+            <div className="space-y-6">
+              {/* Enhanced Progress Bar */}
+              <div className="relative">
+                <Progress 
+                  value={progressPercentage} 
+                  className="h-3 md:h-4 bg-white/20 border-0 shadow-lg" 
+                />
+                <div className="absolute top-0 left-0 right-0 h-full gradient-accent rounded-full opacity-20" />
+              </div>
               
-              {/* Step indicators - hidden on mobile, shown on desktop */}
-              <div className="hidden md:flex justify-between text-sm text-muted-foreground">
+              {/* Enhanced Step indicators - hidden on mobile, shown on desktop */}
+              <div className="hidden md:flex justify-between text-sm">
                 {STEP_NAMES.map((step, index) => (
-                  <span
+                  <div
                     key={step}
-                    className={`text-xs md:text-sm ${
+                    className={`flex flex-col items-center space-y-2 ${
                       index + 1 <= currentStep
-                        ? 'text-primary font-medium'
-                        : 'text-muted-foreground'
+                        ? 'text-white font-semibold'
+                        : 'text-white/60'
                     }`}
                   >
-                    {step}
-                  </span>
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 smooth-transition ${
+                        index + 1 <= currentStep
+                          ? 'bg-white text-primary border-white shadow-lg scale-110'
+                          : 'bg-white/20 text-white/80 border-white/40'
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                    <span className="text-xs text-center max-w-20">{step}</span>
+                  </div>
                 ))}
               </div>
               
-              {/* Mobile step indicator */}
+              {/* Enhanced Mobile step indicator */}
               <div className="flex md:hidden justify-center">
-                <div className="flex space-x-2">
+                <div className="flex space-x-3">
                   {Array.from({ length: totalSteps }, (_, index) => (
                     <div
                       key={index}
-                      className={`w-2 h-2 rounded-full ${
+                      className={`w-3 h-3 rounded-full smooth-transition ${
                         index + 1 <= currentStep
-                          ? 'bg-primary'
-                          : 'bg-muted'
+                          ? 'bg-white shadow-lg scale-125'
+                          : 'bg-white/30'
                       }`}
                     />
                   ))}
@@ -108,14 +126,14 @@ export const OnboardingLayout = ({
             </div>
           </div>
 
-          {/* Step Content */}
-          <Card className="shadow-lg border-border/50">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-center text-foreground text-lg md:text-xl">
+          {/* Enhanced Step Content */}
+          <Card className="glassmorphism shadow-2xl border-white/20 backdrop-blur-lg">
+            <CardHeader className="pb-6">
+              <CardTitle className="text-center text-foreground text-xl md:text-2xl font-poppins font-bold">
                 {stepTitle}
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-4 md:px-6 pb-6">
+            <CardContent className="px-6 md:px-8 pb-8">
               {loading ? (
                 <div className="space-y-4">
                   <Skeleton className="h-4 w-full" />
