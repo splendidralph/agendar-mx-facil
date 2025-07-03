@@ -190,3 +190,17 @@
 .btn-secondary {
   @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 smooth-transition;
 }
+
+/* Mobile optimizations */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Responsive font sizing */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

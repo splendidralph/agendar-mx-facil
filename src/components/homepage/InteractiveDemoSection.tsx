@@ -17,7 +17,7 @@ const InteractiveDemoSection = () => {
       title: "Perfil Profesional",
       description: "Así se ve tu perfil para tus clientes",
       content: (
-        <div className="bg-card rounded-2xl p-6 border border-border/50 max-w-sm mx-auto">
+        <div className="bg-card rounded-2xl p-4 md:p-6 border border-border/50 max-w-sm mx-auto">
           <div className="text-center mb-6">
             <Avatar className="h-20 w-20 mx-auto mb-4">
               <AvatarImage src="" />
@@ -63,7 +63,7 @@ const InteractiveDemoSection = () => {
       title: "Sistema de Reservas",
       description: "Proceso simple para tus clientes",
       content: (
-        <div className="bg-card rounded-2xl p-6 border border-border/50 max-w-sm mx-auto">
+        <div className="bg-card rounded-2xl p-4 md:p-6 border border-border/50 max-w-sm mx-auto">
           <h3 className="text-lg font-semibold mb-4 text-foreground">Selecciona tu servicio</h3>
           
           <div className="space-y-3 mb-6">
@@ -120,7 +120,7 @@ const InteractiveDemoSection = () => {
       title: "Calendario Inteligente",
       description: "Horarios disponibles en tiempo real",
       content: (
-        <div className="bg-card rounded-2xl p-6 border border-border/50 max-w-sm mx-auto">
+        <div className="bg-card rounded-2xl p-4 md:p-6 border border-border/50 max-w-sm mx-auto">
           <h3 className="text-lg font-semibold mb-4 text-foreground">Horarios disponibles</h3>
           
           <div className="mb-4">
@@ -129,16 +129,16 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '09:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('09:00')}
               >
                 09:00
               </Button>
-              <Button variant="outline" size="sm" className="text-xs opacity-50" disabled>10:30</Button>
+              <Button variant="outline" size="sm" className="text-xs opacity-50 h-10" disabled>10:30</Button>
               <Button 
                 variant={selectedTime === '12:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('12:00')}
               >
                 12:00
@@ -146,7 +146,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '14:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('14:00')}
               >
                 14:00
@@ -154,7 +154,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '15:30' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('15:30')}
               >
                 15:30
@@ -162,7 +162,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '17:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('17:00')}
               >
                 17:00
@@ -176,7 +176,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '10:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('10:00')}
               >
                 10:00
@@ -184,16 +184,16 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '11:30' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('11:30')}
               >
                 11:30
               </Button>
-              <Button variant="outline" size="sm" className="text-xs opacity-50" disabled>13:00</Button>
+              <Button variant="outline" size="sm" className="text-xs opacity-50 h-10" disabled>13:00</Button>
               <Button 
                 variant={selectedTime === '14:30' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('14:30')}
               >
                 14:30
@@ -201,7 +201,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '16:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('16:00')}
               >
                 16:00
@@ -209,7 +209,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '17:30' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs"
+                className="text-xs h-10 touch-manipulation"
                 onClick={() => setSelectedTime('17:30')}
               >
                 17:30
@@ -239,7 +239,7 @@ const InteractiveDemoSection = () => {
       title: "¡Reserva Confirmada!",
       description: "Tu cita ha sido agendada exitosamente",
       content: (
-        <div className="bg-card rounded-2xl p-6 border border-border/50 max-w-sm mx-auto">
+        <div className="bg-card rounded-2xl p-4 md:p-6 border border-border/50 max-w-sm mx-auto">
           <div className="text-center mb-6">
             <div className="bg-green-500 text-white p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <Check className="h-8 w-8" />
@@ -316,50 +316,52 @@ const InteractiveDemoSection = () => {
   };
 
   return (
-    <section className="py-16 px-4 gradient-hero-overlay">
+    <section className="py-12 md:py-16 px-4 gradient-hero-overlay">
       <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground mb-4 px-2">
             Experimenta la diferencia
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto px-2">
             Ve cómo tus clientes interactúan con tu perfil profesional. Simple, rápido y efectivo.
           </p>
         </div>
 
         <div className="max-w-5xl mx-auto">
           {/* Demo tabs */}
-          <div className="flex justify-center mb-8 border-b border-border">
-            {Object.entries(demoProfiles).filter(([key]) => key !== 'confirmation').map(([key, demo]) => (
-              <button
-                key={key}
-                onClick={() => {
-                  setActiveDemo(key);
-                  if (key === 'profile') {
-                    setSelectedService(null);
-                    setSelectedTime(null);
-                    setShowConfirmation(false);
-                  }
-                }}
-                className={`px-6 py-3 font-medium transition-colors relative ${
-                  activeDemo === key 
-                    ? 'text-primary border-b-2 border-primary' 
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {demo.title}
-                {key === 'booking' && selectedService && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    1
-                  </span>
-                )}
-                {key === 'schedule' && selectedTime && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    1
-                  </span>
-                )}
-              </button>
-            ))}
+          <div className="flex justify-center mb-6 md:mb-8 border-b border-border overflow-x-auto">
+            <div className="flex min-w-max px-4 md:px-0">
+              {Object.entries(demoProfiles).filter(([key]) => key !== 'confirmation').map(([key, demo]) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    setActiveDemo(key);
+                    if (key === 'profile') {
+                      setSelectedService(null);
+                      setSelectedTime(null);
+                      setShowConfirmation(false);
+                    }
+                  }}
+                  className={`px-3 md:px-6 py-3 font-medium transition-colors relative whitespace-nowrap text-sm md:text-base touch-manipulation ${
+                    activeDemo === key 
+                      ? 'text-primary border-b-2 border-primary' 
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {demo.title}
+                  {key === 'booking' && selectedService && (
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      1
+                    </span>
+                  )}
+                  {key === 'schedule' && selectedTime && (
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      1
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Demo content */}
@@ -377,8 +379,8 @@ const InteractiveDemoSection = () => {
           </div>
 
           {/* CTA */}
-          <div className="text-center mt-12">
-            <p className="text-muted-foreground mb-4">
+          <div className="text-center mt-8 md:mt-12 px-4">
+            <p className="text-muted-foreground mb-4 text-sm md:text-base">
               {showConfirmation 
                 ? "¡Así de fácil es recibir reservas con Bookeasy!" 
                 : "¿Listo para crear tu propio perfil profesional?"
@@ -386,7 +388,7 @@ const InteractiveDemoSection = () => {
             </p>
             <Button 
               size="lg" 
-              className="btn-accent"
+              className="btn-accent w-full max-w-xs md:w-auto touch-manipulation"
               onClick={() => {
                 if (!showConfirmation) {
                   setActiveDemo('profile');
