@@ -150,10 +150,10 @@ const Index = () => {
             {t('finalCta.description')}
             <span className="block mt-2 font-semibold">{t('finalCta.subtitle')}</span>
           </p>
-          <div className="px-4">
+          <div className="flex justify-center px-4">
             <Button 
               size="lg" 
-              className="accent-gradient text-white hover:opacity-90 px-6 py-4 md:px-8 md:py-6 text-base md:text-lg font-semibold shadow-xl hover-lift w-full max-w-md md:w-auto touch-manipulation"
+              className="accent-gradient text-white hover:opacity-90 text-base md:text-lg font-semibold shadow-xl hover-lift touch-manipulation"
               onClick={handleGetStarted}
             >
               {t('finalCta.button')}

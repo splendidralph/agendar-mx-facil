@@ -59,11 +59,11 @@ const HeroSection = () => {
           <div className="flex justify-center px-4">
             <Button 
               size="lg" 
-              className="accent-gradient text-white hover:opacity-90 shadow-xl px-6 py-4 md:px-10 md:py-6 text-lg md:text-xl font-bold group border-0 hover-lift w-full max-w-sm md:w-auto"
+              className="accent-gradient text-white hover:opacity-90 shadow-xl text-base md:text-lg font-bold group border-0 hover-lift"
               onClick={handleGetStarted}
             >
-              <span className="text-center flex-1">{user ? t('hero.cta.dashboard') : t('hero.cta.create')}</span>
-              <ArrowRight className="h-5 w-5 md:h-6 md:w-6 ml-2 md:ml-3 group-hover:translate-x-1 transition-transform flex-shrink-0" />
+              {user ? t('hero.cta.dashboard') : t('hero.cta.create')}
+              <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>
