@@ -20,6 +20,8 @@ interface Provider {
   instagram_handle: string;
   username: string;
   phone: string;
+  colonia?: string;
+  postal_code?: string;
 }
 
 interface Service {
@@ -47,7 +49,9 @@ const Booking = () => {
     name: "",
     phone: "",
     email: "",
-    notes: ""
+    notes: "",
+    colonia: "",
+    postalCode: ""
   });
 
   const timeSlots = [
@@ -320,15 +324,15 @@ const Booking = () => {
                         @{provider.instagram_handle}
                       </div>
                     )}
-                    {provider.address && (
+                     {(provider.colonia || provider.address) && (
                       <div className="flex items-center opacity-90 text-sm">
                         <MapPin className="h-4 w-4 mr-2" />
-                        {provider.address}
+                        {provider.colonia || provider.address}
                       </div>
                     )}
                     <div className="flex items-center opacity-90 text-sm">
                       <Star className="h-4 w-4 mr-2 fill-current" />
-                      Nuevo en BookEasy
+                      {provider.colonia ? `Profesional en ${provider.colonia}` : 'Nuevo en BookEasy'}
                     </div>
                   </div>
                 </div>
@@ -470,17 +474,28 @@ const Booking = () => {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="notes" className="text-foreground font-semibold">Notas adicionales (opcional)</Label>
-                    <Textarea
-                      id="notes"
-                      value={clientData.notes}
-                      onChange={(e) => setClientData(prev => ({ ...prev, notes: e.target.value }))}
-                      className="border-border focus:border-primary mt-2"
-                      placeholder="Cualquier información adicional..."
-                      rows={3}
-                    />
-                  </div>
+                   <div>
+                     <Label htmlFor="client-colonia" className="text-foreground font-semibold">Tu colonia (opcional)</Label>
+                     <Input
+                       id="client-colonia"
+                       value={clientData.colonia}
+                       onChange={(e) => setClientData(prev => ({ ...prev, colonia: e.target.value }))}
+                       className="border-border focus:border-primary mt-2"
+                       placeholder="Ej. Roma Norte"
+                     />
+                   </div>
+
+                   <div>
+                     <Label htmlFor="notes" className="text-foreground font-semibold">Notas adicionales (opcional)</Label>
+                     <Textarea
+                       id="notes"
+                       value={clientData.notes}
+                       onChange={(e) => setClientData(prev => ({ ...prev, notes: e.target.value }))}
+                       className="border-border focus:border-primary mt-2"
+                       placeholder="Cualquier información adicional..."
+                       rows={3}
+                     />
+                   </div>
 
                   <Button 
                     type="submit" 
