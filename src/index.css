@@ -25,7 +25,7 @@
     --muted: 214 15% 94%;
     --muted-foreground: 220 8% 46%;
 
-    --accent: 25 95% 53%;
+    --accent: 142 71% 49%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -66,7 +66,7 @@
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
 
-    --accent: 12 87% 64%;
+    --accent: 142 71% 49%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -107,7 +107,7 @@
 }
 
 .gradient-accent {
-  background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(15 85% 58%) 100%);
+  background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(174 75% 31%) 100%);
 }
 
 .gradient-secondary {
@@ -133,7 +133,7 @@
 }
 
 .accent-gradient {
-  background: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(25 95% 60%) 100%);
+  background: linear-gradient(135deg, hsl(142 71% 49%) 0%, hsl(142 51% 65%) 100%);
 }
 
 .floating-cta {
