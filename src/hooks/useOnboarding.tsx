@@ -1,3 +1,3 @@
 
-// Simple re-export of the new hook
-export { useSimpleOnboarding as useOnboarding } from './useSimpleOnboarding';
+// Updated to use the new mobile-first onboarding flow
+export { useOnboardingFlow as useOnboarding } from './useOnboardingFlow';
