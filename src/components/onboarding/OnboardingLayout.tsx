@@ -36,15 +36,18 @@ export const OnboardingLayout = ({
   return (
     <div className="min-h-screen gradient-hero">
       {/* Header */}
-      <header className="bg-white/10 backdrop-blur-lg border-b border-white/30 sticky top-0 z-50 shadow-lg">
+      <header className="bg-white/25 backdrop-blur-xl border-b border-white/40 sticky top-0 z-50 shadow-xl">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="bg-white/40 backdrop-blur-md text-white p-3 rounded-2xl shadow-xl border border-white/20">
+            <button 
+              onClick={() => window.location.href = '/'}
+              className="flex items-center space-x-4 hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              <div className="bg-white/60 backdrop-blur-md text-white p-3 rounded-2xl shadow-xl border-2 border-white/40">
                 <Calendar className="h-7 w-7 drop-shadow-sm" />
               </div>
               <span className="text-3xl font-bold text-white font-poppins tracking-tight drop-shadow-sm">Bookeasy.mx</span>
-            </div>
+            </button>
             
             {canGoBack && onGoBack && (
               <Button

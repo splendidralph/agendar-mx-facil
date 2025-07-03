@@ -142,7 +142,7 @@ const Index = () => {
           </p>
           <Button 
             size="lg" 
-            className="bg-white text-slate-900 hover:bg-white/90 px-8 py-6 text-lg font-semibold shadow-xl hover-lift"
+            className="accent-gradient text-white hover:opacity-90 px-8 py-6 text-lg font-semibold shadow-xl hover-lift"
             onClick={handleGetStarted}
           >
             Crear Mi Perfil - Completamente Gratis
