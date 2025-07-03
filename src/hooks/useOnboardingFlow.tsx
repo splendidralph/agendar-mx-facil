@@ -102,20 +102,13 @@ export const useOnboardingFlow = () => {
     const errors: ValidationError[] = [];
     
     switch (step) {
-      case 1: // Profile Setup
+      case 1: // Profile + Username Setup
         if (!data.businessName?.trim()) {
           errors.push({ field: 'businessName', message: 'El nombre del negocio es requerido' });
         }
         if (!data.category) {
           errors.push({ field: 'category', message: 'La categoría es requerida' });
         }
-        break;
-        
-      case 2: // Contact (optional)
-        // All fields are optional, no validation needed
-        break;
-        
-      case 3: // Username
         if (!data.username?.trim()) {
           errors.push({ field: 'username', message: 'El username es requerido' });
         } else if (data.username.length < 3) {
@@ -123,11 +116,15 @@ export const useOnboardingFlow = () => {
         }
         break;
         
-      case 4: // Services
+      case 2: // Services
         const validServices = data.services.filter(s => s.name?.trim() && s.price > 0);
         if (validServices.length === 0) {
           errors.push({ field: 'services', message: 'Debes agregar al menos un servicio válido' });
         }
+        break;
+        
+      case 3: // Contact (optional)
+        // All fields are optional, no validation needed
         break;
     }
     
@@ -189,13 +186,13 @@ export const useOnboardingFlow = () => {
       const finalData = { ...state.data, ...additionalData };
       const providerId = await saveProviderData(user.id, finalData, state.currentStep);
 
-      // Save services if we're on step 4 or later
-      if (state.currentStep >= 4 && finalData.services.length > 0 && providerId) {
+      // Save services if we're on step 2 or later
+      if (state.currentStep >= 2 && finalData.services.length > 0 && providerId) {
         await saveServices(providerId, finalData.services);
       }
 
       // Move to next step
-      if (state.currentStep < 5) {
+      if (state.currentStep < 4) {
         const nextStepNumber = state.currentStep + 1;
         setState(prev => ({
           ...prev,

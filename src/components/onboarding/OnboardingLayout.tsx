@@ -16,10 +16,9 @@ interface OnboardingLayoutProps {
 }
 
 const STEP_NAMES = [
-  'Perfil',
-  'Contacto', 
-  'Username',
+  'Perfil & Username',
   'Servicios',
+  'Contacto',
   'Vista Previa'
 ];
 
