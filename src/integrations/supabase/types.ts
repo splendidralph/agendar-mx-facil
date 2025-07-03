@@ -144,6 +144,36 @@ export type Database = {
           },
         ]
       }
+      delegaciones: {
+        Row: {
+          city: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          state: string
+          updated_at: string
+        }
+        Insert: {
+          city?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          state?: string
+          updated_at?: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          state?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       guest_bookings: {
         Row: {
           booking_id: string
@@ -184,39 +214,59 @@ export type Database = {
           city: string
           colonia: string | null
           created_at: string | null
+          delegacion_id: string | null
+          group_label: string | null
           id: string
+          is_anchor: boolean | null
           latitude: number | null
           longitude: number | null
           municipality: string | null
           name: string
           postal_code: string | null
+          professional_count: number | null
           state: string
         }
         Insert: {
           city: string
           colonia?: string | null
           created_at?: string | null
+          delegacion_id?: string | null
+          group_label?: string | null
           id?: string
+          is_anchor?: boolean | null
           latitude?: number | null
           longitude?: number | null
           municipality?: string | null
           name: string
           postal_code?: string | null
+          professional_count?: number | null
           state?: string
         }
         Update: {
           city?: string
           colonia?: string | null
           created_at?: string | null
+          delegacion_id?: string | null
+          group_label?: string | null
           id?: string
+          is_anchor?: boolean | null
           latitude?: number | null
           longitude?: number | null
           municipality?: string | null
           name?: string
           postal_code?: string | null
+          professional_count?: number | null
           state?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "locations_delegacion_id_fkey"
+            columns: ["delegacion_id"]
+            isOneToOne: false
+            referencedRelation: "delegaciones"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notification_preferences: {
         Row: {

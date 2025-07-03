@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,30 +11,87 @@ interface LocationCaptureProps {
   className?: string;
 }
 
-const mexicoCityColonias = [
-  { name: "Roma Norte", postalCode: "06700" },
-  { name: "Condesa", postalCode: "06140" },
-  { name: "Polanco", postalCode: "11560" },
-  { name: "Coyoacán Centro", postalCode: "04000" },
-  { name: "San Ángel", postalCode: "01000" },
-  { name: "Santa Fe", postalCode: "01210" },
-  { name: "Del Valle", postalCode: "03100" },
-  { name: "Narvarte", postalCode: "03020" },
-  { name: "Doctores", postalCode: "06720" },
-  { name: "Escandón", postalCode: "11800" }
-];
+import { supabase } from '@/integrations/supabase/client';
 
 const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps) => {
+  const [selectedDelegacion, setSelectedDelegacion] = useState('');
   const [selectedColonia, setSelectedColonia] = useState('');
   const [customColonia, setCustomColonia] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [useCustom, setUseCustom] = useState(false);
+  
+  const [delegaciones, setDelegaciones] = useState<Array<{id: string, name: string}>>([]);
+  const [coloniaGroups, setColoniaGroups] = useState<Array<{id: string, name: string, colonia: string, postal_code: string, group_label: string, professional_count: number}>>([]);
+  const [loadingDelegaciones, setLoadingDelegaciones] = useState(false);
+  const [loadingColonias, setLoadingColonias] = useState(false);
+
+  // Load delegaciones on mount
+  useEffect(() => {
+    const loadDelegaciones = async () => {
+      setLoadingDelegaciones(true);
+      try {
+        const { data: delegacionData, error } = await supabase
+          .from('delegaciones')
+          .select('id, name')
+          .eq('is_active', true)
+          .order('name');
+        
+        if (error) throw error;
+        setDelegaciones(delegacionData || []);
+      } catch (error) {
+        console.error('Error loading delegaciones:', error);
+      } finally {
+        setLoadingDelegaciones(false);
+      }
+    };
+    
+    loadDelegaciones();
+  }, []);
+
+  // Load colonias when delegación is selected
+  useEffect(() => {
+    if (!selectedDelegacion) {
+      setColoniaGroups([]);
+      return;
+    }
+
+    const loadColonias = async () => {
+      setLoadingColonias(true);
+      try {
+        const selectedDel = delegaciones.find(d => d.name === selectedDelegacion);
+        if (!selectedDel) return;
+
+        const { data: coloniaData, error } = await supabase
+          .from('locations')
+          .select('id, name, colonia, postal_code, group_label, professional_count')
+          .eq('delegacion_id', selectedDel.id)
+          .not('colonia', 'is', null)
+          .order('group_label, colonia');
+        
+        if (error) throw error;
+        setColoniaGroups(coloniaData || []);
+      } catch (error) {
+        console.error('Error loading colonias:', error);
+      } finally {
+        setLoadingColonias(false);
+      }
+    };
+    
+    loadColonias();
+  }, [selectedDelegacion, delegaciones]);
+
+  const handleDelegacionSelect = (delegacionName: string) => {
+    setSelectedDelegacion(delegacionName);
+    setSelectedColonia('');
+    setPostalCode('');
+    setUseCustom(false);
+  };
 
   const handleColoniaSelect = (coloniaName: string) => {
-    const colonia = mexicoCityColonias.find(c => c.name === coloniaName);
+    const colonia = coloniaGroups.find(c => c.colonia === coloniaName);
     if (colonia) {
       setSelectedColonia(coloniaName);
-      setPostalCode(colonia.postalCode);
+      setPostalCode(colonia.postal_code);
       setUseCustom(false);
     }
   };
@@ -52,7 +109,7 @@ const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps
 
   const isValid = useCustom 
     ? customColonia.trim() && postalCode.trim()
-    : selectedColonia && postalCode;
+    : selectedColonia && postalCode && selectedDelegacion;
 
   return (
     <Card className={`border-border/50 shadow-lg ${className}`}>
@@ -67,20 +124,48 @@ const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <Label className="text-foreground font-semibold">Selecciona tu colonia</Label>
-          <Select value={selectedColonia} onValueChange={handleColoniaSelect} disabled={useCustom}>
+          <Label className="text-foreground font-semibold">Selecciona tu delegación</Label>
+          <Select value={selectedDelegacion} onValueChange={handleDelegacionSelect} disabled={useCustom || loadingDelegaciones}>
             <SelectTrigger className="mt-2 border-border focus:border-primary">
-              <SelectValue placeholder="Elige tu colonia" />
+              <SelectValue placeholder={loadingDelegaciones ? "Cargando..." : "Elige tu delegación"} />
             </SelectTrigger>
             <SelectContent className="bg-card border-border">
-              {mexicoCityColonias.map((colonia) => (
-                <SelectItem key={colonia.name} value={colonia.name}>
-                  {colonia.name}
+              {delegaciones.map((delegacion) => (
+                <SelectItem key={delegacion.id} value={delegacion.name}>
+                  {delegacion.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
+
+        {selectedDelegacion && !useCustom && (
+          <div>
+            <Label className="text-foreground font-semibold">Selecciona tu área/colonia</Label>
+            <Select value={selectedColonia} onValueChange={handleColoniaSelect} disabled={loadingColonias}>
+              <SelectTrigger className="mt-2 border-border focus:border-primary">
+                <SelectValue placeholder={loadingColonias ? "Cargando..." : "Elige tu colonia"} />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border">
+                {coloniaGroups.map((colonia) => (
+                  <SelectItem key={colonia.id} value={colonia.colonia}>
+                    <div className="flex justify-between items-center w-full">
+                      <span>{colonia.colonia}</span>
+                      {colonia.professional_count > 0 && (
+                        <span className="text-xs text-muted-foreground ml-2">
+                          ({colonia.professional_count} pros)
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {colonia.group_label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         <div className="text-center">
           <Button
@@ -116,7 +201,7 @@ const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps
             id="postal-code"
             value={postalCode}
             onChange={(e) => setPostalCode(e.target.value)}
-            placeholder="Ej. 06700"
+            placeholder="Ej. 22150"
             className="mt-2 border-border focus:border-primary"
             disabled={!useCustom && !!selectedColonia}
           />

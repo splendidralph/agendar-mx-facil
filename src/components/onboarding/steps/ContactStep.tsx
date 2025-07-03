@@ -30,11 +30,16 @@ export const ContactStep = ({
     address: data.address || '',
     instagramHandle: data.instagramHandle || '',
     whatsappPhone: data.whatsappPhone || '',
+    delegacion: data.delegacion || '',
+    delegacionId: data.delegacionId || '',
     colonia: data.colonia || '',
-    postalCode: data.postalCode || ''
+    postalCode: data.postalCode || '',
+    groupLabel: data.groupLabel || ''
   });
   
-  const [colonias, setColonias] = useState<Array<{id: string, name: string, colonia: string, postal_code: string}>>([]);
+  const [delegaciones, setDelegaciones] = useState<Array<{id: string, name: string}>>([]);
+  const [coloniaGroups, setColoniaGroups] = useState<Array<{id: string, name: string, colonia: string, postal_code: string, group_label: string, professional_count: number}>>([]);
+  const [loadingDelegaciones, setLoadingDelegaciones] = useState(false);
   const [loadingColonias, setLoadingColonias] = useState(false);
   
   const [phoneValidation, setPhoneValidation] = useState<{
@@ -47,25 +52,56 @@ export const ContactStep = ({
       address: data.address || '',
       instagramHandle: data.instagramHandle || '',
       whatsappPhone: data.whatsappPhone || '',
+      delegacion: data.delegacion || '',
+      delegacionId: data.delegacionId || '',
       colonia: data.colonia || '',
-      postalCode: data.postalCode || ''
+      postalCode: data.postalCode || '',
+      groupLabel: data.groupLabel || ''
     });
-  }, [data.address, data.instagramHandle, data.whatsappPhone, data.colonia, data.postalCode]);
+  }, [data.address, data.instagramHandle, data.whatsappPhone, data.delegacion, data.delegacionId, data.colonia, data.postalCode, data.groupLabel]);
 
-  // Load colonias on mount
+  // Load delegaciones on mount
   useEffect(() => {
+    const loadDelegaciones = async () => {
+      setLoadingDelegaciones(true);
+      try {
+        const { data: delegacionData, error } = await supabase
+          .from('delegaciones')
+          .select('id, name')
+          .eq('is_active', true)
+          .order('name');
+        
+        if (error) throw error;
+        setDelegaciones(delegacionData || []);
+      } catch (error) {
+        console.error('Error loading delegaciones:', error);
+      } finally {
+        setLoadingDelegaciones(false);
+      }
+    };
+    
+    loadDelegaciones();
+  }, []);
+
+  // Load colonias when delegación is selected
+  useEffect(() => {
+    if (!formData.delegacionId) {
+      setColoniaGroups([]);
+      return;
+    }
+
     const loadColonias = async () => {
       setLoadingColonias(true);
       try {
         const { data: coloniaData, error } = await supabase
           .from('locations')
-          .select('id, name, colonia, postal_code')
+          .select('id, name, colonia, postal_code, group_label, professional_count')
+          .eq('delegacion_id', formData.delegacionId)
           .not('colonia', 'is', null)
-          .order('colonia');
+          .order('group_label, colonia');
         
         if (error) throw error;
-        
-        setColonias(coloniaData || []);
+        setColoniaGroups(coloniaData || []);
       } catch (error) {
         console.error('Error loading colonias:', error);
       } finally {
@@ -74,7 +110,7 @@ export const ContactStep = ({
     };
     
     loadColonias();
-  }, []);
+  }, [formData.delegacionId]);
 
   const validatePhoneNumber = (phoneValue?: string) => {
     if (!phoneValue) {
@@ -121,7 +157,7 @@ export const ContactStep = ({
 
   return (
     <div className="space-y-6">
-      {/* Colonia Selection Card */}
+      {/* Location Selection Card */}
       <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-blue-800 text-base">
@@ -139,32 +175,77 @@ export const ContactStep = ({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="colonia" className="text-blue-800 font-medium text-sm">
-              Selecciona tu Colonia
+            <Label htmlFor="delegacion" className="text-blue-800 font-medium text-sm">
+              Selecciona tu Delegación
             </Label>
             <Select 
-              value={formData.colonia} 
+              value={formData.delegacion} 
               onValueChange={(value) => {
-                const selectedColonia = colonias.find(c => c.colonia === value);
-                handleChange('colonia', value);
-                if (selectedColonia) {
-                  handleChange('postalCode', selectedColonia.postal_code);
+                const selectedDelegacion = delegaciones.find(d => d.name === value);
+                handleChange('delegacion', value);
+                if (selectedDelegacion) {
+                  handleChange('delegacionId', selectedDelegacion.id);
                 }
+                // Clear colonia selection when delegacion changes
+                handleChange('colonia', '');
+                handleChange('postalCode', '');
+                handleChange('groupLabel', '');
               }}
-              disabled={loadingColonias}
+              disabled={loadingDelegaciones}
             >
               <SelectTrigger className="mt-2 border-blue-200 focus:border-blue-400">
-                <SelectValue placeholder={loadingColonias ? "Cargando colonias..." : "Busca tu colonia"} />
+                <SelectValue placeholder={loadingDelegaciones ? "Cargando delegaciones..." : "Elige tu delegación"} />
               </SelectTrigger>
               <SelectContent>
-                {colonias.map((colonia) => (
-                  <SelectItem key={colonia.id} value={colonia.colonia}>
-                    {colonia.colonia} - {colonia.postal_code}
+                {delegaciones.map((delegacion) => (
+                  <SelectItem key={delegacion.id} value={delegacion.name}>
+                    {delegacion.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
+
+          {formData.delegacionId && (
+            <div>
+              <Label htmlFor="colonia" className="text-blue-800 font-medium text-sm">
+                Selecciona tu Área/Colonia
+              </Label>
+              <Select 
+                value={formData.colonia} 
+                onValueChange={(value) => {
+                  const selectedColonia = coloniaGroups.find(c => c.colonia === value);
+                  handleChange('colonia', value);
+                  if (selectedColonia) {
+                    handleChange('postalCode', selectedColonia.postal_code);
+                    handleChange('groupLabel', selectedColonia.group_label);
+                  }
+                }}
+                disabled={loadingColonias}
+              >
+                <SelectTrigger className="mt-2 border-blue-200 focus:border-blue-400">
+                  <SelectValue placeholder={loadingColonias ? "Cargando áreas..." : "Busca tu colonia/área"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {coloniaGroups.map((colonia) => (
+                    <SelectItem key={colonia.id} value={colonia.colonia}>
+                      <div className="flex justify-between items-center w-full">
+                        <span>{colonia.colonia}</span>
+                        {colonia.professional_count > 0 && (
+                          <Badge variant="secondary" className="ml-2 text-xs">
+                            {colonia.professional_count} pros
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {colonia.group_label} • {colonia.postal_code}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           
           <div>
             <Label htmlFor="postalCode" className="text-blue-800 font-medium text-sm">
@@ -174,7 +255,7 @@ export const ContactStep = ({
               id="postalCode"
               value={formData.postalCode}
               onChange={(e) => handleChange('postalCode', e.target.value)}
-              placeholder="Ej: 06700"
+              placeholder="Ej: 22150"
               className="mt-2 border-blue-200 focus:border-blue-400"
             />
           </div>

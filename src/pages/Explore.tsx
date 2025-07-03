@@ -96,12 +96,12 @@ const Explore = () => {
             {/* Header with location */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
               <div>
-                <h1 className="text-3xl font-bold text-foreground mb-2">
-                  Profesionales en {locationFilter?.colonia}
-                </h1>
-                <p className="text-muted-foreground">
-                  Descubre y reserva con profesionales cerca de ti
-                </p>
+              <h1 className="text-3xl font-bold text-foreground mb-2">
+                Profesionales en {locationFilter?.colonia}, Tijuana
+              </h1>
+              <p className="text-muted-foreground">
+                Descubre y reserva con profesionales en tu área local
+              </p>
               </div>
               <Button 
                 variant="outline" 
