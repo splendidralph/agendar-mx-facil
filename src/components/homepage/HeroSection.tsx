@@ -47,9 +47,9 @@ const HeroSection = () => {
             </p>
             
             {/* Link preview */}
-            <div className="glassmorphism rounded-xl px-6 py-4 text-lg border-white/20 inline-block">
-              <span className="text-sm block text-white/70 mb-1">Tu link será:</span>
-              <span className="font-mono text-white font-semibold text-lg">bookeasy.mx/@tuusername</span>
+            <div className="bg-white/20 backdrop-blur-sm rounded-xl px-6 py-4 text-lg border border-white/30 inline-block">
+              <span className="text-sm block text-white mb-1">Tu link será:</span>
+              <span className="font-mono text-white font-bold text-lg">bookeasy.mx/@tuusername</span>
             </div>
           </div>
 
