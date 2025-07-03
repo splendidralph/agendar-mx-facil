@@ -101,7 +101,7 @@
   }
 }
 
-/* Custom gradient backgrounds */
+/* Modern gradient backgrounds */
 .gradient-primary {
   background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 75% 35%) 100%);
 }
@@ -114,9 +114,31 @@
   background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(162 30% 92%) 100%);
 }
 
+.gradient-hero {
+  background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary)/0.3) 50%, hsl(var(--primary)/0.1) 100%);
+}
+
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.floating-cta {
+  box-shadow: 0 8px 32px -8px hsl(var(--primary) / 0.3);
+}
+
 /* Smooth transitions for interactive elements */
 .smooth-transition {
   @apply transition-all duration-300 ease-in-out;
+}
+
+.hover-lift {
+  @apply smooth-transition hover:shadow-xl hover:-translate-y-2;
+}
+
+.bento-card {
+  @apply bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 smooth-transition hover:bg-card/70 hover:border-border;
 }
 
 /* Success animation */
