@@ -48,6 +48,13 @@ export type Database = {
             referencedRelation: "providers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "availability_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers_with_location"
+            referencedColumns: ["id"]
+          },
         ]
       }
       bookings: {
@@ -122,6 +129,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bookings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers_with_location"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "bookings_service_id_fkey"
             columns: ["service_id"]
             isOneToOne: false
@@ -168,23 +182,38 @@ export type Database = {
       locations: {
         Row: {
           city: string
+          colonia: string | null
           created_at: string | null
           id: string
+          latitude: number | null
+          longitude: number | null
+          municipality: string | null
           name: string
+          postal_code: string | null
           state: string
         }
         Insert: {
           city: string
+          colonia?: string | null
           created_at?: string | null
           id?: string
+          latitude?: number | null
+          longitude?: number | null
+          municipality?: string | null
           name: string
+          postal_code?: string | null
           state?: string
         }
         Update: {
           city?: string
+          colonia?: string | null
           created_at?: string | null
           id?: string
+          latitude?: number | null
+          longitude?: number | null
+          municipality?: string | null
           name?: string
+          postal_code?: string | null
           state?: string
         }
         Relationships: []
@@ -225,6 +254,13 @@ export type Database = {
             referencedRelation: "providers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "notification_preferences_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers_with_location"
+            referencedColumns: ["id"]
+          },
         ]
       }
       providers: {
@@ -233,16 +269,22 @@ export type Database = {
           bio: string | null
           business_name: string
           category: string | null
+          colonia: string | null
           created_at: string | null
           id: string
           instagram_handle: string | null
           is_active: boolean | null
+          latitude: number | null
           location_id: string | null
+          longitude: number | null
           onboarding_step: number | null
           phone: string | null
+          postal_code: string | null
+          prefers_local_clients: boolean | null
           profile_completed: boolean | null
           profile_image_url: string | null
           rating: number | null
+          service_radius_km: number | null
           total_reviews: number | null
           updated_at: string | null
           user_id: string
@@ -254,16 +296,22 @@ export type Database = {
           bio?: string | null
           business_name: string
           category?: string | null
+          colonia?: string | null
           created_at?: string | null
           id?: string
           instagram_handle?: string | null
           is_active?: boolean | null
+          latitude?: number | null
           location_id?: string | null
+          longitude?: number | null
           onboarding_step?: number | null
           phone?: string | null
+          postal_code?: string | null
+          prefers_local_clients?: boolean | null
           profile_completed?: boolean | null
           profile_image_url?: string | null
           rating?: number | null
+          service_radius_km?: number | null
           total_reviews?: number | null
           updated_at?: string | null
           user_id: string
@@ -275,16 +323,22 @@ export type Database = {
           bio?: string | null
           business_name?: string
           category?: string | null
+          colonia?: string | null
           created_at?: string | null
           id?: string
           instagram_handle?: string | null
           is_active?: boolean | null
+          latitude?: number | null
           location_id?: string | null
+          longitude?: number | null
           onboarding_step?: number | null
           phone?: string | null
+          postal_code?: string | null
+          prefers_local_clients?: boolean | null
           profile_completed?: boolean | null
           profile_image_url?: string | null
           rating?: number | null
+          service_radius_km?: number | null
           total_reviews?: number | null
           updated_at?: string | null
           user_id?: string
@@ -353,6 +407,13 @@ export type Database = {
             referencedRelation: "providers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "services_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers_with_location"
+            referencedColumns: ["id"]
+          },
         ]
       }
       users: {
@@ -387,10 +448,62 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      providers_with_location: {
+        Row: {
+          address: string | null
+          bio: string | null
+          business_name: string | null
+          category: string | null
+          city: string | null
+          colonia: string | null
+          created_at: string | null
+          id: string | null
+          instagram_handle: string | null
+          is_active: boolean | null
+          latitude: number | null
+          location_colonia: string | null
+          location_id: string | null
+          location_name: string | null
+          location_postal_code: string | null
+          longitude: number | null
+          onboarding_step: number | null
+          phone: string | null
+          postal_code: string | null
+          prefers_local_clients: boolean | null
+          profile_completed: boolean | null
+          profile_image_url: string | null
+          rating: number | null
+          service_radius_km: number | null
+          state: string | null
+          total_reviews: number | null
+          updated_at: string | null
+          user_id: string | null
+          username: string | null
+          whatsapp_phone: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "providers_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "providers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      calculate_distance_km: {
+        Args: { lat1: number; lng1: number; lat2: number; lng2: number }
+        Returns: number
+      }
     }
     Enums: {
       booking_status: "pending" | "confirmed" | "cancelled" | "completed"

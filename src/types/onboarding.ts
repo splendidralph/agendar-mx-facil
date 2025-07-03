@@ -12,6 +12,13 @@ export interface OnboardingData {
   instagramHandle: string;
   whatsappPhone: string;
   username: string;
+  // Colonia and location data
+  colonia: string;
+  postalCode: string;
+  latitude?: number;
+  longitude?: number;
+  serviceRadiusKm: number;
+  prefersLocalClients: boolean;
   services: Array<{
     name: string;
     price: number;

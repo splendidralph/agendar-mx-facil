@@ -32,6 +32,12 @@ const initialData: OnboardingData = {
   instagramHandle: '',
   whatsappPhone: '',
   username: '',
+  colonia: '',
+  postalCode: '',
+  latitude: undefined,
+  longitude: undefined,
+  serviceRadiusKm: 5,
+  prefersLocalClients: true,
   services: []
 };
 
@@ -69,6 +75,12 @@ export const useOnboardingFlow = () => {
             instagramHandle: provider.instagram_handle || '',
             whatsappPhone: provider.whatsapp_phone || '',
             username: provider.username || '',
+            colonia: provider.colonia || '',
+            postalCode: provider.postal_code || '',
+            latitude: provider.latitude || undefined,
+            longitude: provider.longitude || undefined,
+            serviceRadiusKm: provider.service_radius_km || 5,
+            prefersLocalClients: provider.prefers_local_clients !== false,
             services: services.map(service => ({
               name: service.name,
               price: service.price,

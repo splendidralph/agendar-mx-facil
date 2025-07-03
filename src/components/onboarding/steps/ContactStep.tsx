@@ -3,11 +3,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, MapPin, Instagram, CheckCircle, AlertCircle, Smartphone } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MessageCircle, MapPin, Instagram, CheckCircle, AlertCircle, Smartphone, MapPinIcon } from 'lucide-react';
 import PhoneInput from 'react-phone-number-input/input';
 import 'react-phone-number-input/style.css';
 import { StepNavigation } from '../StepNavigation';
 import { OnboardingData } from '@/types/onboarding';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ContactStepProps {
   data: OnboardingData;
@@ -27,8 +29,13 @@ export const ContactStep = ({
   const [formData, setFormData] = useState({
     address: data.address || '',
     instagramHandle: data.instagramHandle || '',
-    whatsappPhone: data.whatsappPhone || ''
+    whatsappPhone: data.whatsappPhone || '',
+    colonia: data.colonia || '',
+    postalCode: data.postalCode || ''
   });
+  
+  const [colonias, setColonias] = useState<Array<{id: string, name: string, colonia: string, postal_code: string}>>([]);
+  const [loadingColonias, setLoadingColonias] = useState(false);
   
   const [phoneValidation, setPhoneValidation] = useState<{
     isValid: boolean;
@@ -39,9 +46,35 @@ export const ContactStep = ({
     setFormData({
       address: data.address || '',
       instagramHandle: data.instagramHandle || '',
-      whatsappPhone: data.whatsappPhone || ''
+      whatsappPhone: data.whatsappPhone || '',
+      colonia: data.colonia || '',
+      postalCode: data.postalCode || ''
     });
-  }, [data.address, data.instagramHandle, data.whatsappPhone]);
+  }, [data.address, data.instagramHandle, data.whatsappPhone, data.colonia, data.postalCode]);
+
+  // Load colonias on mount
+  useEffect(() => {
+    const loadColonias = async () => {
+      setLoadingColonias(true);
+      try {
+        const { data: coloniaData, error } = await supabase
+          .from('locations')
+          .select('id, name, colonia, postal_code')
+          .not('colonia', 'is', null)
+          .order('colonia');
+        
+        if (error) throw error;
+        
+        setColonias(coloniaData || []);
+      } catch (error) {
+        console.error('Error loading colonias:', error);
+      } finally {
+        setLoadingColonias(false);
+      }
+    };
+    
+    loadColonias();
+  }, []);
 
   const validatePhoneNumber = (phoneValue?: string) => {
     if (!phoneValue) {
@@ -88,6 +121,66 @@ export const ContactStep = ({
 
   return (
     <div className="space-y-6">
+      {/* Colonia Selection Card */}
+      <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-blue-800 text-base">
+            <div className="p-2 bg-blue-500 rounded-lg">
+              <MapPinIcon className="h-4 w-4 text-white" />
+            </div>
+            Tu Ubicación y Área de Servicio
+            <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200 text-xs">
+              Importante
+            </Badge>
+          </CardTitle>
+          <CardDescription className="text-blue-700 text-sm">
+            Esto nos ayuda a conectarte con clientes cercanos para un servicio más rápido y confiable
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="colonia" className="text-blue-800 font-medium text-sm">
+              Selecciona tu Colonia
+            </Label>
+            <Select 
+              value={formData.colonia} 
+              onValueChange={(value) => {
+                const selectedColonia = colonias.find(c => c.colonia === value);
+                handleChange('colonia', value);
+                if (selectedColonia) {
+                  handleChange('postalCode', selectedColonia.postal_code);
+                }
+              }}
+              disabled={loadingColonias}
+            >
+              <SelectTrigger className="mt-2 border-blue-200 focus:border-blue-400">
+                <SelectValue placeholder={loadingColonias ? "Cargando colonias..." : "Busca tu colonia"} />
+              </SelectTrigger>
+              <SelectContent>
+                {colonias.map((colonia) => (
+                  <SelectItem key={colonia.id} value={colonia.colonia}>
+                    {colonia.colonia} - {colonia.postal_code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div>
+            <Label htmlFor="postalCode" className="text-blue-800 font-medium text-sm">
+              Código Postal
+            </Label>
+            <Input
+              id="postalCode"
+              value={formData.postalCode}
+              onChange={(e) => handleChange('postalCode', e.target.value)}
+              placeholder="Ej: 06700"
+              className="mt-2 border-blue-200 focus:border-blue-400"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* WhatsApp Benefits Card */}
       <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
         <CardHeader className="pb-3">

@@ -91,6 +91,12 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
         address: data.address || '',
         instagram_handle: data.instagramHandle || '',
         whatsapp_phone: data.whatsappPhone || '',
+        colonia: data.colonia || '',
+        postal_code: data.postalCode || '',
+        latitude: data.latitude || null,
+        longitude: data.longitude || null,
+        service_radius_km: data.serviceRadiusKm || 5,
+        prefers_local_clients: data.prefersLocalClients !== false,
         onboarding_step: currentStep,
         profile_completed: false
       };
@@ -122,6 +128,12 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
         address: data.address || '',
         instagram_handle: data.instagramHandle || '',
         whatsapp_phone: data.whatsappPhone || '',
+        colonia: data.colonia || '',
+        postal_code: data.postalCode || '',
+        latitude: data.latitude || null,
+        longitude: data.longitude || null,
+        service_radius_km: data.serviceRadiusKm || 5,
+        prefers_local_clients: data.prefersLocalClients !== false,
         onboarding_step: currentStep,
         profile_completed: currentStep >= 5
       };
