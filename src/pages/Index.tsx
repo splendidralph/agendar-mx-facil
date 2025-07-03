@@ -7,12 +7,14 @@ import { useAuth } from "@/hooks/useAuth";
 import HeroSection from "@/components/homepage/HeroSection";
 import InteractiveDemoSection from "@/components/homepage/InteractiveDemoSection";
 import ModernFeaturesSection from "@/components/homepage/ModernFeaturesSection";
-import FloatingCTA from "@/components/homepage/FloatingCTA";
+import { LanguageToggle } from "@/components/ui/language-toggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   const handleGetStarted = () => {
     if (user) {
@@ -37,17 +39,18 @@ const Index = () => {
             
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-4">
+              <LanguageToggle />
               {user ? (
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-muted-foreground">
-                    Hola, {user.user_metadata?.full_name || user.email}
+                    {t('header.hello', { name: user.user_metadata?.full_name || user.email })}
                   </span>
                   <Button 
                     onClick={() => navigate('/dashboard')}
                     variant="outline"
                     className="hover-lift"
                   >
-                    Dashboard
+                    {t('header.dashboard')}
                   </Button>
                   <Button 
                     onClick={signOut}
@@ -63,7 +66,7 @@ const Index = () => {
                   variant="outline"
                   className="hover-lift"
                 >
-                  Iniciar Sesión
+                  {t('header.login')}
                 </Button>
               )}
             </div>
@@ -80,10 +83,13 @@ const Index = () => {
           {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="md:hidden mt-4 pb-4 border-t border-border/20 pt-4 space-y-3 animate-slide-up">
+              <div className="px-3">
+                <LanguageToggle />
+              </div>
               {user ? (
                 <>
                   <div className="text-sm text-muted-foreground px-3">
-                    Hola, {user.user_metadata?.full_name || user.email}
+                    {t('header.hello', { name: user.user_metadata?.full_name || user.email })}
                   </div>
                   <Button 
                     onClick={() => {
@@ -93,7 +99,7 @@ const Index = () => {
                     variant="outline"
                     className="w-full"
                   >
-                    Dashboard
+                    {t('header.dashboard')}
                   </Button>
                   <Button 
                     onClick={() => {
@@ -104,7 +110,7 @@ const Index = () => {
                     className="w-full justify-start"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
-                    Cerrar Sesión
+                    {t('header.logout')}
                   </Button>
                 </>
               ) : (
@@ -116,7 +122,7 @@ const Index = () => {
                   variant="outline"
                   className="w-full"
                 >
-                  Iniciar Sesión
+                  {t('header.login')}
                 </Button>
               )}
             </div>
@@ -134,18 +140,18 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-float"></div>
         <div className="container mx-auto text-center relative z-10">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            ¿Listo para tu link profesional GRATIS?
+            {t('finalCta.title')}
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed">
-            Únete al beta testing y obtén acceso gratuito de por vida. 
-            <span className="block mt-2 font-semibold">🚀 Sé parte de la próxima revolución en reservas</span>
+            {t('finalCta.description')}
+            <span className="block mt-2 font-semibold">{t('finalCta.subtitle')}</span>
           </p>
           <Button 
             size="lg" 
             className="accent-gradient text-white hover:opacity-90 px-8 py-6 text-lg font-semibold shadow-xl hover-lift"
             onClick={handleGetStarted}
           >
-            Crear Mi Perfil - Completamente Gratis
+            {t('finalCta.button')}
           </Button>
         </div>
       </section>
@@ -161,19 +167,17 @@ const Index = () => {
               <span className="text-2xl font-bold">Bookeasy.mx</span>
             </div>
             <p className="text-muted mb-6 max-w-md mx-auto">
-              La plataforma de reservas #1 para profesionales de belleza en México
+              {t('footer.description')}
             </p>
           </div>
           <div className="border-t border-border/20 pt-6 text-center">
             <div className="text-sm text-muted">
-              © 2024 Bookeasy.mx. Todos los derechos reservados.
+              {t('footer.copyright')}
             </div>
           </div>
         </div>
       </footer>
 
-      {/* Floating CTA */}
-      <FloatingCTA />
     </div>
   );
 };

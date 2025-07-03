@@ -4,6 +4,8 @@ import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LanguageToggleOnboarding } from '@/components/ui/language-toggle';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface OnboardingLayoutProps {
   children: ReactNode;
@@ -15,12 +17,6 @@ interface OnboardingLayoutProps {
   onGoBack?: () => void;
 }
 
-const STEP_NAMES = [
-  'Perfil & Username',
-  'Servicios',
-  'Contacto',
-  'Vista Previa'
-];
 
 export const OnboardingLayout = ({
   children,
@@ -32,6 +28,14 @@ export const OnboardingLayout = ({
   onGoBack
 }: OnboardingLayoutProps) => {
   const progressPercentage = (currentStep / totalSteps) * 100;
+  const { t } = useLanguage();
+  
+  const STEP_NAMES = [
+    t('onboarding.steps.profile'),
+    t('onboarding.steps.services'),
+    t('onboarding.steps.contact'),
+    t('onboarding.steps.preview')
+  ];
 
   return (
     <div className="min-h-screen gradient-hero">
@@ -49,16 +53,19 @@ export const OnboardingLayout = ({
               <span className="text-3xl font-bold text-white font-poppins tracking-tight drop-shadow-sm">Bookeasy.mx</span>
             </button>
             
-            {canGoBack && onGoBack && (
-              <Button
-                onClick={onGoBack}
-                variant="ghost"
-                size="sm"
-                className="md:hidden text-white hover:bg-white/20"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            )}
+            <div className="flex items-center space-x-2">
+              <LanguageToggleOnboarding />
+              {canGoBack && onGoBack && (
+                <Button
+                  onClick={onGoBack}
+                  variant="ghost"
+                  size="sm"
+                  className="md:hidden text-white hover:bg-white/20"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -69,10 +76,10 @@ export const OnboardingLayout = ({
           <div className="mb-8 md:mb-12">
             <div className="text-center mb-8">
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 font-poppins">
-                Configura tu Perfil
+                {t('onboarding.title')}
               </h1>
               <p className="text-white/80 text-lg mb-6">
-                Paso {currentStep} de {totalSteps}: {stepTitle}
+                {t('onboarding.step', { current: currentStep.toString(), total: totalSteps.toString(), title: stepTitle })}
               </p>
             </div>
             
