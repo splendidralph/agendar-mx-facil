@@ -17,7 +17,7 @@ const InteractiveDemoSection = () => {
       title: "Perfil Profesional",
       description: "Así se ve tu perfil para tus clientes",
       content: (
-        <div className="bg-card rounded-2xl p-4 md:p-6 border border-border/50 max-w-sm mx-auto">
+        <div className="bg-card rounded-3xl p-6 md:p-8 border-0 shadow-xl max-w-sm mx-auto backdrop-blur-sm">
           <div className="text-center mb-6">
             <Avatar className="h-20 w-20 mx-auto mb-4">
               <AvatarImage src="" />
@@ -63,8 +63,8 @@ const InteractiveDemoSection = () => {
       title: "Sistema de Reservas",
       description: "Proceso simple para tus clientes",
       content: (
-        <div className="bg-card rounded-2xl p-4 md:p-6 border border-border/50 max-w-sm mx-auto">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">Selecciona tu servicio</h3>
+        <div className="bg-card rounded-3xl p-6 md:p-8 border-0 shadow-xl max-w-sm mx-auto backdrop-blur-sm">
+          <h3 className="text-xl font-semibold mb-6 text-foreground">Selecciona tu servicio</h3>
           
           <div className="space-y-3 mb-6">
             <div 
@@ -120,8 +120,8 @@ const InteractiveDemoSection = () => {
       title: "Calendario Inteligente",
       description: "Horarios disponibles en tiempo real",
       content: (
-        <div className="bg-card rounded-2xl p-4 md:p-6 border border-border/50 max-w-sm mx-auto">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">Horarios disponibles</h3>
+        <div className="bg-card rounded-3xl p-6 md:p-8 border-0 shadow-xl max-w-sm mx-auto backdrop-blur-sm">
+          <h3 className="text-xl font-semibold mb-6 text-foreground">Horarios disponibles</h3>
           
           <div className="mb-4">
             <div className="text-sm font-medium text-foreground mb-2">Viernes 15 Nov</div>
@@ -239,7 +239,7 @@ const InteractiveDemoSection = () => {
       title: "¡Reserva Confirmada!",
       description: "Tu cita ha sido agendada exitosamente",
       content: (
-        <div className="bg-card rounded-2xl p-4 md:p-6 border border-border/50 max-w-sm mx-auto">
+        <div className="bg-card rounded-3xl p-6 md:p-8 border-0 shadow-xl max-w-sm mx-auto backdrop-blur-sm">
           <div className="text-center mb-6">
             <div className="bg-green-500 text-white p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <Check className="h-8 w-8" />
@@ -316,13 +316,13 @@ const InteractiveDemoSection = () => {
   };
 
   return (
-    <section className="py-12 md:py-16 px-4 gradient-hero-overlay">
+    <section className="py-16 md:py-24 px-4 bg-gradient-to-br from-primary/5 via-background to-accent/5">
       <div className="container mx-auto">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-foreground mb-4 px-2">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
             Experimenta la diferencia
           </h2>
-          <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto px-2">
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Ve cómo tus clientes interactúan con tu perfil profesional. Simple, rápido y efectivo.
           </p>
         </div>

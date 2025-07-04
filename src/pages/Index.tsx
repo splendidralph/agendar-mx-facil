@@ -140,20 +140,20 @@ const Index = () => {
       <ModernFeaturesSection />
 
       {/* Final CTA Section */}
-      <section className="py-12 md:py-20 px-4 gradient-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-float"></div>
+      <section className="py-16 md:py-24 px-4 gradient-primary text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
         <div className="container mx-auto text-center relative z-10">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 md:mb-6 px-2">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
             {t('finalCta.title')}
           </h2>
-          <p className="text-base sm:text-lg md:text-xl mb-6 md:mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed px-2">
+          <p className="text-lg sm:text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto leading-relaxed">
             {t('finalCta.description')}
-            <span className="block mt-2 font-semibold">{t('finalCta.subtitle')}</span>
+            <span className="block mt-3 font-semibold text-xl md:text-2xl">{t('finalCta.subtitle')}</span>
           </p>
-          <div className="flex justify-center px-4">
+          <div className="flex justify-center">
             <Button 
               size="lg" 
-              className="accent-gradient text-white hover:opacity-90 text-base md:text-lg font-semibold shadow-xl hover-lift touch-manipulation"
+              className="accent-gradient text-white hover:opacity-90 text-lg font-semibold shadow-2xl px-8 py-4 h-auto rounded-2xl hover:scale-105 transition-all duration-300"
               onClick={handleGetStarted}
             >
               {t('finalCta.button')}

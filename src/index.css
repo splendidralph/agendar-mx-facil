@@ -123,9 +123,9 @@
 }
 
 .glassmorphism {
-  background: hsl(var(--card) / 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid hsl(var(--border) / 0.3);
+  background: hsl(var(--card) / 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--border) / 0.2);
 }
 
 .card-gradient {
