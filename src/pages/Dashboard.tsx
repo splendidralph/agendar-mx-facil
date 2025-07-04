@@ -5,13 +5,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Link, TrendingUp, Users, DollarSign } from "lucide-react";
+import { Link } from "lucide-react";
 import { toast } from "sonner";
 import ProfileSettings from "@/components/dashboard/ProfileSettings";
 import ServicesManager from "@/components/dashboard/ServicesManager";
 import NotificationSettings from "@/components/dashboard/NotificationSettings";
-import BookingsTable from "@/components/dashboard/BookingsTable";
 import { useBookings } from "@/hooks/useBookings";
+import MobileHeader from "@/components/dashboard/MobileHeader";
+import MobileStats from "@/components/dashboard/MobileStats";
+import MobileBookingsTable from "@/components/dashboard/MobileBookingsTable";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -94,163 +97,78 @@ const Dashboard = () => {
 
   if (!provider) return null;
 
+  const isMobile = useIsMobile();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
-      {/* Header */}
-      <header className="bg-card/80 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg">
-              <Calendar className="h-6 w-6" />
-            </div>
-            <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-muted-foreground hidden sm:inline font-inter">
-              ¡Hola, {provider.business_name}!
-            </span>
-            <Button 
-              variant="outline"
-              onClick={handleSignOut}
-              className="border-border text-foreground hover:bg-secondary"
-            >
-              Cerrar Sesión
-            </Button>
-          </div>
-        </div>
-      </header>
+      {/* Mobile-First Header */}
+      <MobileHeader
+        businessName={provider.business_name || "Proveedor"}
+        onSignOut={handleSignOut}
+        onCopyLink={copyLink}
+        onViewProfile={viewProfile}
+        username={provider.username}
+      />
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Welcome Section */}
-          <div className="mb-8 animate-fade-in">
-            <h1 className="text-3xl font-bold text-foreground mb-2">
+          <div className={`mb-6 animate-fade-in ${isMobile ? 'px-4' : ''}`}>
+            <h1 className={`font-bold text-foreground mb-2 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>
               Mi Dashboard
             </h1>
             <p className="text-muted-foreground font-inter">
-              Gestiona tus citas y perfil profesional
+              {isMobile ? 'Gestiona tus citas' : 'Gestiona tus citas y perfil profesional'}
             </p>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
-            <Card className="animate-slide-up border-border/50 shadow-lg card-hover">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground font-semibold">Citas Hoy</p>
-                    <p className="text-3xl font-bold text-foreground">
-                      {statsLoading ? '...' : stats.todayCount}
-                    </p>
-                    <p className="text-xs text-muted-foreground font-medium">
-                      {stats.todayCount === 0 ? 'Sin citas programadas' : 'citas programadas'}
-                    </p>
-                  </div>
-                  <div className="gradient-primary p-3 rounded-xl">
-                    <Calendar className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Mobile-First Stats */}
+          <MobileStats stats={stats} loading={statsLoading} />
 
-            <Card className="animate-slide-up border-border/50 shadow-lg card-hover" style={{ animationDelay: '0.1s' }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground font-semibold">Esta Semana</p>
-                    <p className="text-3xl font-bold text-foreground">
-                      {statsLoading ? '...' : stats.weekCount}
-                    </p>
-                    <p className="text-xs text-muted-foreground font-medium">
-                      {stats.weekCount === 0 ? 'Sin citas' : 'citas esta semana'}
+          <div className={`grid gap-8 mb-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'}`}>
+            {/* Booking Link - Hidden on mobile (handled by FAB) */}
+            {!isMobile && (
+              <Card className="lg:col-span-1 animate-slide-up border-border/50 shadow-lg" style={{ animationDelay: '0.4s' }}>
+                <CardHeader>
+                  <CardTitle className="text-foreground">Tu Link de Reservas</CardTitle>
+                  <CardDescription className="font-inter">
+                    Comparte este link con tus clientes
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="p-4 bg-secondary/50 rounded-xl border border-border/50">
+                    <p className="text-sm font-mono text-foreground break-all">
+                      {provider.username ? `bookeasy.mx/${provider.username}` : 'Configura tu username primero'}
                     </p>
                   </div>
-                  <div className="gradient-accent p-3 rounded-xl">
-                    <TrendingUp className="h-6 w-6 text-accent-foreground" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  <Button 
+                    onClick={copyLink}
+                    className="w-full btn-primary shadow-lg touch-manipulation"
+                    disabled={!provider.username}
+                  >
+                    <Link className="h-4 w-4 mr-2" />
+                    Copiar Link
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="w-full border-border text-foreground hover:bg-secondary touch-manipulation"
+                    onClick={viewProfile}
+                    disabled={!provider.username}
+                  >
+                    Ver Mi Perfil
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
 
-            <Card className="animate-slide-up border-border/50 shadow-lg card-hover" style={{ animationDelay: '0.2s' }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground font-semibold">Clientes</p>
-                    <p className="text-3xl font-bold text-foreground">
-                      {statsLoading ? '...' : stats.clientCount}
-                    </p>
-                    <p className="text-xs text-muted-foreground font-medium">
-                      {stats.clientCount === 0 ? 'Sin clientes' : 'clientes únicos'}
-                    </p>
-                  </div>
-                  <div className="bg-primary/10 p-3 rounded-xl">
-                    <Users className="h-6 w-6 text-primary" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="animate-slide-up border-border/50 shadow-lg card-hover" style={{ animationDelay: '0.3s' }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground font-semibold">Ingresos</p>
-                    <p className="text-3xl font-bold text-foreground">
-                      ${statsLoading ? '...' : stats.weekRevenue.toLocaleString()}
-                    </p>
-                    <p className="text-xs text-muted-foreground font-medium">Esta semana</p>
-                  </div>
-                  <div className="bg-accent/10 p-3 rounded-xl">
-                    <DollarSign className="h-6 w-6 text-accent" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8 mb-8">
-            {/* Booking Link */}
-            <Card className="lg:col-span-1 animate-slide-up border-border/50 shadow-lg" style={{ animationDelay: '0.4s' }}>
-              <CardHeader>
-                <CardTitle className="text-foreground">Tu Link de Reservas</CardTitle>
-                <CardDescription className="font-inter">
-                  Comparte este link con tus clientes
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="p-4 bg-secondary/50 rounded-xl border border-border/50">
-                  <p className="text-sm font-mono text-foreground break-all">
-                    {provider.username ? `bookeasy.mx/${provider.username}` : 'Configura tu username primero'}
-                  </p>
-                </div>
-                <Button 
-                  onClick={copyLink}
-                  className="w-full btn-primary shadow-lg"
-                  disabled={!provider.username}
-                >
-                  <Link className="h-4 w-4 mr-2" />
-                  Copiar Link
-                </Button>
-                <Button 
-                  variant="outline"
-                  className="w-full border-border text-foreground hover:bg-secondary"
-                  onClick={viewProfile}
-                  disabled={!provider.username}
-                >
-                  Ver Mi Perfil
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Bookings Management Table */}
-            <div className="lg:col-span-2 animate-slide-up" style={{ animationDelay: '0.5s' }}>
-              <BookingsTable providerId={provider.id} />
+            {/* Mobile-First Bookings Management */}
+            <div className={`animate-slide-up ${!isMobile ? 'lg:col-span-2' : ''}`} style={{ animationDelay: '0.5s' }}>
+              <MobileBookingsTable providerId={provider.id} />
             </div>
           </div>
 
           {/* Profile, Services and Notification Management */}
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className={`grid gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'} ${isMobile ? 'pb-24' : ''}`}>
             <ProfileSettings provider={provider} onUpdate={refreshProvider} />
             <ServicesManager providerId={provider.id} />
             <NotificationSettings provider={provider} onUpdate={refreshProvider} />
