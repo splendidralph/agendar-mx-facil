@@ -6,13 +6,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Mail, MessageCircle, Send } from 'lucide-react';
+import { Mail, Webhook, Send } from 'lucide-react';
 
 const TestNotifications = () => {
   const [loading, setLoading] = useState(false);
   const [testData, setTestData] = useState({
     providerEmail: 'theralphcherry@gmail.com',
-    whatsappNumber: '+526193912826',
+    highlevelWebhookUrl: '',
     businessName: 'Barberia El Rafas',
     serviceName: 'Corte de Cabello',
     clientName: 'Cliente Prueba',
@@ -163,23 +163,31 @@ const TestNotifications = () => {
     }
   };
 
-  const testWhatsAppNotification = async () => {
+  const testHighLevelWebhook = async () => {
     setLoading(true);
     try {
+      if (!testData.highlevelWebhookUrl) {
+        toast.error('Please enter your HighLevel webhook URL');
+        return;
+      }
+
       const bookingId = await createTestBooking();
       if (!bookingId) return;
 
-      const { data, error } = await supabase.functions.invoke('send-whatsapp-notification', {
-        body: { bookingId }
+      const { data, error } = await supabase.functions.invoke('send-highlevel-webhook', {
+        body: { 
+          bookingId,
+          webhookUrl: testData.highlevelWebhookUrl
+        }
       });
 
       if (error) throw error;
 
-      toast.success('WhatsApp notification sent successfully!');
-      console.log('WhatsApp response:', data);
+      toast.success('HighLevel webhook sent successfully!');
+      console.log('HighLevel webhook response:', data);
     } catch (error) {
-      console.error('WhatsApp test error:', error);
-      toast.error(`WhatsApp test failed: ${error.message}`);
+      console.error('HighLevel webhook test error:', error);
+      toast.error(`HighLevel webhook test failed: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -189,7 +197,7 @@ const TestNotifications = () => {
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">Test Notification Systems</h1>
-        <p className="text-muted-foreground">Test email and WhatsApp notifications for bookings</p>
+        <p className="text-muted-foreground">Test email and HighLevel webhook notifications for bookings</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -232,25 +240,25 @@ const TestNotifications = () => {
           </CardContent>
         </Card>
 
-        {/* WhatsApp Test */}
+        {/* HighLevel Webhook Test */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
-              WhatsApp Notifications
+              <Webhook className="h-5 w-5" />
+              HighLevel Webhook
             </CardTitle>
             <CardDescription>
-              Test Twilio WhatsApp notifications
+              Test HighLevel webhook integration for automation
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 mb-4">
               <div>
-                <Label>WhatsApp Number</Label>
+                <Label>HighLevel Webhook URL</Label>
                 <Input
-                  value={testData.whatsappNumber}
-                  onChange={(e) => setTestData(prev => ({ ...prev, whatsappNumber: e.target.value }))}
-                  placeholder="+52XXXXXXXXXX"
+                  value={testData.highlevelWebhookUrl}
+                  onChange={(e) => setTestData(prev => ({ ...prev, highlevelWebhookUrl: e.target.value }))}
+                  placeholder="https://hooks.zapier.com/hooks/catch/..."
                 />
               </div>
               <div>
@@ -262,12 +270,12 @@ const TestNotifications = () => {
               </div>
             </div>
             <Button 
-              onClick={testWhatsAppNotification} 
+              onClick={testHighLevelWebhook} 
               disabled={loading}
               className="w-full"
             >
-              <MessageCircle className="h-4 w-4 mr-2" />
-              Test WhatsApp
+              <Webhook className="h-4 w-4 mr-2" />
+              Test HighLevel Webhook
             </Button>
           </CardContent>
         </Card>

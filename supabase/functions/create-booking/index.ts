@@ -305,14 +305,8 @@ serve(async (req) => {
       )
     }
 
-    if (shouldSendWhatsApp) {
-      console.log('Queuing WhatsApp notification...')
-      notificationPromises.push(
-        supabase.functions.invoke('send-whatsapp-notification', {
-          body: { bookingId: booking.id }
-        }).then(result => ({ type: 'whatsapp', result })).catch(error => ({ type: 'whatsapp', error }))
-      )
-    }
+    // Note: HighLevel webhook integration replaced WhatsApp notifications
+    // This can be configured per provider with webhook URLs in the future
 
     // Send notifications and handle results
     if (notificationPromises.length > 0) {
