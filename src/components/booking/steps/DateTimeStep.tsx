@@ -1,4 +1,4 @@
-import UnifiedBookingCalendar from '../UnifiedBookingCalendar';
+import ModernBookingCalendar from '../ModernBookingCalendar';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DateTimeStepProps {
@@ -28,7 +28,7 @@ const DateTimeStep = ({
           <p className="text-sm text-muted-foreground">Selecciona cuándo quieres tu cita</p>
         </div>
         
-        <UnifiedBookingCalendar
+        <ModernBookingCalendar
           providerId={providerId}
           serviceId={serviceId}
           serviceDuration={serviceDuration}
@@ -41,7 +41,7 @@ const DateTimeStep = ({
   }
 
   return (
-    <UnifiedBookingCalendar
+    <ModernBookingCalendar
       providerId={providerId}
       serviceId={serviceId}
       serviceDuration={serviceDuration}
