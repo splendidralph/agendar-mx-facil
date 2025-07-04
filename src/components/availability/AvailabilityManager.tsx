@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { TimeSelect } from '@/components/ui/time-select';
 import { Calendar, Clock, Plus, X, Save } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -191,22 +192,22 @@ const AvailabilityManager = ({ providerId }: Props) => {
                           onCheckedChange={(checked) => updateTimeSlot(globalIndex, 'is_active', checked)}
                         />
                         
-                        <div className="flex items-center gap-2 flex-1">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type="time"
-                            value={slot.start_time}
-                            onChange={(e) => updateTimeSlot(globalIndex, 'start_time', e.target.value)}
-                            className="w-24"
-                          />
-                          <span className="text-muted-foreground">-</span>
-                          <Input
-                            type="time"
-                            value={slot.end_time}
-                            onChange={(e) => updateTimeSlot(globalIndex, 'end_time', e.target.value)}
-                            className="w-24"
-                          />
-                        </div>
+                         <div className="flex items-center gap-2 flex-1">
+                           <Clock className="h-4 w-4 text-muted-foreground" />
+                           <TimeSelect
+                             value={slot.start_time}
+                             onValueChange={(value) => updateTimeSlot(globalIndex, 'start_time', value)}
+                             placeholder="Inicio"
+                             className="w-32"
+                           />
+                           <span className="text-muted-foreground">-</span>
+                           <TimeSelect
+                             value={slot.end_time}
+                             onValueChange={(value) => updateTimeSlot(globalIndex, 'end_time', value)}
+                             placeholder="Fin"
+                             className="w-32"
+                           />
+                         </div>
 
                         <Button
                           variant="ghost"

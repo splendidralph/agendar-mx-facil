@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DurationSelect } from '@/components/ui/duration-select';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -216,15 +217,14 @@ const ServicesManager = ({ providerId }: ServicesManagerProps) => {
                       onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="duration">Duración (min)</Label>
-                    <Input
-                      id="duration"
-                      type="number"
-                      value={formData.duration_minutes}
-                      onChange={(e) => setFormData(prev => ({ ...prev, duration_minutes: e.target.value }))}
-                    />
-                  </div>
+                   <div>
+                     <Label htmlFor="duration">Duración</Label>
+                     <DurationSelect
+                       value={formData.duration_minutes}
+                       onValueChange={(value) => setFormData(prev => ({ ...prev, duration_minutes: value }))}
+                       placeholder="Seleccionar duración"
+                     />
+                   </div>
                 </div>
 
                 <div>

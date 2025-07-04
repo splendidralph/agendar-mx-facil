@@ -99,19 +99,25 @@ const EnhancedBookingCalendar = ({
         const startTime = startHour * 60 + startMinute;
         const endTime = endHour * 60 + endMinute;
 
-        // Generate 30-minute slots
-        for (let time = startTime; time < endTime; time += 30) {
+        // Generate slots based on service duration (minimum 30 minutes)
+        const slotIncrement = Math.max(30, serviceDuration);
+        for (let time = startTime; time < endTime; time += slotIncrement) {
           const hours = Math.floor(time / 60);
           const minutes = time % 60;
           const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
+          // Check if this slot can accommodate the full service duration
+          const slotEnd = addMinutesToTime(timeString, serviceDuration);
+          const slotEndMinutes = timeToMinutes(slotEnd);
+          
+          // Skip if slot would extend beyond availability window
+          if (slotEndMinutes > endTime) continue;
+          
           // Check if this slot conflicts with existing bookings
           const hasConflict = bookings?.some(booking => {
             const bookingStart = booking.booking_time;
             const bookingDuration = booking.services?.duration_minutes || 30;
             const bookingEndTime = addMinutesToTime(bookingStart, bookingDuration);
-            
-            const slotEnd = addMinutesToTime(timeString, serviceDuration);
             
             return (
               timeOverlaps(timeString, slotEnd, bookingStart, bookingEndTime)
@@ -144,6 +150,11 @@ const EnhancedBookingCalendar = ({
 
   const timeOverlaps = (start1: string, end1: string, start2: string, end2: string): boolean => {
     return start1 < end2 && end1 > start2;
+  };
+
+  const timeToMinutes = (time: string): number => {
+    const [hours, mins] = time.split(':').map(Number);
+    return hours * 60 + mins;
   };
 
   const isDateAvailable = (date: Date): boolean => {
