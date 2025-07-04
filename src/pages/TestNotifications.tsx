@@ -17,7 +17,7 @@ const TestNotifications = () => {
     serviceName: 'Corte de Cabello',
     clientName: 'Cliente Prueba',
     clientPhone: '+521234567890',
-    bookingDate: '2024-07-05',
+    bookingDate: '2025-07-05',
     bookingTime: '14:00',
     price: '200',
     duration: '30',
@@ -26,28 +26,45 @@ const TestNotifications = () => {
 
   const createTestBooking = async () => {
     try {
-      // Get provider and service data
-      const { data: provider } = await supabase
+      console.log('Creating test booking with data:', testData);
+      
+      // Get provider data with better error handling
+      const { data: providers, error: providerError } = await supabase
         .from('providers')
-        .select('id, user_id')
-        .eq('business_name', 'barberia el rafas')
-        .single();
+        .select('id, user_id, business_name')
+        .ilike('business_name', '%barberia%')
+        .limit(5);
 
-      if (!provider) {
-        toast.error('Provider not found');
+      console.log('Found providers:', providers);
+      
+      if (providerError) {
+        console.error('Provider query error:', providerError);
+        toast.error(`Provider query failed: ${providerError.message}`);
         return null;
       }
 
-      const { data: service } = await supabase
-        .from('services')
-        .select('id')
-        .eq('provider_id', provider.id)
-        .limit(1)
-        .single();
+      if (!providers || providers.length === 0) {
+        toast.error('No providers found with "barberia" in name');
+        return null;
+      }
 
-      if (!service) {
-        // Create a test service if none exists
-        const { data: newService } = await supabase
+      // Use the first provider found
+      const provider = providers[0];
+      console.log('Using provider:', provider);
+
+      // Get or create service
+      const { data: services, error: serviceError } = await supabase
+        .from('services')
+        .select('id, name')
+        .eq('provider_id', provider.id)
+        .limit(1);
+
+      console.log('Found services:', services);
+
+      let serviceId;
+      if (!services || services.length === 0) {
+        console.log('Creating new service...');
+        const { data: newService, error: createServiceError } = await supabase
           .from('services')
           .insert({
             provider_id: provider.id,
@@ -59,18 +76,25 @@ const TestNotifications = () => {
           .select()
           .single();
 
-        if (!newService) {
-          toast.error('Failed to create test service');
+        if (createServiceError) {
+          console.error('Service creation error:', createServiceError);
+          toast.error(`Failed to create service: ${createServiceError.message}`);
           return null;
         }
+        serviceId = newService.id;
+        console.log('Created service:', newService);
+      } else {
+        serviceId = services[0].id;
+        console.log('Using existing service:', services[0]);
       }
 
       // Create test booking
-      const { data: booking, error } = await supabase
+      console.log('Creating booking...');
+      const { data: booking, error: bookingError } = await supabase
         .from('bookings')
         .insert({
           provider_id: provider.id,
-          service_id: service?.id || (await supabase.from('services').select('id').eq('provider_id', provider.id).single()).data?.id,
+          service_id: serviceId,
           booking_date: testData.bookingDate,
           booking_time: testData.bookingTime,
           total_price: parseInt(testData.price),
@@ -80,10 +104,17 @@ const TestNotifications = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (bookingError) {
+        console.error('Booking creation error:', bookingError);
+        toast.error(`Booking creation failed: ${bookingError.message}`);
+        return null;
+      }
+
+      console.log('Created booking:', booking);
 
       // Create guest booking info
-      await supabase
+      console.log('Creating guest booking info...');
+      const { error: guestError } = await supabase
         .from('guest_bookings')
         .insert({
           booking_id: booking.id,
@@ -92,10 +123,17 @@ const TestNotifications = () => {
           guest_email: 'cliente@test.com'
         });
 
+      if (guestError) {
+        console.error('Guest booking error:', guestError);
+        toast.error(`Guest booking failed: ${guestError.message}`);
+        return null;
+      }
+
+      console.log('Test booking created successfully:', booking.id);
       return booking.id;
     } catch (error) {
       console.error('Error creating test booking:', error);
-      toast.error('Error creating test booking');
+      toast.error(`Error creating test booking: ${error.message}`);
       return null;
     }
   };
