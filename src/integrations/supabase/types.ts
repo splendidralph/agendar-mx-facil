@@ -9,6 +9,118 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string | null
+          id: string
+          permissions: Json | null
+          role: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          permissions?: Json | null
+          role?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          permissions?: Json | null
+          role?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      analytics_cache: {
+        Row: {
+          calculated_at: string | null
+          date_range: string
+          expires_at: string | null
+          id: string
+          metric_name: string
+          metric_value: Json
+        }
+        Insert: {
+          calculated_at?: string | null
+          date_range: string
+          expires_at?: string | null
+          id?: string
+          metric_name: string
+          metric_value: Json
+        }
+        Update: {
+          calculated_at?: string | null
+          date_range?: string
+          expires_at?: string | null
+          id?: string
+          metric_name?: string
+          metric_value?: Json
+        }
+        Relationships: []
+      }
+      analytics_events: {
+        Row: {
+          created_at: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          provider_id: string | null
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          provider_id?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          provider_id?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "provider_analytics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_events_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_events_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers_with_location"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       availability: {
         Row: {
           created_at: string | null
@@ -41,6 +153,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "availability_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "provider_analytics"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "availability_provider_id_fkey"
             columns: ["provider_id"]
@@ -119,6 +238,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "provider_analytics"
             referencedColumns: ["id"]
           },
           {
@@ -297,6 +423,13 @@ export type Database = {
           whatsapp_enabled?: boolean
         }
         Relationships: [
+          {
+            foreignKeyName: "notification_preferences_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "provider_analytics"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "notification_preferences_provider_id_fkey"
             columns: ["provider_id"]
@@ -484,6 +617,13 @@ export type Database = {
             foreignKeyName: "services_provider_id_fkey"
             columns: ["provider_id"]
             isOneToOne: false
+            referencedRelation: "provider_analytics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "services_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
             referencedRelation: "providers"
             referencedColumns: ["id"]
           },
@@ -528,6 +668,35 @@ export type Database = {
       }
     }
     Views: {
+      colonia_analytics: {
+        Row: {
+          activation_status: string | null
+          active_providers: number | null
+          bookings_last_30_days: number | null
+          colonia: string | null
+          provider_count: number | null
+          total_bookings: number | null
+          total_revenue: number | null
+        }
+        Relationships: []
+      }
+      provider_analytics: {
+        Row: {
+          bookings_last_30_days: number | null
+          bookings_last_7_days: number | null
+          business_name: string | null
+          category: string | null
+          colonia: string | null
+          id: string | null
+          onboarded_at: string | null
+          revenue_last_30_days: number | null
+          status: string | null
+          total_bookings: number | null
+          total_revenue: number | null
+          unique_clients: number | null
+        }
+        Relationships: []
+      }
       providers_with_location: {
         Row: {
           address: string | null
@@ -580,6 +749,10 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_dashboard_metrics: {
+        Args: { date_range?: string }
+        Returns: Json
+      }
       calculate_distance_km: {
         Args: { lat1: number; lng1: number; lat2: number; lng2: number }
         Returns: number
@@ -596,6 +769,10 @@ export type Database = {
       }
       log_security_event: {
         Args: { event_type: string; event_data?: Json; target_user_id?: string }
+        Returns: undefined
+      }
+      refresh_analytics_views: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
     }

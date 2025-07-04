@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Register from "./pages/Register";
 import Setup from "./pages/Setup";
 import Dashboard from "./pages/Dashboard";
+import Admin from "./pages/Admin";
 import Onboarding from "./pages/Onboarding";
 import BookingDemo from "./pages/BookingDemo";
 import Explore from "./pages/Explore";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/setup" element={<Setup />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/booking/demo" element={<BookingDemo />} />
             <Route path="/explore" element={<Explore />} />
             {/* Booking routes - must come before username route */}
