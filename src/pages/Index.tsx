@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Calendar, Menu, X, LogOut } from "lucide-react";
+import { Calendar, Menu, X, LogOut, Instagram, Facebook, Twitter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -47,7 +47,7 @@ const Index = () => {
                   </span>
                   <Button 
                     onClick={() => navigate('/dashboard')}
-                    variant="outline"
+                    variant="default"
                     className="hover-lift"
                   >
                     {t('header.dashboard')}
@@ -63,7 +63,7 @@ const Index = () => {
               ) : (
                 <Button 
                   onClick={() => navigate('/auth')}
-                  variant="outline"
+                  variant="default"
                   className="hover-lift"
                 >
                   {t('header.login')}
@@ -97,7 +97,7 @@ const Index = () => {
                         navigate('/dashboard');
                         setIsMenuOpen(false);
                       }}
-                      variant="outline"
+                      variant="default"
                       className="w-full h-12 touch-manipulation"
                     >
                       {t('header.dashboard')}
@@ -122,7 +122,7 @@ const Index = () => {
                       navigate('/auth');
                       setIsMenuOpen(false);
                     }}
-                    variant="outline"
+                    variant="default"
                     className="w-full h-12 touch-manipulation"
                   >
                     {t('header.login')}
@@ -165,22 +165,65 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-16 px-4 relative">
+      <footer className="bg-foreground text-background py-12 md:py-16 px-4 relative">
         <div className="absolute inset-0 bg-gradient-to-t from-foreground to-foreground/95"></div>
         <div className="container mx-auto relative z-10">
-          <div className="text-center mb-10">
-            <div className="flex justify-center items-center space-x-3 mb-6">
-              <div className="gradient-primary text-primary-foreground p-3 rounded-xl shadow-lg">
-                <Calendar className="h-7 w-7" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {/* Brand Section */}
+            <div className="text-center md:text-left">
+              <div className="flex justify-center md:justify-start items-center space-x-3 mb-4">
+                <div className="gradient-primary text-primary-foreground p-3 rounded-xl shadow-lg">
+                  <Calendar className="h-6 w-6" />
+                </div>
+                <span className="text-2xl font-bold">Bookeasy.mx</span>
               </div>
-              <span className="text-3xl font-bold">Bookeasy.mx</span>
+              <p className="text-background/70 max-w-sm mx-auto md:mx-0 leading-relaxed">
+                {t('footer.description')}
+              </p>
             </div>
-            <p className="text-background/70 mb-8 max-w-lg mx-auto text-lg leading-relaxed">
-              {t('footer.description')}
-            </p>
+            
+            {/* Social Media Section */}
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-4">Síguenos</h3>
+              <div className="flex justify-center space-x-4">
+                <a 
+                  href="https://instagram.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-background/10 hover:bg-background/20 p-3 rounded-full smooth-transition hover:scale-110"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+                <a 
+                  href="https://facebook.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-background/10 hover:bg-background/20 p-3 rounded-full smooth-transition hover:scale-110"
+                >
+                  <Facebook className="h-5 w-5" />
+                </a>
+                <a 
+                  href="https://x.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-background/10 hover:bg-background/20 p-3 rounded-full smooth-transition hover:scale-110"
+                >
+                  <Twitter className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+            
+            {/* Contact/Info Section */}
+            <div className="text-center md:text-right">
+              <h3 className="text-lg font-semibold mb-4">Contacto</h3>
+              <p className="text-background/70">
+                hello@bookeasy.mx
+              </p>
+            </div>
           </div>
-          <div className="border-t border-background/20 pt-8 text-center">
-            <div className="text-background/60">
+          
+          <div className="border-t border-background/20 pt-6 text-center">
+            <div className="text-background/60 text-sm">
               {t('footer.copyright')}
             </div>
           </div>

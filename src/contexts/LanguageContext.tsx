@@ -75,8 +75,8 @@ const esTranslations: Record<string, string> = {
   'finalCta.button': 'Crear Mi Perfil - Completamente Gratis',
   
   // Footer
-  'footer.description': 'La plataforma de reservas #1 para profesionales de belleza en México',
-  'footer.copyright': '© 2024 Bookeasy.mx. Todos los derechos reservados.',
+  'footer.description': 'Plataforma moderna de reservas para profesionales',
+  'footer.copyright': '© 2025 Bookeasy.mx. Todos los derechos reservados.',
   
   // Demo Section
   'demo.title': 'Experimenta la diferencia',
@@ -125,8 +125,8 @@ const enTranslations: Record<string, string> = {
   'finalCta.button': 'Create My Profile - Completely Free',
   
   // Footer
-  'footer.description': 'The #1 booking platform for beauty professionals in Mexico',
-  'footer.copyright': '© 2024 Bookeasy.mx. All rights reserved.',
+  'footer.description': 'Modern booking platform for professionals',
+  'footer.copyright': '© 2025 Bookeasy.mx. All rights reserved.',
   
   // Demo Section
   'demo.title': 'Experience the difference',
