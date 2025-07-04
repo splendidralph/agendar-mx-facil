@@ -34,6 +34,23 @@ const Dashboard = () => {
     if (!user) return;
 
     try {
+      // First check if user is an admin - admins should go to admin dashboard
+      const { data: adminData, error: adminError } = await supabase
+        .from('admin_users')
+        .select('role')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (adminError && adminError.code !== 'PGRST116') {
+        console.error('Error checking admin status:', adminError);
+      }
+
+      if (adminData) {
+        console.log('Dashboard: Admin user detected, redirecting to admin dashboard');
+        navigate('/admin');
+        return;
+      }
+
       const { data: providerData, error } = await supabase
         .from('providers')
         .select('*, users!inner(email, full_name)')

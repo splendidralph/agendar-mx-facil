@@ -84,13 +84,10 @@ const Auth = () => {
           return;
         }
 
-        // If user is admin, allow them to go to dashboard but don't force redirect from other pages
+        // If user is admin, redirect to admin dashboard
         if (adminData) {
-          console.log('Auth: Admin user detected, allowing free navigation');
-          // Only redirect to dashboard if they're not already on a specific route
-          if (window.location.pathname === '/' || window.location.pathname === '/auth') {
-            navigate('/dashboard');
-          }
+          console.log('Auth: Admin user detected, redirecting to admin dashboard');
+          navigate('/admin');
           return;
         }
 
