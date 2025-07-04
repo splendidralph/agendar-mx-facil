@@ -49,6 +49,23 @@ const Auth = () => {
       });
 
       const validationPromise = (async () => {
+        // First check if user is an admin - admins should not be auto-redirected
+        const { data: adminData, error: adminError } = await supabase
+          .from('admin_users')
+          .select('role')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (adminError && adminError.code !== 'PGRST116') {
+          console.error('Auth: Error checking admin status:', adminError);
+        }
+
+        // If user is admin and currently trying to access admin route, don't redirect
+        if (adminData && window.location.pathname.startsWith('/admin')) {
+          console.log('Auth: Admin user accessing admin dashboard, no redirect needed');
+          return;
+        }
+
         // Check if user exists in our users table
         const { data: userData, error: userError } = await supabase
           .from('users')
@@ -67,7 +84,17 @@ const Auth = () => {
           return;
         }
 
-        // Check provider onboarding status
+        // If user is admin, allow them to go to dashboard but don't force redirect from other pages
+        if (adminData) {
+          console.log('Auth: Admin user detected, allowing free navigation');
+          // Only redirect to dashboard if they're not already on a specific route
+          if (window.location.pathname === '/' || window.location.pathname === '/auth') {
+            navigate('/dashboard');
+          }
+          return;
+        }
+
+        // Check provider onboarding status for non-admin users
         const { data: provider, error: providerError } = await supabase
           .from('providers')
           .select('profile_completed')
