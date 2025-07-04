@@ -31,8 +31,9 @@ const TestNotifications = () => {
       // Get provider data with better error handling
       const { data: providers, error: providerError } = await supabase
         .from('providers')
-        .select('id, user_id, business_name')
+        .select('id, user_id, business_name, is_active')
         .ilike('business_name', '%barberia%')
+        .eq('is_active', true)
         .limit(5);
 
       console.log('Found providers:', providers);
@@ -55,8 +56,9 @@ const TestNotifications = () => {
       // Get or create service
       const { data: services, error: serviceError } = await supabase
         .from('services')
-        .select('id, name')
+        .select('id, name, is_active')
         .eq('provider_id', provider.id)
+        .eq('is_active', true)
         .limit(1);
 
       console.log('Found services:', services);
@@ -71,7 +73,8 @@ const TestNotifications = () => {
             name: testData.serviceName,
             price: parseInt(testData.price),
             duration_minutes: parseInt(testData.duration),
-            category: 'corte_barberia'
+            category: 'corte_barberia',
+            is_active: true
           })
           .select()
           .single();
