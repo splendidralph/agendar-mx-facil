@@ -3,14 +3,15 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar, ChevronLeft, Clock, Phone, Instagram, CheckCircle, Star, MapPin, AlertCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Calendar, ChevronLeft, Phone, Instagram, CheckCircle, Star, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { categoryLabels } from "@/utils/serviceCategories";
-import UnifiedBookingCalendar from "@/components/booking/UnifiedBookingCalendar";
+import ProgressiveBookingFlow from "@/components/booking/ProgressiveBookingFlow";
+import ServiceSelectionStep from "@/components/booking/steps/ServiceSelectionStep";
+import DateTimeStep from "@/components/booking/steps/DateTimeStep";
+import ClientDetailsStep from "@/components/booking/steps/ClientDetailsStep";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -33,7 +34,7 @@ interface Service {
   description: string;
   price: number;
   duration_minutes: number;
-  category: string;
+  category?: string;
 }
 
 const Booking = () => {
@@ -56,11 +57,7 @@ const Booking = () => {
     colonia: "",
     postalCode: ""
   });
-
-  const timeSlots = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"
-  ];
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (username) {
@@ -285,258 +282,121 @@ const Booking = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
-      {/* Header */}
-      <header className="bg-card/80 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(`/${provider.username}`)}
-            className="mr-4 text-foreground hover:bg-secondary"
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Volver
-          </Button>
-          <div className="flex items-center space-x-3">
-            <div className="gradient-primary text-primary-foreground p-2 rounded-xl">
-              <Calendar className="h-5 w-5" />
+    <div>
+      {/* Header - Only show on desktop */}
+      {!isMobile && (
+        <header className="bg-card/80 backdrop-blur-sm border-b border-border">
+          <div className="container mx-auto px-4 py-4 flex items-center">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate(`/${provider.username}`)}
+              className="mr-4 text-foreground hover:bg-secondary"
+            >
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Volver
+            </Button>
+            <div className="flex items-center space-x-3">
+              <div className="gradient-primary text-primary-foreground p-2 rounded-xl">
+                <Calendar className="h-5 w-5" />
+              </div>
+              <span className="text-xl font-bold text-foreground">Reservar - {provider.business_name}</span>
             </div>
-            <span className="text-xl font-bold text-foreground">Reservar - {provider.business_name}</span>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Profile Header */}
-          <Card className="mb-8 animate-fade-in border-border/50 shadow-lg overflow-hidden">
-            <div className="gradient-primary p-6 text-primary-foreground">
-              <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-                <div className="w-24 h-24 bg-card rounded-full flex items-center justify-center text-primary text-2xl font-bold shadow-lg">
-                  {provider.business_name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
-                </div>
-                <div className="text-center md:text-left flex-1">
-                  <h1 className="text-2xl font-bold mb-2">{provider.business_name}</h1>
-                  <p className="opacity-90 mb-4 font-inter">{provider.bio || `${categoryLabels[provider.category as keyof typeof categoryLabels] || provider.category}`}</p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                    {provider.phone && (
-                      <div className="flex items-center opacity-90 text-sm">
-                        <Phone className="h-4 w-4 mr-2" />
-                        {provider.phone}
-                      </div>
-                    )}
-                    {provider.instagram_handle && (
-                      <div className="flex items-center opacity-90 text-sm">
-                        <Instagram className="h-4 w-4 mr-2" />
-                        @{provider.instagram_handle}
-                      </div>
-                    )}
-                     {(provider.colonia || provider.address) && (
-                      <div className="flex items-center opacity-90 text-sm">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        {provider.colonia || provider.address}
-                      </div>
-                    )}
-                    <div className="flex items-center opacity-90 text-sm">
-                      <Star className="h-4 w-4 mr-2 fill-current" />
-                      {provider.colonia ? `Profesional en ${provider.colonia}` : 'Nuevo en BookEasy'}
+      {/* Profile Header - Only show on desktop */}
+      {!isMobile && (
+        <div className="bg-gradient-to-br from-secondary to-background py-8">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <Card className="animate-fade-in border-border/50 shadow-lg overflow-hidden">
+                <div className="gradient-primary p-6 text-primary-foreground">
+                  <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+                    <div className="w-24 h-24 bg-card rounded-full flex items-center justify-center text-primary text-2xl font-bold shadow-lg">
+                      {provider.business_name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          <div className="space-y-8">
-            {/* Services Selection */}
-            <Card className="animate-slide-up border-border/50 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-foreground">Selecciona un servicio</CardTitle>
-                <CardDescription className="font-inter">
-                  Elige el servicio que deseas reservar
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {services.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">No hay servicios disponibles</p>
-                  </div>
-                ) : (
-                  <div className="grid gap-3">
-                    {services.map((service) => (
-                      <div
-                        key={service.id}
-                        className={`p-4 border rounded-xl cursor-pointer smooth-transition touch-manipulation ${
-                          selectedService?.id === service.id
-                            ? "border-primary bg-primary/5 shadow-md"
-                            : "border-border hover:border-primary/50 hover:shadow-sm"
-                        }`}
-                        onClick={() => setSelectedService(service)}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-foreground text-lg">{service.name}</h3>
-                            {service.description && (
-                              <p className="text-sm text-muted-foreground mt-1 mb-2">{service.description}</p>
-                            )}
-                            <div className="flex items-center text-sm text-muted-foreground">
-                              <Clock className="h-4 w-4 mr-1" />
-                              {service.duration_minutes} minutos
-                            </div>
+                    <div className="text-center md:text-left flex-1">
+                      <h1 className="text-2xl font-bold mb-2">{provider.business_name}</h1>
+                      <p className="opacity-90 mb-4 font-inter">{provider.bio || `${categoryLabels[provider.category as keyof typeof categoryLabels] || provider.category}`}</p>
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        {provider.phone && (
+                          <div className="flex items-center opacity-90 text-sm">
+                            <Phone className="h-4 w-4 mr-2" />
+                            {provider.phone}
                           </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-primary">
-                              ${service.price}
-                            </div>
-                            <div className="text-xs text-muted-foreground">MXN</div>
+                        )}
+                        {provider.instagram_handle && (
+                          <div className="flex items-center opacity-90 text-sm">
+                            <Instagram className="h-4 w-4 mr-2" />
+                            @{provider.instagram_handle}
                           </div>
+                        )}
+                         {(provider.colonia || provider.address) && (
+                          <div className="flex items-center opacity-90 text-sm">
+                            <MapPin className="h-4 w-4 mr-2" />
+                            {provider.colonia || provider.address}
+                          </div>
+                        )}
+                        <div className="flex items-center opacity-90 text-sm">
+                          <Star className="h-4 w-4 mr-2 fill-current" />
+                          {provider.colonia ? `Profesional en ${provider.colonia}` : 'Nuevo en BookEasy'}
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Booking Calendar - Only show if service is selected */}
-            {selectedService && (
-              <div className="animate-slide-up">
-                <UnifiedBookingCalendar
-                  providerId={provider.id}
-                  serviceId={selectedService.id}
-                  serviceDuration={selectedService.duration_minutes}
-                  onDateTimeSelect={(date, time) => {
-                    setSelectedDate(date);
-                    setSelectedTime(time);
-                  }}
-                  selectedDate={selectedDate}
-                  selectedTime={selectedTime}
-                />
-              </div>
-            )}
-
-            {/* Client Details Form - Only show if date and time are selected */}
-            {selectedService && selectedDate && selectedTime && (
-              <Card className="animate-slide-up border-border/50 shadow-sm">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-foreground">Tus datos</CardTitle>
-                  <CardDescription className="font-inter">
-                    Completa la información para confirmar tu cita
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {error && (
-                    <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2">
-                      <AlertCircle className="h-4 w-4 text-destructive" />
-                      <span className="text-sm text-destructive">{error}</span>
-                    </div>
-                  )}
-                  
-                  <form onSubmit={handleBooking} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="name" className="text-foreground font-medium">Nombre completo *</Label>
-                        <Input
-                          id="name"
-                          type="text"
-                          required
-                          value={clientData.name}
-                          onChange={(e) => setClientData(prev => ({ ...prev, name: e.target.value }))}
-                          className="border-border focus:border-primary mt-2 h-12"
-                          placeholder="Ej. Juan Pérez"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="phone" className="text-foreground font-medium">Teléfono *</Label>
-                        <Input
-                          id="phone"
-                          type="tel"
-                          required
-                          value={clientData.phone}
-                          onChange={(e) => setClientData(prev => ({ ...prev, phone: e.target.value }))}
-                          className="border-border focus:border-primary mt-2 h-12"
-                          placeholder="+52 55 1234 5678"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="email" className="text-foreground font-medium">Email (opcional)</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={clientData.email}
-                        onChange={(e) => setClientData(prev => ({ ...prev, email: e.target.value }))}
-                        className="border-border focus:border-primary mt-2 h-12"
-                        placeholder="tu@email.com"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="client-colonia" className="text-foreground font-medium">Tu colonia (opcional)</Label>
-                      <Input
-                        id="client-colonia"
-                        value={clientData.colonia}
-                        onChange={(e) => setClientData(prev => ({ ...prev, colonia: e.target.value }))}
-                        className="border-border focus:border-primary mt-2 h-12"
-                        placeholder="Ej. Roma Norte"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="notes" className="text-foreground font-medium">Notas adicionales (opcional)</Label>
-                      <Textarea
-                        id="notes"
-                        value={clientData.notes}
-                        onChange={(e) => setClientData(prev => ({ ...prev, notes: e.target.value }))}
-                        className="border-border focus:border-primary mt-2"
-                        placeholder="Cualquier información adicional..."
-                        rows={3}
-                      />
-                    </div>
-
-                    {/* Booking Summary */}
-                    <div className="bg-secondary/30 p-4 rounded-lg border border-border/50 space-y-2">
-                      <h4 className="font-medium text-foreground">Resumen de tu cita:</h4>
-                      <div className="text-sm space-y-1">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Servicio:</span>
-                          <span className="font-medium">{selectedService.name}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Fecha:</span>
-                          <span className="font-medium">{format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Hora:</span>
-                          <span className="font-medium">{selectedTime}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Duración:</span>
-                          <span className="font-medium">{selectedService.duration_minutes} min</span>
-                        </div>
-                        <div className="flex justify-between text-lg font-bold">
-                          <span>Total:</span>
-                          <span className="text-primary">${selectedService.price} MXN</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Button 
-                      type="submit" 
-                      className="w-full btn-primary h-12 text-lg font-semibold shadow-lg touch-manipulation"
-                      disabled={!clientData.name || !clientData.phone || submitting}
-                    >
-                      {submitting ? 'Creando Reserva...' : 'Confirmar Reserva'}
-                    </Button>
-                  </form>
-                </CardContent>
+                </div>
               </Card>
-            )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Progressive Booking Flow */}
+      <ProgressiveBookingFlow
+        services={services}
+        providerId={provider.id}
+        selectedService={selectedService}
+        selectedDate={selectedDate}
+        selectedTime={selectedTime}
+        clientData={clientData}
+        onServiceSelect={(service) => setSelectedService(service)}
+        onDateTimeSelect={(date, time) => {
+          setSelectedDate(date);
+          setSelectedTime(time);
+        }}
+        onClientDataChange={setClientData}
+        onSubmit={() => handleBooking({ preventDefault: () => {} } as React.FormEvent)}
+      >
+        <ServiceSelectionStep
+          services={services}
+          selectedService={selectedService}
+          onServiceSelect={(service) => setSelectedService(service)}
+          isMobile={isMobile}
+        />
+        
+        <DateTimeStep
+          providerId={provider.id}
+          serviceId={selectedService?.id}
+          serviceDuration={selectedService?.duration_minutes}
+          onDateTimeSelect={(date, time) => {
+            setSelectedDate(date);
+            setSelectedTime(time);
+          }}
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
+        />
+        
+        <ClientDetailsStep
+          clientData={clientData}
+          onClientDataChange={setClientData}
+          selectedService={selectedService}
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
+          error={error}
+          isMobile={isMobile}
+        />
+      </ProgressiveBookingFlow>
     </div>
   );
 };
