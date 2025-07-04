@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, ArrowLeft, AlertCircle } from 'lucide-react';
+import { Calendar, ArrowLeft, AlertCircle, Users, Star } from 'lucide-react';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
@@ -288,208 +288,263 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary to-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-6 sm:mb-8 relative">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/')}
-            className="absolute top-0 left-0 text-muted-foreground hover:text-foreground z-10"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver
-          </Button>
-          
-          <div 
-            className="flex justify-center items-center space-x-3 mb-4 pt-12 sm:pt-0 cursor-pointer"
-            onClick={() => navigate('/')}
-          >
-            <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg">
-              <Calendar className="h-6 w-6" />
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Modern gradient background */}
+      <div className="absolute inset-0 gradient-hero"></div>
+      <div className="absolute inset-0 gradient-hero-overlay"></div>
+      
+      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-lg">
+          {/* Header with back button */}
+          <div className="text-center mb-8 relative">
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/')}
+              className="absolute -top-2 left-0 text-white/80 hover:text-white hover:bg-white/10 border-0"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Volver
+            </Button>
+            
+            {/* Brand logo */}
+            <div 
+              className="flex justify-center items-center space-x-3 mb-6 pt-8 cursor-pointer group"
+              onClick={() => navigate('/')}
+            >
+              <div className="bg-white/20 backdrop-blur-sm text-white p-3 rounded-2xl shadow-xl group-hover:bg-white/30 smooth-transition">
+                <Calendar className="h-7 w-7" />
+              </div>
+              <span className="text-3xl font-bold text-white font-poppins">Bookeasy.mx</span>
             </div>
-            <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
+
+            {/* Value proposition */}
+            <div className="text-center mb-8">
+              <h1 className="text-2xl md:text-3xl font-bold text-white mb-3 font-poppins">
+                Impulsa tu negocio de servicios
+              </h1>
+              <p className="text-white/80 text-lg">
+                Crea tu perfil profesional y comienza a recibir citas en minutos
+              </p>
+            </div>
           </div>
-        </div>
 
-        <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Iniciar Sesión</TabsTrigger>
-            <TabsTrigger value="signup">Crear Cuenta</TabsTrigger>
-          </TabsList>
+          {/* Main auth card */}
+          <div className="glassmorphism rounded-3xl p-8 shadow-2xl border border-white/20">
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-1">
+                <TabsTrigger 
+                  value="signin" 
+                  className="text-white data-[state=active]:bg-white data-[state=active]:text-primary rounded-xl smooth-transition"
+                >
+                  Iniciar Sesión
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="signup"
+                  className="text-white data-[state=active]:bg-white data-[state=active]:text-primary rounded-xl smooth-transition"
+                >
+                  Crear Cuenta
+                </TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="signin">
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  {showForgotPassword ? 'Recuperar Contraseña' : 'Iniciar Sesión'}
-                </CardTitle>
-                <CardDescription>
-                  {showForgotPassword 
-                    ? 'Ingresa tu email para recibir instrucciones de recuperación'
-                    : 'Ingresa con tu cuenta existente'
-                  }
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+              <TabsContent value="signin" className="mt-8">
                 {showForgotPassword ? (
-                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                  <div className="space-y-6">
+                    <div className="text-center">
+                      <h2 className="text-xl font-semibold text-white mb-2">Recuperar Contraseña</h2>
+                      <p className="text-white/70">Ingresa tu email para recibir instrucciones</p>
+                    </div>
+                    
+                    <form onSubmit={handleForgotPassword} className="space-y-6">
+                      <div>
+                        <Label htmlFor="reset-email" className="text-white font-medium">Email</Label>
+                        <Input
+                          id="reset-email"
+                          type="email"
+                          value={resetEmail}
+                          onChange={(e) => setResetEmail(e.target.value)}
+                          required
+                          disabled={isSubmitting}
+                          placeholder="tu@email.com"
+                          className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <Button
+                          type="submit"
+                          className="w-full gradient-accent text-white hover:opacity-90 shadow-xl font-semibold py-3 h-auto rounded-2xl smooth-transition hover:scale-[1.02]"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? 'Enviando...' : 'Enviar Instrucciones'}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="w-full text-white/80 hover:text-white hover:bg-white/10"
+                          onClick={() => setShowForgotPassword(false)}
+                          disabled={isSubmitting}
+                        >
+                          Volver al inicio de sesión
+                        </Button>
+                      </div>
+                    </form>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="text-center">
+                      <h2 className="text-xl font-semibold text-white mb-2">Bienvenido de vuelta</h2>
+                      <p className="text-white/70">Ingresa con tu cuenta existente</p>
+                    </div>
+                    
+                    <form onSubmit={handleSignIn} className="space-y-6">
+                      <div>
+                        <Label htmlFor="signin-email" className="text-white font-medium">Email</Label>
+                        <Input
+                          id="signin-email"
+                          type="email"
+                          value={signInData.email}
+                          onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
+                          required
+                          disabled={isSubmitting}
+                          placeholder="tu@email.com"
+                          className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="signin-password" className="text-white font-medium">Contraseña</Label>
+                        <Input
+                          id="signin-password"
+                          type="password"
+                          value={signInData.password}
+                          onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
+                          required
+                          disabled={isSubmitting}
+                          minLength={6}
+                          placeholder="Tu contraseña"
+                          className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <Button
+                          type="submit"
+                          className="w-full gradient-accent text-white hover:opacity-90 shadow-xl font-semibold py-3 h-auto rounded-2xl smooth-transition hover:scale-[1.02]"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="w-full text-white/80 hover:text-white hover:bg-white/10"
+                          onClick={() => setShowForgotPassword(true)}
+                          disabled={isSubmitting}
+                        >
+                          ¿Olvidaste tu contraseña?
+                        </Button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="signup" className="mt-8">
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <h2 className="text-xl font-semibold text-white mb-2">Crear tu cuenta profesional</h2>
+                    <p className="text-white/70">Únete a miles de profesionales exitosos</p>
+                  </div>
+                  
+                  <form onSubmit={handleSignUp} className="space-y-5">
                     <div>
-                      <Label htmlFor="reset-email">Email</Label>
+                      <Label htmlFor="signup-name" className="text-white font-medium">Nombre Completo *</Label>
                       <Input
-                        id="reset-email"
+                        id="signup-name"
+                        type="text"
+                        value={signUpData.fullName}
+                        onChange={(e) => setSignUpData({ ...signUpData, fullName: e.target.value })}
+                        required
+                        disabled={isSubmitting}
+                        placeholder="Tu nombre completo"
+                        className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="signup-email" className="text-white font-medium">Email *</Label>
+                      <Input
+                        id="signup-email"
                         type="email"
-                        value={resetEmail}
-                        onChange={(e) => setResetEmail(e.target.value)}
+                        value={signUpData.email}
+                        onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
                         required
                         disabled={isSubmitting}
                         placeholder="tu@email.com"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Button
-                        type="submit"
-                        className="w-full btn-accent"
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? 'Enviando...' : 'Enviar Instrucciones'}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full"
-                        onClick={() => setShowForgotPassword(false)}
-                        disabled={isSubmitting}
-                      >
-                        Volver al inicio de sesión
-                      </Button>
-                    </div>
-                  </form>
-                ) : (
-                  <form onSubmit={handleSignIn} className="space-y-4">
-                    <div>
-                      <Label htmlFor="signin-email">Email</Label>
-                      <Input
-                        id="signin-email"
-                        type="email"
-                        value={signInData.email}
-                        onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
-                        required
-                        disabled={isSubmitting}
+                        className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="signin-password">Contraseña</Label>
+                      <Label htmlFor="signup-phone" className="text-white font-medium">Teléfono *</Label>
+                      <PhoneInput
+                        international
+                        countryCallingCodeEditable={false}
+                        defaultCountry="MX"
+                        value={signUpData.phone}
+                        onChange={(phone) => setSignUpData({ ...signUpData, phone: phone || '' })}
+                        disabled={isSubmitting}
+                        placeholder="Ingresa tu número de teléfono"
+                        className="mt-2 flex h-12 w-full rounded-lg border-2 border-white/20 bg-white/10 backdrop-blur-sm px-4 py-3 text-white ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:border-white/40 smooth-transition disabled:cursor-not-allowed disabled:opacity-50"
+                        style={{
+                          '--PhoneInputCountryFlag-height': '1em',
+                          '--PhoneInputCountrySelectArrow-color': 'rgba(255, 255, 255, 0.7)',
+                        } as React.CSSProperties}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="signup-password" className="text-white font-medium">Contraseña *</Label>
                       <Input
-                        id="signin-password"
+                        id="signup-password"
                         type="password"
-                        value={signInData.password}
-                        onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
+                        value={signUpData.password}
+                        onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
                         required
                         disabled={isSubmitting}
                         minLength={6}
+                        placeholder="Mínimo 6 caracteres"
+                        className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Button
-                        type="submit"
-                        className="w-full btn-accent"
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full text-sm"
-                        onClick={() => setShowForgotPassword(true)}
-                        disabled={isSubmitting}
-                      >
-                        ¿Olvidaste tu contraseña?
-                      </Button>
-                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full gradient-accent text-white hover:opacity-90 shadow-xl font-semibold py-3 h-auto rounded-2xl smooth-transition hover:scale-[1.02] mt-6"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta Profesional'}
+                    </Button>
                   </form>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                </div>
+              </TabsContent>
+            </Tabs>
 
-          <TabsContent value="signup">
-            <Card>
-              <CardHeader>
-                <CardTitle>Crear Cuenta</CardTitle>
-                <CardDescription>
-                  Únete como proveedor de servicios en BookEasy.mx
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div>
-                    <Label htmlFor="signup-name">Nombre Completo *</Label>
-                    <Input
-                      id="signup-name"
-                      type="text"
-                      value={signUpData.fullName}
-                      onChange={(e) => setSignUpData({ ...signUpData, fullName: e.target.value })}
-                      required
-                      disabled={isSubmitting}
-                      placeholder="Tu nombre completo"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="signup-email">Email *</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      value={signUpData.email}
-                      onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
-                      required
-                      disabled={isSubmitting}
-                      placeholder="tu@email.com"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="signup-phone">Teléfono *</Label>
-                    <PhoneInput
-                      international
-                      countryCallingCodeEditable={false}
-                      defaultCountry="MX"
-                      value={signUpData.phone}
-                      onChange={(phone) => setSignUpData({ ...signUpData, phone: phone || '' })}
-                      disabled={isSubmitting}
-                      placeholder="Ingresa tu número de teléfono"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                      style={{
-                        '--PhoneInputCountryFlag-height': '1em',
-                        '--PhoneInputCountrySelectArrow-color': 'var(--color-text-muted)',
-                      } as React.CSSProperties}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="signup-password">Contraseña *</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      value={signUpData.password}
-                      onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
-                      required
-                      disabled={isSubmitting}
-                      minLength={6}
-                      placeholder="Mínimo 6 caracteres"
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full btn-accent"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta de Proveedor'}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+            {/* Trust indicators */}
+            <div className="mt-8 pt-6 border-t border-white/20">
+              <div className="flex items-center justify-center space-x-6 text-white/60 text-sm">
+                <div className="flex items-center space-x-1">
+                  <Users className="h-4 w-4" />
+                  <span>+1000 profesionales</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Star className="h-4 w-4" />
+                  <span>4.8/5 rating</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Additional info */}
+          <div className="text-center mt-6">
+            <p className="text-white/60 text-sm">
+              Al crear una cuenta, aceptas nuestros términos de servicio y política de privacidad
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
