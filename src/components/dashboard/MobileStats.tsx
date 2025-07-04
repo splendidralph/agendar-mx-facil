@@ -53,50 +53,42 @@ const MobileStats = ({ stats, loading, isMobile }: MobileStatsProps) => {
   if (isMobile) {
     return (
       <div className="mb-6">
-        <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory">
+        <div className="grid grid-cols-2 gap-3 px-1">
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <Card 
                 key={stat.title}
-                className="min-w-[280px] snap-center animate-slide-up border-border/50 shadow-lg card-hover touch-manipulation"
+                className="animate-slide-up border-border/50 shadow-lg card-hover touch-manipulation"
                 style={{ animationDelay: stat.delay }}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm text-muted-foreground font-semibold">{stat.title}</p>
-                      <p className="text-2xl font-bold text-foreground mt-1">
+                <CardContent className="p-3">
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-muted-foreground font-semibold truncate">{stat.title}</p>
+                      <div className={`${stat.gradient} p-2 rounded-lg`}>
+                        <Icon className={`h-4 w-4 ${
+                          stat.gradient.includes('gradient') 
+                            ? 'text-primary-foreground' 
+                            : stat.gradient.includes('primary')
+                              ? 'text-primary'
+                              : 'text-accent'
+                        }`} />
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xl font-bold text-foreground">
                         {stat.value}
                       </p>
-                      <p className="text-xs text-muted-foreground font-medium mt-1">
+                      <p className="text-xs text-muted-foreground font-medium truncate">
                         {stat.subtitle}
                       </p>
-                    </div>
-                    <div className={`${stat.gradient} p-3 rounded-xl ml-3`}>
-                      <Icon className={`h-6 w-6 ${
-                        stat.gradient.includes('gradient') 
-                          ? 'text-primary-foreground' 
-                          : stat.gradient.includes('primary')
-                            ? 'text-primary'
-                            : 'text-accent'
-                      }`} />
                     </div>
                   </div>
                 </CardContent>
               </Card>
             );
           })}
-        </div>
-        
-        {/* Scroll indicator */}
-        <div className="flex justify-center mt-2 space-x-1">
-          {statsCards.map((_, index) => (
-            <div 
-              key={index}
-              className="w-2 h-2 rounded-full bg-border"
-            />
-          ))}
         </div>
       </div>
     );
