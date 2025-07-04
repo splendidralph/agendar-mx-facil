@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Mail, Webhook, Send } from 'lucide-react';
+import { Mail, Webhook, Send, MessageCircle } from 'lucide-react';
 
 const TestNotifications = () => {
   const [loading, setLoading] = useState(false);
@@ -163,6 +163,28 @@ const TestNotifications = () => {
     }
   };
 
+  const testWhatsAppNotification = async () => {
+    setLoading(true);
+    try {
+      const bookingId = await createTestBooking();
+      if (!bookingId) return;
+
+      const { data, error } = await supabase.functions.invoke('send-whatsapp-notification', {
+        body: { bookingId }
+      });
+
+      if (error) throw error;
+
+      toast.success('WhatsApp notification sent successfully!');
+      console.log('WhatsApp response:', data);
+    } catch (error) {
+      console.error('WhatsApp test error:', error);
+      toast.error(`WhatsApp test failed: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const testHighLevelWebhook = async () => {
     setLoading(true);
     try {
@@ -200,7 +222,7 @@ const TestNotifications = () => {
         <p className="text-muted-foreground">Test email and HighLevel webhook notifications for bookings</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-3">
         {/* Email Test */}
         <Card>
           <CardHeader>
@@ -236,6 +258,38 @@ const TestNotifications = () => {
             >
               <Send className="h-4 w-4 mr-2" />
               Test Email
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* WhatsApp Test */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5" />
+              WhatsApp Notifications
+            </CardTitle>
+            <CardDescription>
+              Test Twilio WhatsApp notifications
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 mb-4">
+              <div>
+                <Label>Business Name</Label>
+                <Input
+                  value={testData.businessName}
+                  onChange={(e) => setTestData(prev => ({ ...prev, businessName: e.target.value }))}
+                />
+              </div>
+            </div>
+            <Button 
+              onClick={testWhatsAppNotification} 
+              disabled={loading}
+              className="w-full"
+            >
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Test WhatsApp
             </Button>
           </CardContent>
         </Card>
