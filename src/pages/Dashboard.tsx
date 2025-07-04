@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import ProfileSettings from "@/components/dashboard/ProfileSettings";
 import ServicesManager from "@/components/dashboard/ServicesManager";
 import NotificationSettings from "@/components/dashboard/NotificationSettings";
+import AvailabilityManager from "@/components/availability/AvailabilityManager";
 import { useBookings } from "@/hooks/useBookings";
 import MobileHeader from "@/components/dashboard/MobileHeader";
 import MobileStats from "@/components/dashboard/MobileStats";
@@ -184,10 +185,11 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Profile, Services and Notification Management */}
-          <div className={`grid gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'} ${isMobile ? 'pb-24' : ''}`}>
+          {/* Profile, Services, Availability and Notification Management */}
+          <div className={`grid gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-2'} ${isMobile ? 'pb-24' : ''}`}>
             <ProfileSettings provider={provider} onUpdate={refreshProvider} />
             <ServicesManager providerId={provider.id} />
+            <AvailabilityManager providerId={provider.id} />
             <NotificationSettings provider={provider} onUpdate={refreshProvider} />
           </div>
         </div>

@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar, ChevronLeft, Clock, Phone, Instagram, CheckCircle, Star, MapPin, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { categoryLabels } from "@/utils/serviceCategories";
+import EnhancedBookingCalendar from "@/components/booking/EnhancedBookingCalendar";
 
 interface Provider {
   id: string;
@@ -39,7 +40,7 @@ const Booking = () => {
   const [provider, setProvider] = useState<Provider | null>(null);
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -141,6 +142,8 @@ const Booking = () => {
       return;
     }
 
+    const formattedDate = selectedDate.toISOString().split('T')[0];
+
     if (!clientData.name || !clientData.phone) {
       const errorMsg = 'Por favor completa tu nombre y teléfono';
       setError(errorMsg);
@@ -154,7 +157,7 @@ const Booking = () => {
       console.log("Creating booking:", {
         provider: provider.business_name,
         service: selectedService.name,
-        date: selectedDate,
+        date: formattedDate,
         time: selectedTime,
         client: { name: clientData.name, phone: clientData.phone, hasEmail: !!clientData.email }
       });
@@ -163,7 +166,7 @@ const Booking = () => {
         body: {
           providerId: provider.id,
           serviceId: selectedService.id,
-          bookingDate: selectedDate,
+          bookingDate: formattedDate,
           bookingTime: selectedTime,
           clientData: clientData,
           isGuest: true
@@ -223,6 +226,8 @@ const Booking = () => {
   }
 
   if (showConfirmation) {
+    const formattedDate = selectedDate?.toISOString().split('T')[0] || '';
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-secondary to-background flex items-center justify-center px-4">
         <Card className="max-w-md w-full text-center border-border/50 shadow-2xl">
@@ -242,7 +247,7 @@ const Booking = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Fecha:</span>
-                <span className="font-semibold text-foreground">{selectedDate}</span>
+                <span className="font-semibold text-foreground">{formattedDate}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Hora:</span>
@@ -402,38 +407,21 @@ const Booking = () => {
                   </div>
                 )}
                 
-                <form onSubmit={handleBooking} className="space-y-6">
-                  <div>
-                    <Label className="text-foreground font-semibold">Fecha Preferida *</Label>
-                    <Input
-                      type="date"
-                      required
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="border-border focus:border-primary mt-2"
-                      min={new Date().toISOString().split('T')[0]}
+                 <form onSubmit={handleBooking} className="space-y-6">
+                  {/* Enhanced Date and Time Selection */}
+                  <div className="space-y-4">
+                    <Label className="text-foreground font-semibold">Selecciona Fecha y Hora *</Label>
+                    <EnhancedBookingCalendar
+                      providerId={provider.id}
+                      serviceId={selectedService?.id}
+                      serviceDuration={selectedService?.duration_minutes}
+                      onDateTimeSelect={(date, time) => {
+                        setSelectedDate(date);
+                        setSelectedTime(time);
+                      }}
+                      selectedDate={selectedDate}
+                      selectedTime={selectedTime}
                     />
-                  </div>
-
-                  <div>
-                    <Label className="text-foreground font-semibold">Horario Preferido *</Label>
-                    <div className="grid grid-cols-3 gap-2 mt-3">
-                      {timeSlots.map((time) => (
-                        <Button
-                          key={time}
-                          type="button"
-                          variant={selectedTime === time ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setSelectedTime(time)}
-                          className={selectedTime === time 
-                            ? "btn-primary" 
-                            : "border-border text-foreground hover:bg-secondary"
-                          }
-                        >
-                          {time}
-                        </Button>
-                      ))}
-                    </div>
                   </div>
 
                   <div>
