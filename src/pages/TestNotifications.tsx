@@ -6,13 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Mail, Webhook, Send, MessageCircle } from 'lucide-react';
+import { Mail, Send, MessageCircle } from 'lucide-react';
 
 const TestNotifications = () => {
   const [loading, setLoading] = useState(false);
   const [testData, setTestData] = useState({
     providerEmail: 'theralphcherry@gmail.com',
-    highlevelWebhookUrl: '',
     businessName: 'Barberia El Rafas',
     serviceName: 'Corte de Cabello',
     clientName: 'Cliente Prueba',
@@ -185,44 +184,15 @@ const TestNotifications = () => {
     }
   };
 
-  const testHighLevelWebhook = async () => {
-    setLoading(true);
-    try {
-      if (!testData.highlevelWebhookUrl) {
-        toast.error('Please enter your HighLevel webhook URL');
-        return;
-      }
-
-      const bookingId = await createTestBooking();
-      if (!bookingId) return;
-
-      const { data, error } = await supabase.functions.invoke('send-highlevel-webhook', {
-        body: { 
-          bookingId,
-          webhookUrl: testData.highlevelWebhookUrl
-        }
-      });
-
-      if (error) throw error;
-
-      toast.success('HighLevel webhook sent successfully!');
-      console.log('HighLevel webhook response:', data);
-    } catch (error) {
-      console.error('HighLevel webhook test error:', error);
-      toast.error(`HighLevel webhook test failed: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">Test Notification Systems</h1>
-        <p className="text-muted-foreground">Test email and HighLevel webhook notifications for bookings</p>
+        <p className="text-muted-foreground">Test email and WhatsApp notifications for bookings</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Email Test */}
         <Card>
           <CardHeader>
@@ -294,45 +264,6 @@ const TestNotifications = () => {
           </CardContent>
         </Card>
 
-        {/* HighLevel Webhook Test */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Webhook className="h-5 w-5" />
-              HighLevel Webhook
-            </CardTitle>
-            <CardDescription>
-              Test HighLevel webhook integration for automation
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 mb-4">
-              <div>
-                <Label>HighLevel Webhook URL</Label>
-                <Input
-                  value={testData.highlevelWebhookUrl}
-                  onChange={(e) => setTestData(prev => ({ ...prev, highlevelWebhookUrl: e.target.value }))}
-                  placeholder="https://hooks.zapier.com/hooks/catch/..."
-                />
-              </div>
-              <div>
-                <Label>Business Name</Label>
-                <Input
-                  value={testData.businessName}
-                  onChange={(e) => setTestData(prev => ({ ...prev, businessName: e.target.value }))}
-                />
-              </div>
-            </div>
-            <Button 
-              onClick={testHighLevelWebhook} 
-              disabled={loading}
-              className="w-full"
-            >
-              <Webhook className="h-4 w-4 mr-2" />
-              Test HighLevel Webhook
-            </Button>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Test Data */}
