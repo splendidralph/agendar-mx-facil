@@ -137,6 +137,8 @@ export const ContactStep = ({
   };
 
   const handleChange = (field: keyof typeof formData, value: string) => {
+    console.log('handleChange called:', { field, value });
+    
     // Sanitize input to prevent XSS
     let sanitizedValue = sanitizeInput(value, 255);
     
@@ -147,6 +149,7 @@ export const ContactStep = ({
     }
     
     const newData = { ...formData, [field]: sanitizedValue };
+    console.log('Setting form data:', newData);
     setFormData(newData);
     onUpdate(newData);
     
@@ -225,7 +228,7 @@ export const ContactStep = ({
               <SelectTrigger className="mt-2 border-blue-200 focus:border-blue-400">
                 <SelectValue placeholder={loadingDelegaciones ? "Cargando delegaciones..." : "Elige tu delegación"} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-50 bg-white border border-border shadow-lg">
                 {delegaciones.map((delegacion) => (
                   <SelectItem key={delegacion.id} value={delegacion.name}>
                     {delegacion.name}
@@ -255,7 +258,7 @@ export const ContactStep = ({
                 <SelectTrigger className="mt-2 border-blue-200 focus:border-blue-400">
                   <SelectValue placeholder={loadingColonias ? "Cargando áreas..." : "Busca tu colonia/área"} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-50 bg-white border border-border shadow-lg">
                   {coloniaGroups.map((colonia) => (
                     <SelectItem key={colonia.id} value={colonia.colonia}>
                       <div className="flex justify-between items-center w-full">
