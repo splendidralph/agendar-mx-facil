@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Settings, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { checkUsernameAvailability } from '@/utils/usernameUtils';
+import ProfilePictureUpload from './ProfilePictureUpload';
 
 interface ProfileSettingsProps {
   provider: any;
@@ -102,7 +103,19 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
             <DialogHeader>
               <DialogTitle>Editar Perfil</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-6">
+              <div className="flex justify-center">
+                <ProfilePictureUpload
+                  providerId={provider.id}
+                  currentImageUrl={provider.profile_image_url}
+                  businessName={provider.business_name || 'Usuario'}
+                  onImageUpdate={onUpdate}
+                  size="lg"
+                  showUploadButton
+                />
+              </div>
+              
+              <div className="space-y-4">
               <div>
                 <Label htmlFor="business_name">Nombre del Negocio</Label>
                 <Input
@@ -193,6 +206,7 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
                 <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
                   Cancelar
                 </Button>
+              </div>
               </div>
             </div>
           </DialogContent>

@@ -126,6 +126,8 @@ const Dashboard = () => {
         isMobile={isMobile}
         activeTab={activeTab}
         onTabChange={isMobile ? setActiveTab : undefined}
+        provider={provider}
+        onRefreshProvider={refreshProvider}
       />
 
       <div className="relative z-10 container mx-auto px-4 py-8">

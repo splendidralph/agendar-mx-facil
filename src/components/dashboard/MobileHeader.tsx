@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, Link } from "lucide-react";
 import MobileNavigation from "./MobileNavigation";
+import ProfilePictureUpload from "./ProfilePictureUpload";
 
 interface MobileHeaderProps {
   businessName: string;
@@ -11,9 +12,11 @@ interface MobileHeaderProps {
   isMobile: boolean;
   activeTab?: string;
   onTabChange?: (tab: string) => void;
+  provider?: any;
+  onRefreshProvider?: () => void;
 }
 
-const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, username, isMobile, activeTab = "overview", onTabChange }: MobileHeaderProps) => {
+const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, username, isMobile, activeTab = "overview", onTabChange, provider, onRefreshProvider }: MobileHeaderProps) => {
 
   if (!isMobile) {
     return (
@@ -46,7 +49,16 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
     <>
       <header className="glassmorphism border-b border-white/10 sticky top-0 z-50 touch-manipulation">
         <div className="flex justify-between items-center p-4">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
+            {provider && (
+              <ProfilePictureUpload
+                providerId={provider.id}
+                currentImageUrl={provider.profile_image_url}
+                businessName={businessName}
+                onImageUpdate={onRefreshProvider || (() => {})}
+                size="sm"
+              />
+            )}
             <div className="gradient-primary text-primary-foreground p-2 rounded-lg animate-glow">
               <Calendar className="h-5 w-5" />
             </div>
