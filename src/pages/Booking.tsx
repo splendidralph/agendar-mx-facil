@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar, ChevronLeft, Clock, Phone, Instagram, CheckCircle, Star, MapPin, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { categoryLabels } from "@/utils/serviceCategories";
-import EnhancedBookingCalendar from "@/components/booking/EnhancedBookingCalendar";
+import UnifiedBookingCalendar from "@/components/booking/UnifiedBookingCalendar";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -401,7 +401,7 @@ const Booking = () => {
             {/* Booking Calendar - Only show if service is selected */}
             {selectedService && (
               <div className="animate-slide-up">
-                <EnhancedBookingCalendar
+                <UnifiedBookingCalendar
                   providerId={provider.id}
                   serviceId={selectedService.id}
                   serviceDuration={selectedService.duration_minutes}
