@@ -45,7 +45,7 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       businessName: data.businessName,
       category: data.category,
       username: data.username,
-      whatsappPhone: data.whatsappPhone,
+      whatsappPhone: data.whatsappPhone ? '***' : 'empty',
       hasServices: data.services?.length || 0
     });
     
@@ -75,37 +75,38 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
 
     if (fetchError) {
       console.error('onboardingService: Error fetching provider:', fetchError);
-      throw fetchError;
+      throw new Error(`Error verificando proveedor existente: ${fetchError.message}`);
     }
 
     let providerId = existingProvider?.id;
 
+    // Prepare provider data - allow null values during onboarding
+    const providerData: any = {
+      user_id: userId,
+      business_name: data.businessName?.trim() || null, // Allow null during onboarding
+      category: data.category?.trim() || null,
+      bio: data.bio?.trim() || null,
+      address: data.address?.trim() || null,
+      instagram_handle: data.instagramHandle?.trim() || null,
+      whatsapp_phone: data.whatsappPhone?.trim() || null,
+      colonia: data.colonia?.trim() || null,
+      postal_code: data.postalCode?.trim() || null,
+      latitude: data.latitude || null,
+      longitude: data.longitude || null,
+      service_radius_km: data.serviceRadiusKm || 5,
+      prefers_local_clients: data.prefersLocalClients !== false,
+      onboarding_step: currentStep,
+      profile_completed: false // Keep false during onboarding
+    };
+
+    // Only include username if it's provided and not empty
+    if (data.username && data.username.trim()) {
+      providerData.username = data.username.trim();
+    }
+
     if (!existingProvider) {
       console.log('onboardingService: Creating new provider');
-      // Create new provider - only set username if it's provided and not empty
-      const providerData: any = {
-        user_id: userId,
-        business_name: data.businessName || '',
-        category: data.category || '',
-        bio: data.bio || '',
-        address: data.address || '',
-        instagram_handle: data.instagramHandle || '',
-        whatsapp_phone: data.whatsappPhone || '',
-        colonia: data.colonia || '',
-        postal_code: data.postalCode || '',
-        latitude: data.latitude || null,
-        longitude: data.longitude || null,
-        service_radius_km: data.serviceRadiusKm || 5,
-        prefers_local_clients: data.prefersLocalClients !== false,
-        onboarding_step: currentStep,
-        profile_completed: false
-      };
-
-      // Only include username if it's provided and not empty
-      if (data.username && data.username.trim()) {
-        providerData.username = data.username.trim();
-      }
-
+      
       const { data: newProvider, error: createError } = await supabase
         .from('providers')
         .insert(providerData)
@@ -114,43 +115,52 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
 
       if (createError) {
         console.error('onboardingService: Error creating provider:', createError);
-        throw createError;
+        
+        // Provide specific error handling for common constraint violations
+        if (createError.message.includes('providers_username_key')) {
+          throw new Error('Este nombre de usuario ya está en uso. Por favor, elige otro.');
+        } else if (createError.message.includes('Username must be')) {
+          throw new Error('El formato del nombre de usuario no es válido. Solo letras, números, guiones y guiones bajos.');
+        } else if (createError.message.includes('Invalid WhatsApp')) {
+          throw new Error('El formato del número de WhatsApp no es válido.');
+        } else if (createError.code === '23505') { // Unique constraint violation
+          throw new Error('Ya existe un proveedor con estos datos. Verifica la información.');
+        } else {
+          throw new Error(`Error creando perfil: ${createError.message}`);
+        }
       }
+      
       providerId = newProvider.id;
       console.log('onboardingService: Created new provider with ID:', providerId);
     } else {
       console.log('onboardingService: Updating existing provider with ID:', providerId);
-      // Update existing provider - be careful with username updates
-      const updateData: any = {
-        business_name: data.businessName || '',
-        category: data.category || '',
-        bio: data.bio || '',
-        address: data.address || '',
-        instagram_handle: data.instagramHandle || '',
-        whatsapp_phone: data.whatsappPhone || '',
-        colonia: data.colonia || '',
-        postal_code: data.postalCode || '',
-        latitude: data.latitude || null,
-        longitude: data.longitude || null,
-        service_radius_km: data.serviceRadiusKm || 5,
-        prefers_local_clients: data.prefersLocalClients !== false,
-        onboarding_step: currentStep,
-        profile_completed: currentStep >= 5
-      };
-
+      
       // Only update username if it's different from existing and not empty
       if (data.username && data.username.trim() && data.username.trim() !== existingProvider.username) {
-        updateData.username = data.username.trim();
+        // Username is changing, keep it in the update
+      } else {
+        // Remove username from update to avoid conflicts
+        delete providerData.username;
       }
 
       const { error: updateError } = await supabase
         .from('providers')
-        .update(updateData)
+        .update(providerData)
         .eq('user_id', userId);
 
       if (updateError) {
         console.error('onboardingService: Error updating provider:', updateError);
-        throw updateError;
+        
+        // Provide specific error handling for common constraint violations
+        if (updateError.message.includes('providers_username_key')) {
+          throw new Error('Este nombre de usuario ya está en uso. Por favor, elige otro.');
+        } else if (updateError.message.includes('Username must be')) {
+          throw new Error('El formato del nombre de usuario no es válido. Solo letras, números, guiones y guiones bajos.');
+        } else if (updateError.message.includes('Invalid WhatsApp')) {
+          throw new Error('El formato del número de WhatsApp no es válido.');
+        } else {
+          throw new Error(`Error actualizando datos: ${updateError.message}`);
+        }
       }
     }
 
@@ -164,8 +174,16 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
     }
     
-    // Re-throw with more context
-    throw new Error(`Failed to save provider data: ${error.message || 'Unknown error'}`);
+    // Re-throw the error as-is if it already has a user-friendly message
+    if (error instanceof Error && error.message.includes('usuario') || 
+        error.message.includes('nombre') || 
+        error.message.includes('formato') ||
+        error.message.includes('existe')) {
+      throw error;
+    }
+    
+    // Otherwise, provide a generic error message
+    throw new Error(`Error guardando los datos del proveedor: ${error.message || 'Error desconocido'}`);
   }
 };
 
