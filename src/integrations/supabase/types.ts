@@ -767,6 +767,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: {
+        Args: { user_id_param: string }
+        Returns: boolean
+      }
       log_security_event: {
         Args: { event_type: string; event_data?: Json; target_user_id?: string }
         Returns: undefined

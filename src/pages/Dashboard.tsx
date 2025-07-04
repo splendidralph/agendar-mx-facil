@@ -36,7 +36,7 @@ const Dashboard = () => {
     try {
       const { data: providerData, error } = await supabase
         .from('providers')
-        .select('*')
+        .select('*, users!inner(email, full_name)')
         .eq('user_id', user.id)
         .single();
 

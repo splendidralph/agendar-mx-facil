@@ -158,6 +158,16 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
               </div>
 
               <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  value={provider.users?.email || 'No disponible'}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+
+              <div>
                 <Label htmlFor="phone">Teléfono</Label>
                 <Input
                   id="phone"
