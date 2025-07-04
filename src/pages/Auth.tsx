@@ -450,7 +450,7 @@ const Auth = () => {
                 <div className="space-y-6">
                   <div className="text-center">
                     <h2 className="text-xl font-semibold text-white mb-2">Crear tu cuenta profesional</h2>
-                    <p className="text-white/70">Únete a miles de profesionales exitosos</p>
+                    <p className="text-white/70">Comienza a gestionar tus citas profesionalmente</p>
                   </div>
                   
                   <form onSubmit={handleSignUp} className="space-y-5">
@@ -523,19 +523,6 @@ const Auth = () => {
               </TabsContent>
             </Tabs>
 
-            {/* Trust indicators */}
-            <div className="mt-8 pt-6 border-t border-white/20">
-              <div className="flex items-center justify-center space-x-6 text-white/60 text-sm">
-                <div className="flex items-center space-x-1">
-                  <Users className="h-4 w-4" />
-                  <span>+1000 profesionales</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Star className="h-4 w-4" />
-                  <span>4.8/5 rating</span>
-                </div>
-              </div>
-            </div>
           </div>
           
           {/* Additional info */}
