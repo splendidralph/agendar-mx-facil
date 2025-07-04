@@ -2,19 +2,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar, Menu, X, Link, Share2 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
-
 interface MobileHeaderProps {
   businessName: string;
   onSignOut: () => void;
   onCopyLink: () => void;
   onViewProfile: () => void;
   username?: string;
+  isMobile: boolean;
 }
 
-const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, username }: MobileHeaderProps) => {
+const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, username, isMobile }: MobileHeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const isMobile = useIsMobile();
 
   if (!isMobile) {
     return (

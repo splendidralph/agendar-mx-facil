@@ -10,19 +10,18 @@ import { Calendar, Clock, Edit, Calendar as CalendarIcon, Phone, User } from 'lu
 import { BookingData, useBookings } from '@/hooks/useBookings';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface MobileBookingsTableProps {
   providerId: string;
+  isMobile: boolean;
 }
 
-const MobileBookingsTable = ({ providerId }: MobileBookingsTableProps) => {
+const MobileBookingsTable = ({ providerId, isMobile }: MobileBookingsTableProps) => {
   const { bookings, loading, updateBookingStatus, addProviderNotes } = useBookings(providerId);
   const [selectedBooking, setSelectedBooking] = useState<BookingData | null>(null);
   const [notes, setNotes] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const isMobile = useIsMobile();
 
   const getStatusBadge = (status: BookingData['status']) => {
     const variants = {

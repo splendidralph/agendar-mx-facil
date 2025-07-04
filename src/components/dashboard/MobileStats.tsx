@@ -1,7 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, TrendingUp, Users, DollarSign } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
-
 interface StatsData {
   todayCount: number;
   weekCount: number;
@@ -12,10 +10,10 @@ interface StatsData {
 interface MobileStatsProps {
   stats: StatsData;
   loading: boolean;
+  isMobile: boolean;
 }
 
-const MobileStats = ({ stats, loading }: MobileStatsProps) => {
-  const isMobile = useIsMobile();
+const MobileStats = ({ stats, loading, isMobile }: MobileStatsProps) => {
 
   const statsCards = [
     {

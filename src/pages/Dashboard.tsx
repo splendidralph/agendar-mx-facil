@@ -108,6 +108,7 @@ const Dashboard = () => {
         onCopyLink={copyLink}
         onViewProfile={viewProfile}
         username={provider.username}
+        isMobile={isMobile}
       />
 
       <div className="container mx-auto px-4 py-8">
@@ -123,7 +124,7 @@ const Dashboard = () => {
           </div>
 
           {/* Mobile-First Stats */}
-          <MobileStats stats={stats} loading={statsLoading} />
+          <MobileStats stats={stats} loading={statsLoading} isMobile={isMobile} />
 
           <div className={`grid gap-8 mb-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'}`}>
             {/* Booking Link - Hidden on mobile (handled by FAB) */}
@@ -163,7 +164,7 @@ const Dashboard = () => {
 
             {/* Mobile-First Bookings Management */}
             <div className={`animate-slide-up ${!isMobile ? 'lg:col-span-2' : ''}`} style={{ animationDelay: '0.5s' }}>
-              <MobileBookingsTable providerId={provider.id} />
+              <MobileBookingsTable providerId={provider.id} isMobile={isMobile} />
             </div>
           </div>
 
