@@ -117,7 +117,12 @@ const Dashboard = () => {
   if (!provider) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
+    <div className="min-h-screen gradient-hero relative overflow-hidden">
+      {/* Hero Background Elements */}
+      <div className="absolute inset-0 gradient-hero-overlay"></div>
+      <div className="absolute top-20 left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-20 right-10 w-48 h-48 bg-accent/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '1s' }}></div>
+      
       {/* Mobile-First Header */}
       <MobileHeader
         businessName={provider.business_name || "Proveedor"}
@@ -128,16 +133,18 @@ const Dashboard = () => {
         isMobile={isMobile}
       />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="relative z-10 container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Welcome Section */}
-          <div className={`mb-6 animate-fade-in ${isMobile ? 'px-4' : ''}`}>
-            <h1 className={`font-bold text-foreground mb-2 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>
-              Mi Dashboard
-            </h1>
-            <p className="text-muted-foreground font-inter">
-              {isMobile ? 'Gestiona tus citas' : 'Gestiona tus citas y perfil profesional'}
-            </p>
+          <div className={`mb-8 animate-fade-in ${isMobile ? 'px-4' : ''}`}>
+            <div className="glassmorphism rounded-2xl p-6 mb-6">
+              <h1 className={`font-bold text-foreground mb-3 ${isMobile ? 'text-2xl' : 'text-4xl'}`}>
+                Mi Dashboard
+              </h1>
+              <p className="text-muted-foreground font-inter text-lg">
+                {isMobile ? 'Gestiona tus citas profesionalmente' : 'Gestiona tus citas y perfil profesional con elegancia'}
+              </p>
+            </div>
           </div>
 
           {/* Mobile-First Stats */}
@@ -146,22 +153,22 @@ const Dashboard = () => {
           <div className={`grid gap-8 mb-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'}`}>
             {/* Booking Link - Hidden on mobile (handled by FAB) */}
             {!isMobile && (
-              <Card className="lg:col-span-1 animate-slide-up border-border/50 shadow-lg" style={{ animationDelay: '0.4s' }}>
-                <CardHeader>
-                  <CardTitle className="text-foreground">Tu Link de Reservas</CardTitle>
-                  <CardDescription className="font-inter">
+              <div className="lg:col-span-1 animate-scale-in glassmorphism rounded-2xl p-6 hover-lift" style={{ animationDelay: '0.4s' }}>
+                <div className="mb-4">
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Tu Link de Reservas</h3>
+                  <p className="text-muted-foreground font-inter">
                     Comparte este link con tus clientes
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="p-4 bg-secondary/50 rounded-xl border border-border/50">
+                  </p>
+                </div>
+                <div className="space-y-4">
+                  <div className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
                     <p className="text-sm font-mono text-foreground break-all">
                       {provider.username ? `bookeasy.mx/${provider.username}` : 'Configura tu username primero'}
                     </p>
                   </div>
                   <Button 
                     onClick={copyLink}
-                    className="w-full btn-primary shadow-lg touch-manipulation"
+                    className="w-full gradient-primary text-primary-foreground hover:opacity-90 shadow-lg touch-manipulation smooth-transition"
                     disabled={!provider.username}
                   >
                     <Link className="h-4 w-4 mr-2" />
@@ -169,14 +176,14 @@ const Dashboard = () => {
                   </Button>
                   <Button 
                     variant="outline"
-                    className="w-full border-border text-foreground hover:bg-secondary touch-manipulation"
+                    className="w-full border-white/20 text-foreground hover:bg-white/10 hover:border-white/30 touch-manipulation smooth-transition"
                     onClick={viewProfile}
                     disabled={!provider.username}
                   >
                     Ver Mi Perfil
                   </Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )}
 
             {/* Mobile-First Bookings Management */}
@@ -187,10 +194,18 @@ const Dashboard = () => {
 
           {/* Profile, Services, Availability and Notification Management */}
           <div className={`grid gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-2'} ${isMobile ? 'pb-24' : ''}`}>
-            <ProfileSettings provider={provider} onUpdate={refreshProvider} />
-            <ServicesManager providerId={provider.id} />
-            <AvailabilityManager providerId={provider.id} />
-            <NotificationSettings provider={provider} onUpdate={refreshProvider} />
+            <div className="animate-scale-in" style={{ animationDelay: '0.6s' }}>
+              <ProfileSettings provider={provider} onUpdate={refreshProvider} />
+            </div>
+            <div className="animate-scale-in" style={{ animationDelay: '0.7s' }}>
+              <ServicesManager providerId={provider.id} />
+            </div>
+            <div className="animate-scale-in" style={{ animationDelay: '0.8s' }}>
+              <AvailabilityManager providerId={provider.id} />
+            </div>
+            <div className="animate-scale-in" style={{ animationDelay: '0.9s' }}>
+              <NotificationSettings provider={provider} onUpdate={refreshProvider} />
+            </div>
           </div>
         </div>
       </div>

@@ -16,10 +16,10 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
 
   if (!isMobile) {
     return (
-      <header className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
+      <header className="glassmorphism border-b border-white/10 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg">
+            <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg animate-glow">
               <Calendar className="h-6 w-6" />
             </div>
             <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
@@ -31,7 +31,7 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
             <Button 
               variant="outline"
               onClick={onSignOut}
-              className="border-border text-foreground hover:bg-secondary"
+              className="border-white/20 text-foreground hover:bg-white/10 hover:border-white/30 smooth-transition"
             >
               Cerrar Sesión
             </Button>
@@ -43,10 +43,10 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
 
   return (
     <>
-      <header className="bg-card/95 backdrop-blur-sm border-b border-border sticky top-0 z-50 touch-manipulation">
+      <header className="glassmorphism border-b border-white/10 sticky top-0 z-50 touch-manipulation">
         <div className="flex justify-between items-center p-4">
           <div className="flex items-center space-x-2">
-            <div className="gradient-primary text-primary-foreground p-2 rounded-lg">
+            <div className="gradient-primary text-primary-foreground p-2 rounded-lg animate-glow">
               <Calendar className="h-5 w-5" />
             </div>
             <div>
@@ -150,7 +150,7 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
         <div className="fixed bottom-6 right-4 z-40 md:hidden">
           <Button
             onClick={onCopyLink}
-            className="h-14 w-14 rounded-full gradient-primary shadow-lg touch-manipulation floating-cta"
+            className="h-14 w-14 rounded-full gradient-primary text-primary-foreground shadow-2xl touch-manipulation floating-cta animate-glow hover:scale-110 smooth-transition"
           >
             <Link className="h-6 w-6" />
           </Button>
