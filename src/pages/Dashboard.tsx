@@ -3,18 +3,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "lucide-react";
 import { toast } from "sonner";
-import ProfileSettings from "@/components/dashboard/ProfileSettings";
-import ServicesManager from "@/components/dashboard/ServicesManager";
-import NotificationSettings from "@/components/dashboard/NotificationSettings";
-import AvailabilityManager from "@/components/availability/AvailabilityManager";
 import { useBookings } from "@/hooks/useBookings";
 import MobileHeader from "@/components/dashboard/MobileHeader";
-import MobileStats from "@/components/dashboard/MobileStats";
-import MobileBookingsTable from "@/components/dashboard/MobileBookingsTable";
+import DashboardTabs from "@/components/dashboard/DashboardTabs";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Dashboard = () => {
@@ -22,6 +14,7 @@ const Dashboard = () => {
   const { user, signOut } = useAuth();
   const [provider, setProvider] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
   const isMobile = useIsMobile();
   const { stats, loading: statsLoading } = useBookings(provider?.id || '');
 
@@ -131,13 +124,15 @@ const Dashboard = () => {
         onViewProfile={viewProfile}
         username={provider.username}
         isMobile={isMobile}
+        activeTab={activeTab}
+        onTabChange={isMobile ? setActiveTab : undefined}
       />
 
       <div className="relative z-10 container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Welcome Section */}
           <div className={`mb-8 animate-fade-in ${isMobile ? 'px-4' : ''}`}>
-            <div className="glassmorphism rounded-2xl p-6 mb-6">
+            <div className="glassmorphism rounded-3xl p-6 mb-6">
               <h1 className={`font-bold text-foreground mb-3 ${isMobile ? 'text-2xl' : 'text-4xl'}`}>
                 Mi Dashboard
               </h1>
@@ -147,65 +142,18 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Mobile-First Stats */}
-          <MobileStats stats={stats} loading={statsLoading} isMobile={isMobile} />
-
-          <div className={`grid gap-8 mb-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'}`}>
-            {/* Booking Link - Hidden on mobile (handled by FAB) */}
-            {!isMobile && (
-              <div className="lg:col-span-1 animate-scale-in glassmorphism rounded-2xl p-6 hover-lift" style={{ animationDelay: '0.4s' }}>
-                <div className="mb-4">
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Tu Link de Reservas</h3>
-                  <p className="text-muted-foreground font-inter">
-                    Comparte este link con tus clientes
-                  </p>
-                </div>
-                <div className="space-y-4">
-                  <div className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
-                    <p className="text-sm font-mono text-foreground break-all">
-                      {provider.username ? `bookeasy.mx/${provider.username}` : 'Configura tu username primero'}
-                    </p>
-                  </div>
-                  <Button 
-                    onClick={copyLink}
-                    className="w-full gradient-primary text-primary-foreground hover:opacity-90 shadow-lg touch-manipulation smooth-transition"
-                    disabled={!provider.username}
-                  >
-                    <Link className="h-4 w-4 mr-2" />
-                    Copiar Link
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    className="w-full border-white/20 text-foreground hover:bg-white/10 hover:border-white/30 touch-manipulation smooth-transition"
-                    onClick={viewProfile}
-                    disabled={!provider.username}
-                  >
-                    Ver Mi Perfil
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Mobile-First Bookings Management */}
-            <div className={`animate-slide-up ${!isMobile ? 'lg:col-span-2' : ''}`} style={{ animationDelay: '0.5s' }}>
-              <MobileBookingsTable providerId={provider.id} isMobile={isMobile} />
-            </div>
-          </div>
-
-          {/* Profile, Services, Availability and Notification Management */}
-          <div className={`grid gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-2'} ${isMobile ? 'pb-24' : ''}`}>
-            <div className="animate-scale-in" style={{ animationDelay: '0.6s' }}>
-              <ProfileSettings provider={provider} onUpdate={refreshProvider} />
-            </div>
-            <div className="animate-scale-in" style={{ animationDelay: '0.7s' }}>
-              <ServicesManager providerId={provider.id} />
-            </div>
-            <div className="animate-scale-in" style={{ animationDelay: '0.8s' }}>
-              <AvailabilityManager providerId={provider.id} />
-            </div>
-            <div className="animate-scale-in" style={{ animationDelay: '0.9s' }}>
-              <NotificationSettings provider={provider} onUpdate={refreshProvider} />
-            </div>
+          {/* Tabbed Dashboard */}
+          <div className={isMobile ? 'pb-24' : ''}>
+            <DashboardTabs
+              provider={provider}
+              stats={stats}
+              statsLoading={statsLoading}
+              onRefreshProvider={refreshProvider}
+              onCopyLink={copyLink}
+              onViewProfile={viewProfile}
+              activeTab={isMobile ? activeTab : undefined}
+              onTabChange={isMobile ? setActiveTab : undefined}
+            />
           </div>
         </div>
       </div>
