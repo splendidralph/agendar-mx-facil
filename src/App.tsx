@@ -17,6 +17,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import PublicProfile from "./pages/PublicProfile";
 import Booking from "./pages/Booking";
+import TestNotifications from "./pages/TestNotifications";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/test-notifications" element={<TestNotifications />} />
             <Route path="/booking/demo" element={<BookingDemo />} />
             <Route path="/explore" element={<Explore />} />
             {/* Booking routes - must come before username route */}
