@@ -21,6 +21,7 @@ const Dashboard = () => {
   const { user, signOut } = useAuth();
   const [provider, setProvider] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
   const { stats, loading: statsLoading } = useBookings(provider?.id || '');
 
   useEffect(() => {
@@ -96,8 +97,6 @@ const Dashboard = () => {
   }
 
   if (!provider) return null;
-
-  const isMobile = useIsMobile();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
