@@ -142,12 +142,6 @@ export const ContactStep = ({
     // Sanitize input to prevent XSS
     let sanitizedValue = sanitizeInput(value, 255);
     
-    // Additional validation based on field type
-    if (field === 'postalCode' && sanitizedValue && !validatePostalCode(sanitizedValue)) {
-      toast.error('El código postal debe tener 5 dígitos');
-      return;
-    }
-    
     const newData = { ...formData, [field]: sanitizedValue };
     console.log('Setting form data:', newData);
     setFormData(newData);
@@ -207,6 +201,19 @@ export const ContactStep = ({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
+            <Label htmlFor="address" className="text-blue-800 font-medium text-sm">
+              Dirección del Negocio (Opcional)
+            </Label>
+            <Input
+              id="address"
+              value={formData.address}
+              onChange={(e) => handleChange('address', e.target.value)}
+              placeholder="Ej: Av. Principal 123, Colonia Centro"
+              className="mt-2 border-blue-200 focus:border-blue-400"
+            />
+          </div>
+          
+          <div>
             <Label htmlFor="delegacion" className="text-blue-800 font-medium text-sm">
               Selecciona tu Delegación
             </Label>
@@ -214,14 +221,16 @@ export const ContactStep = ({
               value={formData.delegacion} 
               onValueChange={(value) => {
                 const selectedDelegacion = delegaciones.find(d => d.name === value);
-                handleChange('delegacion', value);
-                if (selectedDelegacion) {
-                  handleChange('delegacionId', selectedDelegacion.id);
-                }
-                // Clear colonia selection when delegacion changes
-                handleChange('colonia', '');
-                handleChange('postalCode', '');
-                handleChange('groupLabel', '');
+                const newData = {
+                  ...formData,
+                  delegacion: value,
+                  delegacionId: selectedDelegacion?.id || '',
+                  colonia: '',
+                  postalCode: '',
+                  groupLabel: ''
+                };
+                setFormData(newData);
+                onUpdate(newData);
               }}
               disabled={loadingDelegaciones}
             >
@@ -247,11 +256,14 @@ export const ContactStep = ({
                 value={formData.colonia} 
                 onValueChange={(value) => {
                   const selectedColonia = coloniaGroups.find(c => c.colonia === value);
-                  handleChange('colonia', value);
-                  if (selectedColonia) {
-                    handleChange('postalCode', selectedColonia.postal_code);
-                    handleChange('groupLabel', selectedColonia.group_label);
-                  }
+                  const newData = {
+                    ...formData,
+                    colonia: value,
+                    postalCode: selectedColonia?.postal_code || '',
+                    groupLabel: selectedColonia?.group_label || ''
+                  };
+                  setFormData(newData);
+                  onUpdate(newData);
                 }}
                 disabled={loadingColonias}
               >
@@ -370,47 +382,6 @@ export const ContactStep = ({
         </CardContent>
       </Card>
 
-      {/* Optional Contact Information */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="h-px bg-border flex-1"></div>
-          <span className="text-sm text-muted-foreground px-3">Información Adicional (Opcional)</span>
-          <div className="h-px bg-border flex-1"></div>
-        </div>
-
-        <div>
-          <Label htmlFor="address" className="flex items-center gap-2 text-sm font-medium">
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-            Dirección del Negocio
-          </Label>
-          <Input
-            id="address"
-            value={formData.address}
-            onChange={(e) => handleChange('address', e.target.value)}
-            placeholder="Ej: Av. Principal 123, Colonia Centro"
-            className="mt-2"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="instagram" className="flex items-center gap-2 text-sm font-medium">
-            <Instagram className="h-4 w-4 text-muted-foreground" />
-            Instagram
-          </Label>
-          <div className="relative mt-2">
-            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-              @
-            </span>
-            <Input
-              id="instagram"
-              value={formData.instagramHandle}
-              onChange={(e) => handleInstagramChange(e.target.value)}
-              placeholder="tu_instagram"
-              className="pl-8"
-            />
-          </div>
-        </div>
-      </div>
 
       <StepNavigation
         onPrevious={onPrevious}
