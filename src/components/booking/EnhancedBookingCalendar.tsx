@@ -3,9 +3,9 @@ import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Clock, AlertCircle } from 'lucide-react';
+import { CalendarDays, Clock, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { format, addDays, startOfDay, isSameDay, isAfter, isBefore } from 'date-fns';
+import { format, addDays, startOfDay, isSameDay, isAfter, isBefore, isToday, isTomorrow } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 interface TimeSlot {
@@ -166,17 +166,78 @@ const EnhancedBookingCalendar = ({
     }
   };
 
+  const getDateLabel = (date: Date) => {
+    if (isToday(date)) return 'Hoy';
+    if (isTomorrow(date)) return 'Mañana';
+    return format(date, 'EEE d', { locale: es });
+  };
+
+  const groupTimeSlots = () => {
+    const morning = availableSlots.filter(slot => {
+      const hour = parseInt(slot.time.split(':')[0]);
+      return hour < 12;
+    });
+    
+    const afternoon = availableSlots.filter(slot => {
+      const hour = parseInt(slot.time.split(':')[0]);
+      return hour >= 12 && hour < 18;
+    });
+    
+    const evening = availableSlots.filter(slot => {
+      const hour = parseInt(slot.time.split(':')[0]);
+      return hour >= 18;
+    });
+
+    return { morning, afternoon, evening };
+  };
+
+  const { morning, afternoon, evening } = groupTimeSlots();
+
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      {/* Calendar */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CalendarDays className="h-5 w-5" />
-            Seleccionar Fecha
-          </CardTitle>
+    <div className="space-y-6">
+      {/* Progress indicator */}
+      <div className="flex items-center justify-center space-x-2 mb-6">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">1</div>
+          <span className="text-sm font-medium text-primary">Fecha</span>
+        </div>
+        <div className="w-8 h-0.5 bg-border"></div>
+        <div className="flex items-center space-x-2">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+            date ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+          }`}>2</div>
+          <span className={`text-sm font-medium ${date ? 'text-primary' : 'text-muted-foreground'}`}>Hora</span>
+        </div>
+      </div>
+
+      {/* Date Selection */}
+      <Card className="border-border/50 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold text-foreground">Selecciona una fecha</CardTitle>
+          <p className="text-sm text-muted-foreground">Elige el día para tu cita</p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {/* Quick date shortcuts */}
+          <div className="flex gap-2 mb-4">
+            {[0, 1, 2].map(days => {
+              const quickDate = addDays(new Date(), days);
+              if (!isDateAvailable(quickDate)) return null;
+              
+              return (
+                <Button
+                  key={days}
+                  variant={date && isSameDay(date, quickDate) ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleDateSelect(quickDate)}
+                  className="touch-manipulation h-10 px-4 text-sm"
+                >
+                  {getDateLabel(quickDate)}
+                </Button>
+              );
+            })}
+          </div>
+
+          {/* Calendar */}
           <Calendar
             mode="single"
             selected={date}
@@ -186,95 +247,155 @@ const EnhancedBookingCalendar = ({
               !isDateAvailable(date)
             }
             modifiers={{
-              available: (date) => isDateAvailable(date),
-              unavailable: (date) => !isDateAvailable(date)
+              available: (date) => isDateAvailable(date) && !isBefore(date, startOfDay(new Date())),
+              unavailable: (date) => !isDateAvailable(date) || isBefore(date, startOfDay(new Date()))
             }}
             modifiersStyles={{
               available: { 
-                backgroundColor: 'hsl(var(--primary))', 
-                color: 'hsl(var(--primary-foreground))'
+                backgroundColor: 'hsl(var(--primary) / 0.1)', 
+                color: 'hsl(var(--primary))',
+                fontWeight: '500'
               },
               unavailable: { 
-                opacity: 0.3,
-                textDecoration: 'line-through'
+                opacity: 0.4,
+                color: 'hsl(var(--muted-foreground))'
               }
             }}
             locale={es}
-            className="rounded-md border"
+            className="rounded-lg border-0 w-full"
           />
           
-          <div className="mt-4 space-y-2 text-sm">
+          <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-primary rounded"></div>
-              <span>Días disponibles</span>
+              <div className="w-3 h-3 bg-primary/20 rounded border border-primary/30"></div>
+              <span>Disponible</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-muted rounded line-through"></div>
-              <span>Días no disponibles</span>
+              <div className="w-3 h-3 bg-muted rounded"></div>
+              <span>No disponible</span>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Time Slots */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Horarios Disponibles
-          </CardTitle>
-          {date && (
+      {/* Time Selection */}
+      {date && (
+        <Card className="border-border/50 shadow-sm animate-slide-up">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-semibold text-foreground">Selecciona una hora</CardTitle>
             <p className="text-sm text-muted-foreground">
-              {format(date, 'EEEE, d MMMM yyyy', { locale: es })}
+              {format(date, "EEEE, d 'de' MMMM", { locale: es })}
             </p>
-          )}
-        </CardHeader>
-        <CardContent>
-          {!date ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Selecciona una fecha para ver los horarios disponibles</p>
-            </div>
-          ) : loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p>Cargando horarios...</p>
-            </div>
-          ) : availableSlots.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <AlertCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No hay horarios disponibles para esta fecha</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-3 gap-2">
-              {availableSlots.map((slot) => (
-                <Button
-                  key={slot.time}
-                  variant={selectedTime === slot.time ? "default" : "outline"}
-                  size="sm"
-                  disabled={!slot.available}
-                  onClick={() => handleTimeSelect(slot.time)}
-                  className={`${
-                    selectedTime === slot.time 
-                      ? "bg-primary text-primary-foreground" 
-                      : slot.available 
-                        ? "hover:bg-secondary" 
-                        : "opacity-50 cursor-not-allowed"
-                  }`}
-                  title={slot.conflictReason}
-                >
-                  {slot.time}
-                  {!slot.available && (
-                    <Badge variant="secondary" className="ml-1 text-xs">
-                      X
-                    </Badge>
-                  )}
-                </Button>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="h-10 bg-muted/50 rounded-lg animate-pulse"></div>
+                ))}
+              </div>
+            ) : availableSlots.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <AlertCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <h3 className="font-medium text-foreground mb-2">No hay horarios disponibles</h3>
+                <p className="text-sm">Por favor selecciona otra fecha</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Morning slots */}
+                {morning.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Mañana</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {morning.map((slot) => (
+                        <Button
+                          key={slot.time}
+                          variant={selectedTime === slot.time ? "default" : "outline"}
+                          disabled={!slot.available}
+                          onClick={() => handleTimeSelect(slot.time)}
+                          className={`h-12 touch-manipulation font-medium ${
+                            selectedTime === slot.time 
+                              ? "bg-primary text-primary-foreground shadow-sm" 
+                              : slot.available 
+                                ? "hover:bg-secondary hover:border-secondary-foreground/20" 
+                                : "opacity-50 cursor-not-allowed"
+                          }`}
+                          title={slot.conflictReason}
+                        >
+                          {slot.time}
+                          {!slot.available && (
+                            <span className="ml-2 text-xs opacity-60">Ocupado</span>
+                          )}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Afternoon slots */}
+                {afternoon.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Tarde</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {afternoon.map((slot) => (
+                        <Button
+                          key={slot.time}
+                          variant={selectedTime === slot.time ? "default" : "outline"}
+                          disabled={!slot.available}
+                          onClick={() => handleTimeSelect(slot.time)}
+                          className={`h-12 touch-manipulation font-medium ${
+                            selectedTime === slot.time 
+                              ? "bg-primary text-primary-foreground shadow-sm" 
+                              : slot.available 
+                                ? "hover:bg-secondary hover:border-secondary-foreground/20" 
+                                : "opacity-50 cursor-not-allowed"
+                          }`}
+                          title={slot.conflictReason}
+                        >
+                          {slot.time}
+                          {!slot.available && (
+                            <span className="ml-2 text-xs opacity-60">Ocupado</span>
+                          )}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Evening slots */}
+                {evening.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Noche</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {evening.map((slot) => (
+                        <Button
+                          key={slot.time}
+                          variant={selectedTime === slot.time ? "default" : "outline"}
+                          disabled={!slot.available}
+                          onClick={() => handleTimeSelect(slot.time)}
+                          className={`h-12 touch-manipulation font-medium ${
+                            selectedTime === slot.time 
+                              ? "bg-primary text-primary-foreground shadow-sm" 
+                              : slot.available 
+                                ? "hover:bg-secondary hover:border-secondary-foreground/20" 
+                                : "opacity-50 cursor-not-allowed"
+                          }`}
+                          title={slot.conflictReason}
+                        >
+                          {slot.time}
+                          {!slot.available && (
+                            <span className="ml-2 text-xs opacity-60">Ocupado</span>
+                          )}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

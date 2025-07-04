@@ -11,6 +11,8 @@ import { Calendar, ChevronLeft, Clock, Phone, Instagram, CheckCircle, Star, MapP
 import { toast } from "sonner";
 import { categoryLabels } from "@/utils/serviceCategories";
 import EnhancedBookingCalendar from "@/components/booking/EnhancedBookingCalendar";
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 interface Provider {
   id: string;
@@ -345,11 +347,11 @@ const Booking = () => {
             </div>
           </Card>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Services */}
-            <Card className="animate-slide-up border-border/50 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-foreground">Selecciona un Servicio</CardTitle>
+          <div className="space-y-8">
+            {/* Services Selection */}
+            <Card className="animate-slide-up border-border/50 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-foreground">Selecciona un servicio</CardTitle>
                 <CardDescription className="font-inter">
                   Elige el servicio que deseas reservar
                 </CardDescription>
@@ -360,141 +362,178 @@ const Booking = () => {
                     <p className="text-muted-foreground">No hay servicios disponibles</p>
                   </div>
                 ) : (
-                  services.map((service) => (
-                    <div
-                      key={service.id}
-                      className={`p-4 border rounded-xl cursor-pointer smooth-transition ${
-                        selectedService?.id === service.id
-                          ? "border-primary bg-primary/5 shadow-md"
-                          : "border-border hover:border-primary/50 hover:shadow-sm"
-                      }`}
-                      onClick={() => setSelectedService(service)}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="font-semibold text-foreground">{service.name}</h3>
-                          {service.description && (
-                            <p className="text-sm text-muted-foreground mt-1">{service.description}</p>
-                          )}
-                          <div className="flex items-center text-sm text-muted-foreground mt-1">
-                            <Clock className="h-4 w-4 mr-1" />
-                            {service.duration_minutes} min
+                  <div className="grid gap-3">
+                    {services.map((service) => (
+                      <div
+                        key={service.id}
+                        className={`p-4 border rounded-xl cursor-pointer smooth-transition touch-manipulation ${
+                          selectedService?.id === service.id
+                            ? "border-primary bg-primary/5 shadow-md"
+                            : "border-border hover:border-primary/50 hover:shadow-sm"
+                        }`}
+                        onClick={() => setSelectedService(service)}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-foreground text-lg">{service.name}</h3>
+                            {service.description && (
+                              <p className="text-sm text-muted-foreground mt-1 mb-2">{service.description}</p>
+                            )}
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <Clock className="h-4 w-4 mr-1" />
+                              {service.duration_minutes} minutos
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-primary">
+                              ${service.price}
+                            </div>
+                            <div className="text-xs text-muted-foreground">MXN</div>
                           </div>
                         </div>
-                        <div className="text-lg font-bold text-primary">
-                          ${service.price}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Booking Calendar - Only show if service is selected */}
+            {selectedService && (
+              <div className="animate-slide-up">
+                <EnhancedBookingCalendar
+                  providerId={provider.id}
+                  serviceId={selectedService.id}
+                  serviceDuration={selectedService.duration_minutes}
+                  onDateTimeSelect={(date, time) => {
+                    setSelectedDate(date);
+                    setSelectedTime(time);
+                  }}
+                  selectedDate={selectedDate}
+                  selectedTime={selectedTime}
+                />
+              </div>
+            )}
+
+            {/* Client Details Form - Only show if date and time are selected */}
+            {selectedService && selectedDate && selectedTime && (
+              <Card className="animate-slide-up border-border/50 shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-foreground">Tus datos</CardTitle>
+                  <CardDescription className="font-inter">
+                    Completa la información para confirmar tu cita
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {error && (
+                    <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 text-destructive" />
+                      <span className="text-sm text-destructive">{error}</span>
+                    </div>
+                  )}
+                  
+                  <form onSubmit={handleBooking} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name" className="text-foreground font-medium">Nombre completo *</Label>
+                        <Input
+                          id="name"
+                          type="text"
+                          required
+                          value={clientData.name}
+                          onChange={(e) => setClientData(prev => ({ ...prev, name: e.target.value }))}
+                          className="border-border focus:border-primary mt-2 h-12"
+                          placeholder="Ej. Juan Pérez"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="phone" className="text-foreground font-medium">Teléfono *</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          required
+                          value={clientData.phone}
+                          onChange={(e) => setClientData(prev => ({ ...prev, phone: e.target.value }))}
+                          className="border-border focus:border-primary mt-2 h-12"
+                          placeholder="+52 55 1234 5678"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="email" className="text-foreground font-medium">Email (opcional)</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={clientData.email}
+                        onChange={(e) => setClientData(prev => ({ ...prev, email: e.target.value }))}
+                        className="border-border focus:border-primary mt-2 h-12"
+                        placeholder="tu@email.com"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="client-colonia" className="text-foreground font-medium">Tu colonia (opcional)</Label>
+                      <Input
+                        id="client-colonia"
+                        value={clientData.colonia}
+                        onChange={(e) => setClientData(prev => ({ ...prev, colonia: e.target.value }))}
+                        className="border-border focus:border-primary mt-2 h-12"
+                        placeholder="Ej. Roma Norte"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="notes" className="text-foreground font-medium">Notas adicionales (opcional)</Label>
+                      <Textarea
+                        id="notes"
+                        value={clientData.notes}
+                        onChange={(e) => setClientData(prev => ({ ...prev, notes: e.target.value }))}
+                        className="border-border focus:border-primary mt-2"
+                        placeholder="Cualquier información adicional..."
+                        rows={3}
+                      />
+                    </div>
+
+                    {/* Booking Summary */}
+                    <div className="bg-secondary/30 p-4 rounded-lg border border-border/50 space-y-2">
+                      <h4 className="font-medium text-foreground">Resumen de tu cita:</h4>
+                      <div className="text-sm space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Servicio:</span>
+                          <span className="font-medium">{selectedService.name}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Fecha:</span>
+                          <span className="font-medium">{format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Hora:</span>
+                          <span className="font-medium">{selectedTime}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Duración:</span>
+                          <span className="font-medium">{selectedService.duration_minutes} min</span>
+                        </div>
+                        <div className="flex justify-between text-lg font-bold">
+                          <span>Total:</span>
+                          <span className="text-primary">${selectedService.price} MXN</span>
                         </div>
                       </div>
                     </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
 
-            {/* Booking Form */}
-            <Card className="animate-slide-up border-border/50 shadow-lg" style={{ animationDelay: '0.1s' }}>
-              <CardHeader>
-                <CardTitle className="text-foreground">Solicitar Reserva</CardTitle>
-                <CardDescription className="font-inter">
-                  Completa los datos para solicitar tu reserva
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {error && (
-                  <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-destructive" />
-                    <span className="text-sm text-destructive">{error}</span>
-                  </div>
-                )}
-                
-                 <form onSubmit={handleBooking} className="space-y-6">
-                  {/* Enhanced Date and Time Selection */}
-                  <div className="space-y-4">
-                    <Label className="text-foreground font-semibold">Selecciona Fecha y Hora *</Label>
-                    <EnhancedBookingCalendar
-                      providerId={provider.id}
-                      serviceId={selectedService?.id}
-                      serviceDuration={selectedService?.duration_minutes}
-                      onDateTimeSelect={(date, time) => {
-                        setSelectedDate(date);
-                        setSelectedTime(time);
-                      }}
-                      selectedDate={selectedDate}
-                      selectedTime={selectedTime}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="name" className="text-foreground font-semibold">Tu Nombre *</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      required
-                      value={clientData.name}
-                      onChange={(e) => setClientData(prev => ({ ...prev, name: e.target.value }))}
-                      className="border-border focus:border-primary mt-2"
-                      placeholder="Ej. Juan Pérez"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="phone" className="text-foreground font-semibold">Teléfono *</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      required
-                      value={clientData.phone}
-                      onChange={(e) => setClientData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="border-border focus:border-primary mt-2"
-                      placeholder="+52 55 1234 5678"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="email" className="text-foreground font-semibold">Email (opcional)</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={clientData.email}
-                      onChange={(e) => setClientData(prev => ({ ...prev, email: e.target.value }))}
-                      className="border-border focus:border-primary mt-2"
-                      placeholder="tu@email.com"
-                    />
-                  </div>
-
-                   <div>
-                     <Label htmlFor="client-colonia" className="text-foreground font-semibold">Tu colonia (opcional)</Label>
-                     <Input
-                       id="client-colonia"
-                       value={clientData.colonia}
-                       onChange={(e) => setClientData(prev => ({ ...prev, colonia: e.target.value }))}
-                       className="border-border focus:border-primary mt-2"
-                       placeholder="Ej. Roma Norte"
-                     />
-                   </div>
-
-                   <div>
-                     <Label htmlFor="notes" className="text-foreground font-semibold">Notas adicionales (opcional)</Label>
-                     <Textarea
-                       id="notes"
-                       value={clientData.notes}
-                       onChange={(e) => setClientData(prev => ({ ...prev, notes: e.target.value }))}
-                       className="border-border focus:border-primary mt-2"
-                       placeholder="Cualquier información adicional..."
-                       rows={3}
-                     />
-                   </div>
-
-                  <Button 
-                    type="submit" 
-                    className="w-full btn-accent py-6 text-lg font-semibold shadow-lg"
-                    disabled={!selectedService || !selectedDate || !selectedTime || !clientData.name || !clientData.phone || submitting}
-                  >
-                    {submitting ? 'Creando Reserva...' : 'Crear Reserva'}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+                    <Button 
+                      type="submit" 
+                      className="w-full btn-primary h-12 text-lg font-semibold shadow-lg touch-manipulation"
+                      disabled={!clientData.name || !clientData.phone || submitting}
+                    >
+                      {submitting ? 'Creando Reserva...' : 'Confirmar Reserva'}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
