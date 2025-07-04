@@ -128,6 +128,58 @@
   border: 1px solid hsl(var(--border) / 0.2);
 }
 
+/* Modern homepage-specific styles */
+.homepage-header {
+  background: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid hsl(var(--border) / 0.1);
+  box-shadow: 0 1px 3px 0 hsl(var(--foreground) / 0.05);
+}
+
+.modern-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border) / 0.1);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.03), 0 2px 4px -1px hsl(var(--foreground) / 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modern-card:hover {
+  box-shadow: 0 20px 25px -5px hsl(var(--foreground) / 0.05), 0 10px 10px -5px hsl(var(--foreground) / 0.02);
+  transform: translateY(-2px);
+}
+
+.hero-modern {
+  background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(214 32% 97%) 50%, hsl(var(--background)) 100%);
+}
+
+.section-modern {
+  background: hsl(var(--background));
+}
+
+.demo-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border) / 0.1);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 15px -3px hsl(var(--foreground) / 0.03), 0 4px 6px -2px hsl(var(--foreground) / 0.02);
+}
+
+.premium-badge {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 75% 35%) 100%);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  box-shadow: 0 4px 6px -1px hsl(var(--primary) / 0.1);
+}
+
+.modern-tab {
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.modern-tab.active {
+  border-bottom-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.05);
+}
+
 .card-gradient {
   background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(214 32% 96%) 100%);
 }

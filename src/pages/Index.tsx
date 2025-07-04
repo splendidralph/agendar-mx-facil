@@ -27,7 +27,7 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="glassmorphism border-b border-border/50 sticky top-0 z-40">
+      <header className="homepage-header sticky top-0 z-40">
         <div className="container mx-auto px-4 py-3 md:py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2 md:space-x-3">
@@ -140,44 +140,47 @@ const Index = () => {
       <ModernFeaturesSection />
 
       {/* Final CTA Section */}
-      <section className="py-16 md:py-24 px-4 gradient-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+      <section className="py-20 md:py-28 px-4 section-modern relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5"></div>
         <div className="container mx-auto text-center relative z-10">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            {t('finalCta.title')}
-          </h2>
-          <p className="text-lg sm:text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto leading-relaxed">
-            {t('finalCta.description')}
-            <span className="block mt-3 font-semibold text-xl md:text-2xl">{t('finalCta.subtitle')}</span>
-          </p>
-          <div className="flex justify-center">
-            <Button 
-              size="lg" 
-              className="accent-gradient text-white hover:opacity-90 text-lg font-semibold shadow-2xl px-8 py-4 h-auto rounded-2xl hover:scale-105 transition-all duration-300"
-              onClick={handleGetStarted}
-            >
-              {t('finalCta.button')}
-            </Button>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+              {t('finalCta.title')}
+            </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+              {t('finalCta.description')}
+              <span className="block mt-3 font-semibold text-xl md:text-2xl text-foreground">{t('finalCta.subtitle')}</span>
+            </p>
+            <div className="flex justify-center">
+              <Button 
+                size="lg" 
+                className="accent-gradient text-white hover:opacity-90 text-lg font-semibold px-10 py-5 h-auto rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg"
+                onClick={handleGetStarted}
+              >
+                {t('finalCta.button')}
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-12 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-8">
-            <div className="flex justify-center items-center space-x-3 mb-4">
-              <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl">
-                <Calendar className="h-6 w-6" />
+      <footer className="bg-foreground text-background py-16 px-4 relative">
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground to-foreground/95"></div>
+        <div className="container mx-auto relative z-10">
+          <div className="text-center mb-10">
+            <div className="flex justify-center items-center space-x-3 mb-6">
+              <div className="gradient-primary text-primary-foreground p-3 rounded-xl shadow-lg">
+                <Calendar className="h-7 w-7" />
               </div>
-              <span className="text-2xl font-bold">Bookeasy.mx</span>
+              <span className="text-3xl font-bold">Bookeasy.mx</span>
             </div>
-            <p className="text-muted mb-6 max-w-md mx-auto">
+            <p className="text-background/70 mb-8 max-w-lg mx-auto text-lg leading-relaxed">
               {t('footer.description')}
             </p>
           </div>
-          <div className="border-t border-border/20 pt-6 text-center">
-            <div className="text-sm text-muted">
+          <div className="border-t border-background/20 pt-8 text-center">
+            <div className="text-background/60">
               {t('footer.copyright')}
             </div>
           </div>

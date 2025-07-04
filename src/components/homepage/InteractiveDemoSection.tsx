@@ -17,43 +17,43 @@ const InteractiveDemoSection = () => {
       title: "Perfil Profesional",
       description: "Así se ve tu perfil para tus clientes",
       content: (
-        <div className="bg-card rounded-3xl p-6 md:p-8 border-0 shadow-xl max-w-sm mx-auto backdrop-blur-sm">
-          <div className="text-center mb-6">
-            <Avatar className="h-20 w-20 mx-auto mb-4">
+        <div className="demo-card p-8 md:p-10 max-w-md mx-auto">
+          <div className="text-center mb-8">
+            <Avatar className="h-24 w-24 mx-auto mb-6 shadow-lg">
               <AvatarImage src="" />
-              <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold">
+              <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
                 MG
               </AvatarFallback>
             </Avatar>
-            <h3 className="text-xl font-bold text-foreground">María García</h3>
-            <p className="text-muted-foreground">Estilista Profesional</p>
-            <div className="flex items-center justify-center gap-1 mt-2">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span className="font-semibold">4.9</span>
-              <span className="text-muted-foreground text-sm">(127 reseñas)</span>
+            <h3 className="text-2xl font-bold text-foreground">María García</h3>
+            <p className="text-muted-foreground text-lg">Estilista Profesional</p>
+            <div className="flex items-center justify-center gap-2 mt-3">
+              <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+              <span className="font-semibold text-lg">4.9</span>
+              <span className="text-muted-foreground">(127 reseñas)</span>
             </div>
           </div>
           
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center gap-2 text-sm">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-              <span>Polanco, CDMX</span>
+          <div className="space-y-4 mb-8">
+            <div className="flex items-center gap-3">
+              <MapPin className="h-5 w-5 text-muted-foreground" />
+              <span className="text-base">Polanco, CDMX</span>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              <span>+52 55 1234 5678</span>
+            <div className="flex items-center gap-3">
+              <Phone className="h-5 w-5 text-muted-foreground" />
+              <span className="text-base">+52 55 1234 5678</span>
             </div>
           </div>
 
           <Button 
-            className="w-full mb-3 btn-accent"
+            className="w-full mb-4 btn-accent py-3 text-base font-semibold"
             onClick={() => setActiveDemo('booking')}
           >
-            <Calendar className="h-4 w-4 mr-2" />
+            <Calendar className="h-5 w-5 mr-2" />
             Reservar Cita
           </Button>
-          <Button variant="outline" className="w-full">
-            <MessageCircle className="h-4 w-4 mr-2" />
+          <Button variant="outline" className="w-full py-3 text-base font-medium hover:bg-muted/50">
+            <MessageCircle className="h-5 w-5 mr-2" />
             WhatsApp
           </Button>
         </div>
@@ -63,51 +63,51 @@ const InteractiveDemoSection = () => {
       title: "Sistema de Reservas",
       description: "Proceso simple para tus clientes",
       content: (
-        <div className="bg-card rounded-3xl p-6 md:p-8 border-0 shadow-xl max-w-sm mx-auto backdrop-blur-sm">
-          <h3 className="text-xl font-semibold mb-6 text-foreground">Selecciona tu servicio</h3>
+        <div className="demo-card p-8 md:p-10 max-w-md mx-auto">
+          <h3 className="text-2xl font-semibold mb-8 text-foreground">Selecciona tu servicio</h3>
           
-          <div className="space-y-3 mb-6">
+          <div className="space-y-4 mb-8">
             <div 
-              className={`border rounded-lg p-3 cursor-pointer transition-all hover:bg-muted/50 ${
-                selectedService === 'haircut' ? 'border-primary bg-primary/5' : 'border-border'
+              className={`border rounded-xl p-4 cursor-pointer transition-all hover:bg-muted/50 ${
+                selectedService === 'haircut' ? 'border-primary bg-primary/5 shadow-md' : 'border-border hover:border-border/60'
               }`}
               onClick={() => setSelectedService('haircut')}
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-medium text-foreground">Corte y Peinado</h4>
-                  <p className="text-sm text-muted-foreground">Corte profesional + styling</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Clock className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">60 min</span>
+                  <h4 className="font-medium text-foreground text-lg">Corte y Peinado</h4>
+                  <p className="text-muted-foreground mb-2">Corte profesional + styling</p>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">60 min</span>
                   </div>
                 </div>
-                <Badge variant={selectedService === 'haircut' ? 'default' : 'secondary'}>$350</Badge>
+                <Badge variant={selectedService === 'haircut' ? 'default' : 'secondary'} className="text-base px-3 py-1">$350</Badge>
               </div>
             </div>
             
             <div 
-              className={`border rounded-lg p-3 cursor-pointer transition-all hover:bg-muted/50 ${
-                selectedService === 'color' ? 'border-primary bg-primary/5' : 'border-border'
+              className={`border rounded-xl p-4 cursor-pointer transition-all hover:bg-muted/50 ${
+                selectedService === 'color' ? 'border-primary bg-primary/5 shadow-md' : 'border-border hover:border-border/60'
               }`}
               onClick={() => setSelectedService('color')}
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-medium text-foreground">Color Completo</h4>
-                  <p className="text-sm text-muted-foreground">Aplicación de color + styling</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Clock className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">120 min</span>
+                  <h4 className="font-medium text-foreground text-lg">Color Completo</h4>
+                  <p className="text-muted-foreground mb-2">Aplicación de color + styling</p>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">120 min</span>
                   </div>
                 </div>
-                <Badge variant={selectedService === 'color' ? 'default' : 'secondary'}>$750</Badge>
+                <Badge variant={selectedService === 'color' ? 'default' : 'secondary'} className="text-base px-3 py-1">$750</Badge>
               </div>
             </div>
           </div>
 
           <Button 
-            className="w-full btn-primary"
+            className="w-full btn-primary py-3 text-base font-semibold"
             disabled={!selectedService}
             onClick={() => selectedService && setActiveDemo('schedule')}
           >
@@ -120,25 +120,25 @@ const InteractiveDemoSection = () => {
       title: "Calendario Inteligente",
       description: "Horarios disponibles en tiempo real",
       content: (
-        <div className="bg-card rounded-3xl p-6 md:p-8 border-0 shadow-xl max-w-sm mx-auto backdrop-blur-sm">
-          <h3 className="text-xl font-semibold mb-6 text-foreground">Horarios disponibles</h3>
+        <div className="demo-card p-8 md:p-10 max-w-md mx-auto">
+          <h3 className="text-2xl font-semibold mb-8 text-foreground">Horarios disponibles</h3>
           
-          <div className="mb-4">
-            <div className="text-sm font-medium text-foreground mb-2">Viernes 15 Nov</div>
-            <div className="grid grid-cols-3 gap-2">
+          <div className="mb-6">
+            <div className="text-base font-medium text-foreground mb-4">Viernes 15 Nov</div>
+            <div className="grid grid-cols-3 gap-3">
               <Button 
                 variant={selectedTime === '09:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('09:00')}
               >
                 09:00
               </Button>
-              <Button variant="outline" size="sm" className="text-xs opacity-50 h-10" disabled>10:30</Button>
+              <Button variant="outline" size="sm" className="text-sm opacity-50 h-12" disabled>10:30</Button>
               <Button 
                 variant={selectedTime === '12:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('12:00')}
               >
                 12:00
@@ -146,7 +146,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '14:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('14:00')}
               >
                 14:00
@@ -154,7 +154,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '15:30' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('15:30')}
               >
                 15:30
@@ -162,7 +162,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '17:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('17:00')}
               >
                 17:00
@@ -170,13 +170,13 @@ const InteractiveDemoSection = () => {
             </div>
           </div>
 
-          <div className="mb-6">
-            <div className="text-sm font-medium text-foreground mb-2">Sábado 16 Nov</div>
-            <div className="grid grid-cols-3 gap-2">
+          <div className="mb-8">
+            <div className="text-base font-medium text-foreground mb-4">Sábado 16 Nov</div>
+            <div className="grid grid-cols-3 gap-3">
               <Button 
                 variant={selectedTime === '10:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('10:00')}
               >
                 10:00
@@ -184,16 +184,16 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '11:30' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('11:30')}
               >
                 11:30
               </Button>
-              <Button variant="outline" size="sm" className="text-xs opacity-50 h-10" disabled>13:00</Button>
+              <Button variant="outline" size="sm" className="text-sm opacity-50 h-12" disabled>13:00</Button>
               <Button 
                 variant={selectedTime === '14:30' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('14:30')}
               >
                 14:30
@@ -201,7 +201,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '16:00' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('16:00')}
               >
                 16:00
@@ -209,7 +209,7 @@ const InteractiveDemoSection = () => {
               <Button 
                 variant={selectedTime === '17:30' ? 'default' : 'outline'} 
                 size="sm" 
-                className="text-xs h-10 touch-manipulation"
+                className="text-sm h-12 touch-manipulation font-medium"
                 onClick={() => setSelectedTime('17:30')}
               >
                 17:30
@@ -218,7 +218,7 @@ const InteractiveDemoSection = () => {
           </div>
 
           <Button 
-            className="w-full btn-accent"
+            className="w-full btn-accent py-3 text-base font-semibold"
             disabled={!selectedTime || isLoading}
             onClick={async () => {
               if (selectedTime) {
@@ -239,54 +239,54 @@ const InteractiveDemoSection = () => {
       title: "¡Reserva Confirmada!",
       description: "Tu cita ha sido agendada exitosamente",
       content: (
-        <div className="bg-card rounded-3xl p-6 md:p-8 border-0 shadow-xl max-w-sm mx-auto backdrop-blur-sm">
-          <div className="text-center mb-6">
-            <div className="bg-green-500 text-white p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-              <Check className="h-8 w-8" />
+        <div className="demo-card p-8 md:p-10 max-w-md mx-auto">
+          <div className="text-center mb-8">
+            <div className="bg-green-500 text-white p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center shadow-lg">
+              <Check className="h-10 w-10" />
             </div>
-            <h3 className="text-xl font-bold text-foreground mb-2">¡Reserva Confirmada!</h3>
-            <p className="text-muted-foreground">Tu cita ha sido agendada</p>
+            <h3 className="text-2xl font-bold text-foreground mb-3">¡Reserva Confirmada!</h3>
+            <p className="text-muted-foreground text-lg">Tu cita ha sido agendada exitosamente</p>
           </div>
           
-          <div className="space-y-4 mb-6">
-            <div className="bg-muted/50 rounded-lg p-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="space-y-6 mb-8">
+            <div className="bg-muted/30 rounded-xl p-6">
+              <div className="grid grid-cols-2 gap-6 text-base">
                 <div>
-                  <span className="text-muted-foreground">Servicio:</span>
-                  <p className="font-medium">
+                  <span className="text-muted-foreground block mb-1">Servicio:</span>
+                  <p className="font-medium text-foreground">
                     {selectedService === 'haircut' ? 'Corte y Peinado' : 'Color Completo'}
                   </p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Precio:</span>
-                  <p className="font-medium">
+                  <span className="text-muted-foreground block mb-1">Precio:</span>
+                  <p className="font-medium text-foreground">
                     {selectedService === 'haircut' ? '$350' : '$750'}
                   </p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Fecha:</span>
-                  <p className="font-medium">Viernes 15 Nov</p>
+                  <span className="text-muted-foreground block mb-1">Fecha:</span>
+                  <p className="font-medium text-foreground">Viernes 15 Nov</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Hora:</span>
-                  <p className="font-medium">{selectedTime}</p>
+                  <span className="text-muted-foreground block mb-1">Hora:</span>
+                  <p className="font-medium text-foreground">{selectedTime}</p>
                 </div>
               </div>
             </div>
             
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-2">
+            <div className="text-center py-4">
+              <p className="text-base text-muted-foreground mb-2">
                 📱 Confirmación enviada por WhatsApp
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 ID de reserva: #BK2024-{Math.random().toString(36).substr(2, 6).toUpperCase()}
               </p>
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Button 
-              className="w-full btn-accent"
+              className="w-full btn-accent py-3 text-base font-semibold"
               onClick={() => {
                 setActiveDemo('profile');
                 setSelectedService(null);
@@ -298,7 +298,7 @@ const InteractiveDemoSection = () => {
             </Button>
             <Button 
               variant="outline" 
-              className="w-full"
+              className="w-full py-3 text-base font-medium hover:bg-muted/50"
               onClick={() => {
                 setActiveDemo('profile');
                 setSelectedService(null);
@@ -316,20 +316,21 @@ const InteractiveDemoSection = () => {
   };
 
   return (
-    <section className="py-16 md:py-24 px-4 bg-gradient-to-br from-primary/5 via-background to-accent/5">
-      <div className="container mx-auto">
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+    <section className="py-20 md:py-28 px-4 section-modern">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-background to-accent/3"></div>
+      <div className="container mx-auto relative z-10">
+        <div className="text-center mb-16 md:mb-20">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-8 leading-tight">
             Experimenta la diferencia
           </h2>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
             Ve cómo tus clientes interactúan con tu perfil profesional. Simple, rápido y efectivo.
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Demo tabs */}
-          <div className="flex justify-center mb-6 md:mb-8 border-b border-border overflow-x-auto">
+          <div className="flex justify-center mb-8 md:mb-12 border-b border-border/20 overflow-x-auto bg-card/50 backdrop-blur-sm rounded-t-2xl">
             <div className="flex min-w-max px-4 md:px-0">
               {Object.entries(demoProfiles).filter(([key]) => key !== 'confirmation').map(([key, demo]) => (
                 <button
@@ -342,20 +343,20 @@ const InteractiveDemoSection = () => {
                       setShowConfirmation(false);
                     }
                   }}
-                  className={`px-3 md:px-6 py-3 font-medium transition-colors relative whitespace-nowrap text-sm md:text-base touch-manipulation ${
+                  className={`modern-tab px-4 md:px-8 py-4 font-medium transition-all relative whitespace-nowrap text-base md:text-lg touch-manipulation rounded-t-xl ${
                     activeDemo === key 
-                      ? 'text-primary border-b-2 border-primary' 
-                      : 'text-muted-foreground hover:text-foreground'
+                      ? 'modern-tab active text-primary font-semibold' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >
                   {demo.title}
                   {key === 'booking' && selectedService && (
-                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
                       1
                     </span>
                   )}
                   {key === 'schedule' && selectedTime && (
-                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
                       1
                     </span>
                   )}
@@ -366,10 +367,10 @@ const InteractiveDemoSection = () => {
 
           {/* Demo content */}
           <div className="text-center">
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+            <h3 className="text-2xl font-semibold text-foreground mb-3">
               {demoProfiles[activeDemo as keyof typeof demoProfiles].title}
             </h3>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground mb-10 text-lg">
               {demoProfiles[activeDemo as keyof typeof demoProfiles].description}
             </p>
             
@@ -379,8 +380,8 @@ const InteractiveDemoSection = () => {
           </div>
 
           {/* CTA */}
-          <div className="text-center mt-8 md:mt-12 px-4">
-            <p className="text-muted-foreground mb-4 text-sm md:text-base">
+          <div className="text-center mt-12 md:mt-16 px-4">
+            <p className="text-muted-foreground mb-6 text-base md:text-lg">
               {showConfirmation 
                 ? "¡Así de fácil es recibir reservas con Bookeasy!" 
                 : "¿Listo para crear tu propio perfil profesional?"
@@ -388,7 +389,7 @@ const InteractiveDemoSection = () => {
             </p>
             <Button 
               size="lg" 
-              className="btn-accent w-full max-w-xs md:w-auto touch-manipulation"
+              className="btn-accent w-full max-w-sm md:w-auto touch-manipulation px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
               onClick={() => {
                 if (!showConfirmation) {
                   setActiveDemo('profile');
@@ -398,7 +399,7 @@ const InteractiveDemoSection = () => {
                 }
               }}
             >
-              <ExternalLink className="h-4 w-4 mr-2" />
+              <ExternalLink className="h-5 w-5 mr-2" />
               {showConfirmation ? "Crear Mi Perfil Gratis" : "Probar Demo Completo"}
             </Button>
           </div>
