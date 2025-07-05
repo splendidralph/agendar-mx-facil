@@ -28,14 +28,17 @@ const TestNotifications = () => {
     try {
       console.log('Creating test booking with data:', testData);
       
-      // Get provider data - only providers WITH WhatsApp numbers
+      // Get provider data - only providers WITH WhatsApp numbers in notification_preferences
       const { data: providers, error: providerError } = await supabase
         .from('providers')
-        .select('id, user_id, business_name, is_active, whatsapp_phone')
+        .select(`
+          id, user_id, business_name, is_active,
+          notification_preferences!inner(whatsapp_phone)
+        `)
         .ilike('business_name', '%barberia%')
         .eq('is_active', true)
-        .not('whatsapp_phone', 'is', null)
-        .neq('whatsapp_phone', '')
+        .not('notification_preferences.whatsapp_phone', 'is', null)
+        .neq('notification_preferences.whatsapp_phone', '')
         .limit(5);
 
       if (providerError) {

@@ -30,7 +30,6 @@ serve(async (req) => {
         *,
         providers!inner(
           business_name, 
-          whatsapp_phone,
           user_id, 
           users!inner(email, full_name)
         ),
@@ -49,18 +48,31 @@ serve(async (req) => {
     const service = booking.services
     const guestInfo = booking.guest_bookings?.[0]
 
-    if (!provider.whatsapp_phone) {
-      console.log('Provider has no WhatsApp phone number, skipping WhatsApp notification')
+    // Get WhatsApp phone from notification preferences
+    const { data: notificationPrefs, error: prefsError } = await supabase
+      .from('notification_preferences')
+      .select('whatsapp_phone, whatsapp_enabled')
+      .eq('provider_id', booking.provider_id)
+      .single()
+
+    if (prefsError) {
+      console.error('Error fetching notification preferences:', prefsError)
+      throw new Error('Notification preferences not found')
+    }
+
+    if (!notificationPrefs.whatsapp_enabled || !notificationPrefs.whatsapp_phone) {
+      console.log('Provider has WhatsApp notifications disabled or no phone number configured')
       console.log('Provider details:', {
-        id: provider.id,
+        provider_id: booking.provider_id,
         business_name: provider.business_name,
-        whatsapp_phone: provider.whatsapp_phone
+        whatsapp_enabled: notificationPrefs.whatsapp_enabled,
+        whatsapp_phone: notificationPrefs.whatsapp_phone
       })
       return new Response(
         JSON.stringify({ 
           success: false, 
-          message: 'Provider has no WhatsApp phone number configured',
-          provider_id: provider.id,
+          message: 'Provider has WhatsApp notifications disabled or no phone number configured',
+          provider_id: booking.provider_id,
           business_name: provider.business_name
         }),
         { 
@@ -122,7 +134,7 @@ _Mensaje automático de BookEasy.mx_`
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`
 
     // Ensure phone number has proper WhatsApp format
-    let toWhatsAppNumber = provider.whatsapp_phone
+    let toWhatsAppNumber = notificationPrefs.whatsapp_phone
     if (!toWhatsAppNumber.startsWith('whatsapp:')) {
       // Require full international format (no default country code)
       if (!toWhatsAppNumber.startsWith('+')) {
