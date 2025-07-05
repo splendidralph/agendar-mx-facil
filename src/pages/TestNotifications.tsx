@@ -442,6 +442,53 @@ const TestNotifications = () => {
         </CardContent>
       </Card>
 
+      {/* WhatsApp Template Setup */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageCircle className="h-5 w-5" />
+            WhatsApp Message Templates Setup
+          </CardTitle>
+          <CardDescription>
+            Required for WhatsApp business notifications outside 24-hour window
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Alert className="mb-4">
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              <div className="space-y-2">
+                <p><strong>Step 1:</strong> Create Message Templates in Twilio Console</p>
+                <p><strong>Step 2:</strong> Wait for WhatsApp approval (24-48 hours)</p>
+                <p><strong>Step 3:</strong> Add Template SIDs to Supabase secrets</p>
+              </div>
+            </AlertDescription>
+          </Alert>
+          
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-medium mb-2">Template 1: New Booking Notification</h4>
+              <div className="bg-muted/30 rounded-lg p-3 text-sm font-mono">
+                <div className="mb-2 font-semibold">Template Content:</div>
+                <div>🗓️ *Nueva reserva para {'{{1}}'}*</div>
+                <div className="mt-1">📋 *Detalles:*</div>
+                <div>• Servicio: {'{{2}}'}</div>
+                <div>• Fecha: {'{{3}}'}</div>
+                <div>• Hora: {'{{4}}'}</div>
+                <div>• Duración: {'{{5}}'}</div>
+                <div>• Precio: {'{{6}}'}</div>
+                <div className="mt-1">👤 *Cliente:*</div>
+                <div>• Nombre: {'{{7}}'}</div>
+                <div>• Teléfono: {'{{8}}'}</div>
+                <div>• Notas: {'{{9}}'}</div>
+                <div className="mt-1">⏳ Estado: Pendiente de confirmación</div>
+                <div className="mt-1">_Mensaje automático de BookEasy.mx_</div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Debug Log */}
       <Card className="mt-6">
         <CardHeader>

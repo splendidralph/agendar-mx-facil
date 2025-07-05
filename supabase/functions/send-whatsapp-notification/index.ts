@@ -96,8 +96,25 @@ serve(async (req) => {
     const clientName = guestInfo ? guestInfo.guest_name : 'Cliente registrado'
     const clientPhone = guestInfo ? guestInfo.guest_phone : 'No disponible'
 
-    // Create WhatsApp message
-    const whatsappMessage = `🗓️ *Nueva reserva para ${provider.business_name}*
+    // Get Message Template SIDs from environment
+    const newBookingTemplateSid = Deno.env.get('WHATSAPP_NEW_BOOKING_TEMPLATE_SID')
+    const bookingConfirmationTemplateSid = Deno.env.get('WHATSAPP_BOOKING_CONFIRMATION_TEMPLATE_SID')
+
+    // Prepare message data for template or fallback
+    const templateVariables = [
+      provider.business_name,
+      service.name,
+      bookingDate,
+      bookingTime,
+      service.duration_minutes.toString(),
+      service.price.toString(),
+      clientName,
+      clientPhone,
+      booking.client_notes || 'Sin notas adicionales'
+    ]
+
+    // Fallback message for when templates aren't available
+    const fallbackMessage = `🗓️ *Nueva reserva para ${provider.business_name}*
 
 📋 *Detalles:*
 • Servicio: ${service.name}
@@ -113,7 +130,7 @@ ${booking.client_notes ? `• Notas: ${booking.client_notes}` : ''}
 
 ⏳ Estado: Pendiente de confirmación
 
-Para confirmar la reserva, contacta al cliente al ${clientPhone}.
+Para confirmar la reserva, contacta al ${clientPhone}.
 
 _Mensaje automático de BookEasy.mx_`
 
@@ -144,13 +161,48 @@ _Mensaje automático de BookEasy.mx_`
       toWhatsAppNumber = 'whatsapp:' + toWhatsAppNumber
     }
 
+    // Prepare message body parameters
+    let messageBody = {}
+    let useTemplate = false
+
+    // Try to use Message Template if available
+    if (newBookingTemplateSid) {
+      console.log('Using WhatsApp Message Template:', newBookingTemplateSid)
+      messageBody = {
+        From: twilioWhatsAppNumber,
+        To: toWhatsAppNumber,
+        ContentSid: newBookingTemplateSid,
+        ContentVariables: JSON.stringify({
+          "1": provider.business_name,
+          "2": service.name,
+          "3": bookingDate,
+          "4": bookingTime,
+          "5": service.duration_minutes.toString() + " min",
+          "6": "$" + service.price.toString(),
+          "7": clientName,
+          "8": clientPhone,
+          "9": booking.client_notes || 'Sin notas adicionales'
+        })
+      }
+      useTemplate = true
+    } else {
+      console.log('Using fallback freeform message (templates not configured)')
+      messageBody = {
+        From: twilioWhatsAppNumber,
+        To: toWhatsAppNumber,
+        Body: fallbackMessage
+      }
+    }
+
     console.log('Preparing to send WhatsApp message:', {
       from: twilioWhatsAppNumber,
       to: toWhatsAppNumber,
       provider_business: provider.business_name,
       client_name: clientName,
       booking_date: bookingDate,
-      booking_time: bookingTime
+      booking_time: bookingTime,
+      using_template: useTemplate,
+      template_sid: useTemplate ? newBookingTemplateSid : 'N/A'
     })
 
     const response = await fetch(twilioUrl, {
@@ -159,11 +211,7 @@ _Mensaje automático de BookEasy.mx_`
         'Authorization': `Basic ${auth}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({
-        From: twilioWhatsAppNumber,
-        To: toWhatsAppNumber,
-        Body: whatsappMessage,
-      }),
+      body: new URLSearchParams(messageBody),
     })
 
     if (!response.ok) {
