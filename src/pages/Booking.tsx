@@ -235,6 +235,22 @@ const Booking = () => {
               <CheckCircle className="h-12 w-12 text-primary-foreground checkmark-animation" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-4">¡Reserva Creada Exitosamente!</h2>
+            
+            {/* Account Creation Message */}
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-6">
+              <h3 className="font-semibold text-foreground mb-2">✨ Tu cuenta ha sido creada automáticamente</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Ahora puedes gestionar tus citas, contactar al profesional y dejar reseñas.
+              </p>
+              <Button 
+                onClick={() => navigate('/mi-cuenta')}
+                className="w-full sm:w-auto"
+                size="sm"
+              >
+                Acceder a Mi Cuenta
+              </Button>
+            </div>
+
             <div className="space-y-3 text-left bg-secondary/50 p-4 rounded-lg mb-6">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Negocio:</span>
