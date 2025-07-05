@@ -318,15 +318,6 @@ const Auth = () => {
               <span className="text-3xl font-bold text-white font-poppins">Bookeasy.mx</span>
             </div>
 
-            {/* Value proposition */}
-            <div className="text-center mb-8">
-              <h1 className="text-2xl md:text-3xl font-bold text-white mb-3 font-poppins">
-                Impulsa tu negocio de servicios
-              </h1>
-              <p className="text-white/80 text-lg">
-                Crea tu perfil profesional y comienza a recibir citas en minutos
-              </p>
-            </div>
           </div>
 
           {/* Main auth card */}

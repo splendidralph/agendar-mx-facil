@@ -13,7 +13,7 @@ const HeroSection = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/auth');
+      navigate('/auth?tab=signup');
     }
   };
 
