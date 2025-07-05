@@ -270,6 +270,59 @@ export type Database = {
           },
         ]
       }
+      customer_favorites: {
+        Row: {
+          client_id: string
+          created_at: string
+          id: string
+          provider_id: string
+          service_id: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          id?: string
+          provider_id: string
+          service_id?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          id?: string
+          provider_id?: string
+          service_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_favorites_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "provider_analytics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers_with_location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       delegaciones: {
         Row: {
           city: string
@@ -452,6 +505,7 @@ export type Database = {
       providers: {
         Row: {
           address: string | null
+          avg_rating: number | null
           bio: string | null
           business_name: string | null
           category: string | null
@@ -470,6 +524,7 @@ export type Database = {
           profile_completed: boolean | null
           profile_image_url: string | null
           rating: number | null
+          review_count: number | null
           service_radius_km: number | null
           total_reviews: number | null
           updated_at: string | null
@@ -479,6 +534,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          avg_rating?: number | null
           bio?: string | null
           business_name?: string | null
           category?: string | null
@@ -497,6 +553,7 @@ export type Database = {
           profile_completed?: boolean | null
           profile_image_url?: string | null
           rating?: number | null
+          review_count?: number | null
           service_radius_km?: number | null
           total_reviews?: number | null
           updated_at?: string | null
@@ -506,6 +563,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          avg_rating?: number | null
           bio?: string | null
           business_name?: string | null
           category?: string | null
@@ -524,6 +582,7 @@ export type Database = {
           profile_completed?: boolean | null
           profile_image_url?: string | null
           rating?: number | null
+          review_count?: number | null
           service_radius_km?: number | null
           total_reviews?: number | null
           updated_at?: string | null
@@ -544,6 +603,74 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          booking_id: string
+          client_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          is_public: boolean
+          is_verified: boolean
+          provider_id: string
+          rating: number
+          updated_at: string
+        }
+        Insert: {
+          booking_id: string
+          client_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          is_verified?: boolean
+          provider_id: string
+          rating: number
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string
+          client_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          is_verified?: boolean
+          provider_id?: string
+          rating?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "provider_analytics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers_with_location"
             referencedColumns: ["id"]
           },
         ]

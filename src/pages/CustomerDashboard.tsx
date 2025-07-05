@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import ReviewForm from "@/components/reviews/ReviewForm";
 import { 
   Calendar, 
   Clock, 
@@ -14,7 +15,9 @@ import {
   LogOut,
   User,
   ArrowLeft,
-  Star
+  Star,
+  RefreshCw,
+  Edit3
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from 'date-fns';
@@ -38,6 +41,7 @@ interface Booking {
     whatsapp_phone?: string;
     address?: string;
     username: string;
+    id: string;
   };
   guest_bookings?: {
     guest_name: string;
@@ -49,6 +53,7 @@ interface Booking {
 const CustomerDashboard = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showReviewForm, setShowReviewForm] = useState<string | null>(null);
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
@@ -67,7 +72,7 @@ const CustomerDashboard = () => {
         .select(`
           *,
           services(name, duration_minutes),
-          providers(business_name, phone, whatsapp_phone, address, username),
+          providers(business_name, phone, whatsapp_phone, address, username, id),
           guest_bookings(guest_name, guest_phone, guest_email)
         `)
         .eq('client_id', user?.id)
@@ -125,6 +130,21 @@ const CustomerDashboard = () => {
     } else {
       toast.error("No hay información de contacto disponible");
     }
+  };
+
+  const handleRebook = (booking: Booking) => {
+    // Navigate to booking page with pre-selected service
+    navigate(`/${booking.providers.username}/booking`);
+    toast.success("Te llevamos a reservar de nuevo");
+  };
+
+  const handleShowReviewForm = (bookingId: string) => {
+    setShowReviewForm(bookingId);
+  };
+
+  const handleReviewSubmitted = () => {
+    setShowReviewForm(null);
+    toast.success("¡Gracias por tu reseña!");
   };
 
   if (loading) {
@@ -212,51 +232,86 @@ const CustomerDashboard = () => {
                   {bookings.map((booking) => (
                     <Card key={booking.id} className="border border-border/30">
                       <CardContent className="p-4">
-                        <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
-                          <div className="space-y-2">
-                            <div className="flex items-center space-x-2">
-                              <h3 className="font-semibold text-foreground">
-                                {booking.providers.business_name}
-                              </h3>
-                              {getStatusBadge(booking.status)}
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                              {booking.services.name} • {booking.services.duration_minutes} min
-                            </p>
-                            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                              <div className="flex items-center space-x-1">
-                                <Calendar className="h-4 w-4" />
-                                <span>{formatBookingDate(booking.booking_date)}</span>
+                        {/* Show review form if this booking is selected */}
+                        {showReviewForm === booking.id ? (
+                          <ReviewForm
+                            bookingId={booking.id}
+                            providerId={booking.providers.id}
+                            providerName={booking.providers.business_name}
+                            serviceName={booking.services.name}
+                            onReviewSubmitted={handleReviewSubmitted}
+                            onCancel={() => setShowReviewForm(null)}
+                          />
+                        ) : (
+                          <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+                            <div className="space-y-2">
+                              <div className="flex items-center space-x-2">
+                                <h3 className="font-semibold text-foreground">
+                                  {booking.providers.business_name}
+                                </h3>
+                                {getStatusBadge(booking.status)}
                               </div>
-                              <div className="flex items-center space-x-1">
-                                <Clock className="h-4 w-4" />
-                                <span>{booking.booking_time}</span>
+                              <p className="text-sm text-muted-foreground">
+                                {booking.services.name} • {booking.services.duration_minutes} min
+                              </p>
+                              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                                <div className="flex items-center space-x-1">
+                                  <Calendar className="h-4 w-4" />
+                                  <span>{formatBookingDate(booking.booking_date)}</span>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <Clock className="h-4 w-4" />
+                                  <span>{booking.booking_time}</span>
+                                </div>
                               </div>
+                              {booking.providers.address && (
+                                <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                                  <MapPin className="h-4 w-4" />
+                                  <span>{booking.providers.address}</span>
+                                </div>
+                              )}
                             </div>
-                            {booking.providers.address && (
-                              <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-                                <MapPin className="h-4 w-4" />
-                                <span>{booking.providers.address}</span>
+                            <div className="flex flex-col space-y-2">
+                              <div className="text-right mb-2">
+                                <span className="text-lg font-bold text-foreground">
+                                  ${booking.total_price}
+                                </span>
                               </div>
-                            )}
-                          </div>
-                          <div className="flex flex-col space-y-2">
-                            <div className="text-right mb-2">
-                              <span className="text-lg font-bold text-foreground">
-                                ${booking.total_price}
-                              </span>
-                            </div>
-                            <div className="flex space-x-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleContactProvider(booking)}
-                                className="text-xs"
-                              >
-                                <MessageCircle className="h-3 w-3 mr-1" />
-                                Contactar
-                              </Button>
-                              {booking.status === 'completed' && (
+                              <div className="flex flex-wrap gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleContactProvider(booking)}
+                                  className="text-xs"
+                                >
+                                  <MessageCircle className="h-3 w-3 mr-1" />
+                                  Contactar
+                                </Button>
+                                
+                                {booking.status === 'completed' && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleShowReviewForm(booking.id)}
+                                    className="text-xs"
+                                  >
+                                    <Edit3 className="h-3 w-3 mr-1" />
+                                    Reseña
+                                  </Button>
+                                )}
+                                
+                                {(booking.status === 'completed' || booking.status === 'confirmed') && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleRebook(booking)}
+                                    className="text-xs"
+                                  >
+                                    <RefreshCw className="h-3 w-3 mr-1" />
+                                    Reservar de nuevo
+                                  </Button>
+                                )}
+                                
                                 <Button
                                   size="sm"
                                   variant="outline"
@@ -264,12 +319,12 @@ const CustomerDashboard = () => {
                                   className="text-xs"
                                 >
                                   <Star className="h-3 w-3 mr-1" />
-                                  Reseña
+                                  Ver perfil
                                 </Button>
-                              )}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}

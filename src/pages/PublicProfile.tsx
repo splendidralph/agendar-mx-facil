@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import ReviewCard from '@/components/reviews/ReviewCard';
 import { MapPin, Instagram, Clock, DollarSign, ArrowLeft, Phone, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { categoryLabels } from '@/utils/serviceCategories';
@@ -19,6 +21,18 @@ interface Provider {
   username: string;
   phone: string;
   profile_image_url: string | null;
+  avg_rating: number;
+  review_count: number;
+}
+
+interface Review {
+  id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  users: {
+    full_name: string;
+  };
 }
 
 interface Service {
@@ -41,6 +55,7 @@ const PublicProfile = () => {
   const navigate = useNavigate();
   const [provider, setProvider] = useState<Provider | null>(null);
   const [services, setServices] = useState<Service[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -71,7 +86,7 @@ const PublicProfile = () => {
       // Fetch provider data
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
-        .select('id, business_name, bio, category, address, instagram_handle, username, phone, profile_image_url')
+        .select('id, business_name, bio, category, address, instagram_handle, username, phone, profile_image_url, avg_rating, review_count')
         .eq('username', cleanUsername)
         .eq('profile_completed', true)
         .eq('is_active', true)
@@ -110,6 +125,27 @@ const PublicProfile = () => {
       } else {
         setServices(servicesData || []);
         console.log('PublicProfile: Successfully loaded provider and services');
+      }
+
+      // Fetch reviews - simplified for now
+      const { data: reviewsData, error: reviewsError } = await supabase
+        .from('reviews')
+        .select('id, rating, comment, created_at')
+        .eq('provider_id', providerData.id)
+        .eq('is_public', true)
+        .eq('is_verified', true)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (reviewsError) {
+        console.error('PublicProfile: Error fetching reviews:', reviewsError);
+      } else {
+        // Add mock user data for now
+        const reviewsWithUsers = reviewsData?.map(review => ({
+          ...review,
+          users: { full_name: 'Cliente verificado' }
+        })) || [];
+        setReviews(reviewsWithUsers);
       }
     } catch (error) {
       console.error('PublicProfile: Unexpected error:', error);
@@ -223,8 +259,8 @@ const PublicProfile = () => {
             </div>
           </Card>
 
-          {/* Services Section - Similar to BookingDemo */}
-          <Card className="border-border/50 shadow-lg">
+          {/* Services Section */}
+          <Card className="mb-8 border-border/50 shadow-lg">
             <CardHeader>
               <CardTitle className="text-foreground">Servicios Disponibles</CardTitle>
             </CardHeader>
@@ -272,6 +308,25 @@ const PublicProfile = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Reviews Section */}
+          {reviews.length > 0 && (
+            <Card className="border-border/50 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Star className="h-5 w-5" />
+                  <span>Reseñas ({reviews.length})</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {reviews.map((review) => (
+                    <ReviewCard key={review.id} review={review} />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
