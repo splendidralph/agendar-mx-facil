@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { CustomPhoneInput } from '@/components/ui/phone-input';
 import { AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -85,16 +86,20 @@ const ClientDetailsStep = ({
           </div>
 
           <div>
-            <Label htmlFor="phone" className="text-foreground font-medium">Teléfono *</Label>
-            <Input
-              id="phone"
-              type="tel"
-              required
-              value={clientData.phone}
-              onChange={(e) => handleChange('phone', e.target.value)}
-              className="border-border focus:border-primary mt-2 h-12"
-              placeholder="+52 55 1234 5678"
-            />
+            <Label htmlFor="phone" className="text-foreground font-medium">Teléfono (con código de país) *</Label>
+            <div className="mt-2">
+              <CustomPhoneInput
+                value={clientData.phone}
+                onChange={(value) => handleChange('phone', value || '')}
+                defaultCountry="MX"
+                className="border-border focus:border-primary h-12"
+                placeholder="(55) 1234-5678"
+                required
+              />
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Incluye el código de país (ej. +52 para México, +1 para EE.UU.)
+            </p>
           </div>
         </div>
 

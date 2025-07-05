@@ -49,13 +49,19 @@ serve(async (req) => {
     const service = booking.services
     const guestInfo = booking.guest_bookings?.[0]
 
-    // Check if provider has WhatsApp phone number
     if (!provider.whatsapp_phone) {
       console.log('Provider has no WhatsApp phone number, skipping WhatsApp notification')
+      console.log('Provider details:', {
+        id: provider.id,
+        business_name: provider.business_name,
+        whatsapp_phone: provider.whatsapp_phone
+      })
       return new Response(
         JSON.stringify({ 
           success: false, 
-          message: 'Provider has no WhatsApp phone number configured' 
+          message: 'Provider has no WhatsApp phone number configured',
+          provider_id: provider.id,
+          business_name: provider.business_name
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -105,6 +111,10 @@ _Mensaje automático de BookEasy.mx_`
     const twilioWhatsAppNumber = 'whatsapp:+18777036062' // New approved number
 
     if (!twilioAccountSid || !twilioAuthToken) {
+      console.error('Twilio credentials missing:', {
+        hasAccountSid: !!twilioAccountSid,
+        hasAuthToken: !!twilioAuthToken
+      })
       throw new Error('Twilio credentials not configured')
     }
 
@@ -122,6 +132,15 @@ _Mensaje automático de BookEasy.mx_`
       toWhatsAppNumber = 'whatsapp:' + toWhatsAppNumber
     }
 
+    console.log('Preparing to send WhatsApp message:', {
+      from: twilioWhatsAppNumber,
+      to: toWhatsAppNumber,
+      provider_business: provider.business_name,
+      client_name: clientName,
+      booking_date: bookingDate,
+      booking_time: bookingTime
+    })
+
     const response = await fetch(twilioUrl, {
       method: 'POST',
       headers: {
@@ -137,8 +156,14 @@ _Mensaje automático de BookEasy.mx_`
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Twilio API error:', errorText)
-      throw new Error(`Failed to send WhatsApp message: ${response.status}`)
+      console.error('Twilio API error details:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+        to: toWhatsAppNumber,
+        from: twilioWhatsAppNumber
+      })
+      throw new Error(`Failed to send WhatsApp message: ${response.status} - ${errorText}`)
     }
 
     const twilioResponse = await response.json()

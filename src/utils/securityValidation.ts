@@ -17,9 +17,26 @@ export const validateEmail = (email: string): boolean => {
 };
 
 export const validatePhoneNumber = (phone: string): boolean => {
-  // International phone number format validation
-  const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+  // Require international format with country code (must start with +)
+  const phoneRegex = /^\+[1-9]\d{1,14}$/;
   return phoneRegex.test(phone);
+};
+
+export const validatePhoneNumberWithCountryCode = (phone: string): { isValid: boolean; error?: string } => {
+  if (!phone || phone.trim() === '') {
+    return { isValid: false, error: 'Phone number is required' };
+  }
+  
+  if (!phone.startsWith('+')) {
+    return { isValid: false, error: 'Phone number must include country code (e.g., +52, +1)' };
+  }
+  
+  const phoneRegex = /^\+[1-9]\d{1,14}$/;
+  if (!phoneRegex.test(phone)) {
+    return { isValid: false, error: 'Invalid phone number format' };
+  }
+  
+  return { isValid: true };
 };
 
 export const validateUsername = (username: string): boolean => {
