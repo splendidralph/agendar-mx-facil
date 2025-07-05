@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CustomPhoneInput } from "@/components/ui/phone-input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -112,11 +113,11 @@ const CustomerLogin = () => {
                 <label className="text-sm font-medium text-foreground mb-2 block">
                   Número de Teléfono
                 </label>
-                <Input
-                  type="tel"
-                  placeholder="+52 664 123 4567"
+                <CustomPhoneInput
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(value) => setPhone(value || "")}
+                  placeholder="(664) 123-4567"
+                  defaultCountry="MX"
                   className="w-full"
                   disabled={loading}
                 />

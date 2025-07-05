@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { CustomPhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import { Calendar, ChevronLeft, Clock, Phone, Instagram, CheckCircle, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -234,14 +235,13 @@ const BookingDemo = () => {
 
                   <div>
                     <Label htmlFor="phone" className="text-foreground font-semibold">Teléfono *</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      required
+                    <CustomPhoneInput
                       value={clientData.phone}
-                      onChange={(e) => setClientData(prev => ({ ...prev, phone: e.target.value }))}
+                      onChange={(value) => setClientData(prev => ({ ...prev, phone: value || "" }))}
+                      placeholder="(55) 1234-5678"
+                      defaultCountry="MX"
                       className="border-border focus:border-primary mt-2"
-                      placeholder="+52 55 1234 5678"
+                      required
                     />
                   </div>
 

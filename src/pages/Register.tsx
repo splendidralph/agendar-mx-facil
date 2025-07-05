@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { CustomPhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import { Calendar, ChevronLeft, Link2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +40,13 @@ const Register = () => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
+    }));
+  };
+
+  const handlePhoneChange = (value: string | undefined) => {
+    setFormData(prev => ({
+      ...prev,
+      phone: value || ""
     }));
   };
 
@@ -134,15 +142,13 @@ const Register = () => {
 
                 <div>
                   <Label htmlFor="phone" className="text-bookeasy-700">Teléfono *</Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    required
+                  <CustomPhoneInput
                     value={formData.phone}
-                    onChange={handleChange}
+                    onChange={handlePhoneChange}
+                    placeholder="(55) 1234-5678"
+                    defaultCountry="MX"
                     className="border-bookeasy-200 focus:border-bookeasy-400"
-                    placeholder="Ej. +52 55 1234 5678"
+                    required
                   />
                 </div>
 
