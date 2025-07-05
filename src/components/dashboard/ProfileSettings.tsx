@@ -92,7 +92,21 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
           Administra la información de tu negocio
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
+        <div className="flex items-center space-x-4">
+          <ProfilePictureUpload
+            providerId={provider.id}
+            currentImageUrl={provider.profile_image_url}
+            businessName={provider.business_name || 'Usuario'}
+            onImageUpdate={onUpdate}
+            size="md"
+          />
+          <div className="flex-1">
+            <h3 className="font-semibold">{provider.business_name || 'Sin nombre'}</h3>
+            <p className="text-sm text-muted-foreground">@{provider.username || 'sin-username'}</p>
+          </div>
+        </div>
+        
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="w-full">

@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Instagram, Clock, DollarSign, ArrowLeft, Phone, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { categoryLabels } from '@/utils/serviceCategories';
@@ -17,6 +18,7 @@ interface Provider {
   instagram_handle: string;
   username: string;
   phone: string;
+  profile_image_url: string | null;
 }
 
 interface Service {
@@ -69,7 +71,7 @@ const PublicProfile = () => {
       // Fetch provider data
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
-        .select('*')
+        .select('id, business_name, bio, category, address, instagram_handle, username, phone, profile_image_url')
         .eq('username', cleanUsername)
         .eq('profile_completed', true)
         .eq('is_active', true)
@@ -177,9 +179,12 @@ const PublicProfile = () => {
           <Card className="mb-8 animate-fade-in border-border/50 shadow-lg overflow-hidden">
             <div className="gradient-primary p-6 text-primary-foreground">
               <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-                <div className="w-24 h-24 bg-card rounded-full flex items-center justify-center text-primary text-2xl font-bold shadow-lg">
-                  {provider.business_name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
-                </div>
+                <Avatar className="w-24 h-24 shadow-lg border-4 border-white/20">
+                  <AvatarImage src={provider.profile_image_url || undefined} />
+                  <AvatarFallback className="bg-card text-primary text-2xl font-bold">
+                    {provider.business_name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="text-center md:text-left flex-1">
                   <h1 className="text-2xl font-bold mb-2">{provider.business_name}</h1>
                   <Badge variant="secondary" className="mb-2 bg-white/20 text-white">

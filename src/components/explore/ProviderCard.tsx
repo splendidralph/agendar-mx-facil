@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, MapPin, Briefcase, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Database } from '@/integrations/supabase/types';
@@ -37,9 +38,12 @@ const ProviderCard = ({ provider }: ProviderCardProps) => {
     <Card className="card-hover bg-card/80 backdrop-blur-sm border-border/50 overflow-hidden">
       <div className="relative">
         <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-          <div className="text-3xl font-bold text-primary">
-            {provider.business_name?.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
-          </div>
+          <Avatar className="w-20 h-20 border-4 border-white/20 shadow-lg">
+            <AvatarImage src={provider.profile_image_url || undefined} />
+            <AvatarFallback className="bg-card text-primary text-3xl font-bold">
+              {provider.business_name?.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
         </div>
         
         <div className="absolute top-3 left-3 flex flex-col gap-2">
