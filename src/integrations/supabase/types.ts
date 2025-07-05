@@ -403,6 +403,7 @@ export type Database = {
           provider_id: string
           updated_at: string | null
           whatsapp_enabled: boolean
+          whatsapp_phone: string | null
         }
         Insert: {
           created_at?: string | null
@@ -412,6 +413,7 @@ export type Database = {
           provider_id: string
           updated_at?: string | null
           whatsapp_enabled?: boolean
+          whatsapp_phone?: string | null
         }
         Update: {
           created_at?: string | null
@@ -421,6 +423,7 @@ export type Database = {
           provider_id?: string
           updated_at?: string | null
           whatsapp_enabled?: boolean
+          whatsapp_phone?: string | null
         }
         Relationships: [
           {

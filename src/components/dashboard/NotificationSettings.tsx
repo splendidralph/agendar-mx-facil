@@ -5,8 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Bell, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { CustomPhoneInput } from '@/components/ui/phone-input';
@@ -24,7 +22,7 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
     email_enabled: true,
     whatsapp_enabled: true,
     preferred_method: 'both',
-    whatsapp_phone: provider.whatsapp_phone || ''
+    whatsapp_phone: ''
   });
 
   useEffect(() => {
@@ -50,7 +48,7 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
           email_enabled: data.email_enabled,
           whatsapp_enabled: data.whatsapp_enabled,
           preferred_method: data.preferred_method,
-          whatsapp_phone: provider.whatsapp_phone || ''
+          whatsapp_phone: data.whatsapp_phone || ''
         });
       } else {
         // Create default preferences if none exist
@@ -68,8 +66,9 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
         .insert({
           provider_id: provider.id,
           email_enabled: true,
-          whatsapp_enabled: true,
-          preferred_method: 'both'
+          whatsapp_enabled: false,
+          preferred_method: 'email_only',
+          whatsapp_phone: ''
         })
         .select()
         .single();
@@ -81,7 +80,7 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
         email_enabled: data.email_enabled,
         whatsapp_enabled: data.whatsapp_enabled,
         preferred_method: data.preferred_method,
-        whatsapp_phone: provider.whatsapp_phone || ''
+        whatsapp_phone: data.whatsapp_phone || ''
       });
     } catch (error) {
       console.error('Error creating default preferences:', error);
@@ -92,34 +91,30 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
   const handleSave = async () => {
     setLoading(true);
     try {
-      // Update notification preferences
+      // Smart defaults: automatically enable WhatsApp if phone is provided
+      const hasWhatsApp = formData.whatsapp_phone && formData.whatsapp_phone.trim() !== '';
+      const whatsappEnabled = hasWhatsApp;
+      const preferredMethod = hasWhatsApp ? 'both' : 'email_only';
+
+      // Update notification preferences (store WhatsApp phone here)
       const { error: preferencesError } = await supabase
         .from('notification_preferences')
         .update({
-          email_enabled: formData.email_enabled,
-          whatsapp_enabled: formData.whatsapp_enabled,
-          preferred_method: formData.preferred_method,
+          email_enabled: true, // Always enable email
+          whatsapp_enabled: whatsappEnabled,
+          preferred_method: preferredMethod,
+          whatsapp_phone: formData.whatsapp_phone,
           updated_at: new Date().toISOString()
         })
         .eq('provider_id', provider.id);
 
       if (preferencesError) throw preferencesError;
 
-      // Update WhatsApp phone number in provider profile if changed
-      if (formData.whatsapp_phone !== provider.whatsapp_phone) {
-        const { error: providerError } = await supabase
-          .from('providers')
-          .update({
-            whatsapp_phone: formData.whatsapp_phone
-          })
-          .eq('id', provider.id);
-
-        if (providerError) throw providerError;
-      }
-
       toast.success('Preferencias de notificación actualizadas');
       setOpen(false);
       onUpdate();
+      // Refresh preferences to update UI
+      loadNotificationPreferences();
     } catch (error) {
       console.error('Error updating notification preferences:', error);
       toast.error('Error actualizando las preferencias');
@@ -163,12 +158,10 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
             <p className="text-sm font-medium">Estado actual:</p>
             <p className="text-sm text-muted-foreground">{getStatusText()}</p>
           </div>
-          {(!provider.whatsapp_phone || !preferences?.whatsapp_enabled) && (
-            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-yellow-800">
-                {!provider.whatsapp_phone 
-                  ? 'Agrega tu número de WhatsApp para recibir notificaciones' 
-                  : 'WhatsApp deshabilitado'}
+          {(!formData.whatsapp_phone || !preferences?.whatsapp_enabled) && (
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                Recibirás notificaciones por email. Agrega tu WhatsApp para también recibirlas por mensaje.
               </p>
             </div>
           )}
@@ -186,8 +179,8 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
               <DialogTitle>Configurar Notificaciones</DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
-            <div>
-                <Label htmlFor="whatsapp_phone">Número de WhatsApp</Label>
+              <div>
+                <Label htmlFor="whatsapp_phone">Número de WhatsApp (opcional)</Label>
                 <CustomPhoneInput
                   value={formData.whatsapp_phone}
                   onChange={handleWhatsAppChange}
@@ -195,62 +188,24 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
                   defaultCountry="MX"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  El número se guardará automáticamente con el código de país
+                  Si proporcionas tu WhatsApp, recibirás notificaciones por email y WhatsApp
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="email-notifications">Email</Label>
-                    <p className="text-sm text-muted-foreground">Recibir notificaciones por email</p>
-                  </div>
-                  <Switch
-                    id="email-notifications"
-                    checked={formData.email_enabled}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, email_enabled: checked }))}
-                  />
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-blue-900">¿Cómo funciona?</h4>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• Siempre recibirás notificaciones por email</li>
+                    <li>• Si agregas WhatsApp, también recibirás mensajes</li>
+                    <li>• Puedes cambiar tu número cuando quieras</li>
+                  </ul>
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="whatsapp-notifications">WhatsApp</Label>
-                    <p className="text-sm text-muted-foreground">Recibir notificaciones por WhatsApp</p>
-                  </div>
-                  <Switch
-                    id="whatsapp-notifications"
-                    checked={formData.whatsapp_enabled}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, whatsapp_enabled: checked }))}
-                    disabled={!formData.whatsapp_phone}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label>Método preferido</Label>
-                <RadioGroup
-                  value={formData.preferred_method}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, preferred_method: value }))}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="email_only" id="email_only" />
-                    <Label htmlFor="email_only">Solo email</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="whatsapp_only" id="whatsapp_only" disabled={!formData.whatsapp_phone} />
-                    <Label htmlFor="whatsapp_only">Solo WhatsApp</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="both" id="both" />
-                    <Label htmlFor="both">Ambos</Label>
-                  </div>
-                </RadioGroup>
               </div>
 
               <div className="flex gap-2 pt-4">
                 <Button onClick={handleSave} disabled={loading} className="flex-1">
-                  {loading ? 'Guardando...' : 'Guardar'}
+                  {loading ? 'Guardando...' : 'Guardar Configuración'}
                 </Button>
                 <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
                   Cancelar
