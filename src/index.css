@@ -295,6 +295,32 @@
   background: hsl(var(--primary) / 0.5);
 }
 
+/* PhoneInput styling fixes for glassmorphism background */
+.PhoneInput {
+  --PhoneInput-color--focus: hsl(0 0% 100% / 0.9);
+}
+
+.PhoneInput .PhoneInputInput {
+  background: transparent !important;
+  color: white !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.PhoneInput .PhoneInputInput::placeholder {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
+.PhoneInput .PhoneInputCountrySelect {
+  background: transparent !important;
+  color: white !important;
+  border: none !important;
+}
+
+.PhoneInput .PhoneInputCountrySelectArrow {
+  color: hsl(0 0% 100% / 0.7) !important;
+}
+
 /* Responsive font sizing */
 @media (max-width: 640px) {
   .container {

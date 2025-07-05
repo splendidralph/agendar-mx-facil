@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +7,7 @@ import { Calendar, Clock, Star, MapPin, Phone, MessageCircle, ExternalLink, Chec
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const InteractiveDemoSection = () => {
+  const navigate = useNavigate();
   const [activeDemo, setActiveDemo] = useState('profile');
   const [selectedService, setSelectedService] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -398,16 +400,15 @@ const InteractiveDemoSection = () => {
               size="lg" 
               className="btn-accent w-full max-w-sm md:w-auto touch-manipulation px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
               onClick={() => {
-                if (!showConfirmation) {
-                  setActiveDemo('profile');
-                  setSelectedService(null);
-                  setSelectedTime(null);
-                  setShowConfirmation(false);
+                if (showConfirmation) {
+                  navigate('/auth?tab=signup');
+                } else {
+                  navigate('/auth?tab=signup');
                 }
               }}
             >
               <ExternalLink className="h-5 w-5 mr-2" />
-              {showConfirmation ? "Crear Mi Perfil Gratis" : "Probar Demo Completo"}
+              Crear Cuenta Gratuita
             </Button>
           </div>
         </div>
