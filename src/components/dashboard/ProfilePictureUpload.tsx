@@ -103,6 +103,12 @@ const ProfilePictureUpload = ({
   const uploadImage = async (file: File) => {
     setUploading(true);
     try {
+      // Debug: Check authentication context
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Upload Debug - Current user:', user?.id);
+      console.log('Upload Debug - Provider ID:', providerId);
+      console.log('Upload Debug - File name will be:', `${providerId}/profile.jpg`);
+      
       // Compress the image
       const compressedFile = await compressImage(file);
       
@@ -113,6 +119,9 @@ const ProfilePictureUpload = ({
 
       const fileExt = 'jpg'; // Always save as JPG after compression
       const fileName = `${providerId}/profile.${fileExt}`;
+      
+      console.log('Upload Debug - Final file path:', fileName);
+      console.log('Upload Debug - File size after compression:', compressedFile.size);
 
       const { error: uploadError } = await supabase.storage
         .from('profile-pictures')
@@ -121,6 +130,7 @@ const ProfilePictureUpload = ({
           contentType: 'image/jpeg'
         });
 
+      console.log('Upload Debug - Upload error:', uploadError);
       if (uploadError) throw uploadError;
 
       // Get public URL
