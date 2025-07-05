@@ -15,7 +15,7 @@ const TestNotifications = () => {
     businessName: 'Barberia El Rafas',
     serviceName: 'Corte de Cabello',
     clientName: 'Cliente Prueba',
-    clientPhone: '+521234567890',
+    clientPhone: '+11234567890',
     bookingDate: '2025-07-05',
     bookingTime: '14:00',
     price: '200',
@@ -27,16 +27,24 @@ const TestNotifications = () => {
     try {
       console.log('Creating test booking with data:', testData);
       
-      // Get provider data
+      // Get provider data - only providers WITH WhatsApp numbers
       const { data: providers, error: providerError } = await supabase
         .from('providers')
-        .select('id, user_id, business_name, is_active')
+        .select('id, user_id, business_name, is_active, whatsapp_phone')
         .ilike('business_name', '%barberia%')
         .eq('is_active', true)
+        .not('whatsapp_phone', 'is', null)
+        .neq('whatsapp_phone', '')
         .limit(5);
 
-      if (providerError || !providers || providers.length === 0) {
-        toast.error('No providers found with "barberia" in name');
+      if (providerError) {
+        console.error('Provider query error:', providerError);
+        toast.error(`Provider query failed: ${providerError.message}`);
+        return null;
+      }
+
+      if (!providers || providers.length === 0) {
+        toast.error('No providers found with WhatsApp numbers configured');
         return null;
       }
 

@@ -120,9 +120,10 @@ _Mensaje automático de BookEasy.mx_`
     // Ensure client phone number has proper WhatsApp format
     let toWhatsAppNumber = clientPhone
     if (!toWhatsAppNumber.startsWith('whatsapp:')) {
-      // Add country code if not present (default to Mexico +52)
+      // Require full international format (no default country code)
       if (!toWhatsAppNumber.startsWith('+')) {
-        toWhatsAppNumber = '+52' + toWhatsAppNumber.replace(/^0+/, '')
+        console.error('Client phone number must include country code:', toWhatsAppNumber)
+        throw new Error('Client phone number must include country code (e.g., +1, +52)')
       }
       toWhatsAppNumber = 'whatsapp:' + toWhatsAppNumber
     }
