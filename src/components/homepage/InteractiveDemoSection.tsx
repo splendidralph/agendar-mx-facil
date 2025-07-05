@@ -39,11 +39,11 @@ const InteractiveDemoSection = () => {
           <div className="space-y-3 sm:space-y-4 mb-6 md:mb-8">
             <div className="flex items-center gap-3">
               <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
-              <span className="text-sm sm:text-base">Polanco, CDMX</span>
+              <span className="text-sm sm:text-base">Tijuana, BC</span>
             </div>
             <div className="flex items-center gap-3">
               <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
-              <span className="text-sm sm:text-base">+52 55 1234 5678</span>
+              <span className="text-sm sm:text-base">+52 664 1234 5678</span>
             </div>
           </div>
 

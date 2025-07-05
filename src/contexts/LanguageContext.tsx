@@ -57,7 +57,7 @@ const esTranslations: Record<string, string> = {
   'header.hello': 'Hola, {name}',
   
   // Hero Section
-  'hero.badge': '🚀 OPEN FOR BETA TESTING NOW',
+  'hero.badge': '¡YA DISPONIBLE EN BETA!',
   'hero.title': 'Tu link de reservas',
   'hero.subtitle': 'profesional',
   'hero.description1': 'Crea tu perfil',
