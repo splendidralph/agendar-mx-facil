@@ -4,11 +4,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CustomPhoneInput } from '@/components/ui/phone-input';
-import { AlertCircle, User, Clock, Star, ChevronRight } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useReturningCustomer } from '@/hooks/useReturningCustomer';
-import { useEffect } from 'react';
 
 interface Service {
   id: string;
@@ -42,20 +40,8 @@ const ClientDetailsStep = ({
   error,
   isMobile = false
 }: ClientDetailsStepProps) => {
-  const { customer, loading, isReturning } = useReturningCustomer(clientData.phone);
-
   const handleChange = (field: string, value: string) => {
     onClientDataChange(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleFillFromProfile = () => {
-    if (customer) {
-      onClientDataChange(prev => ({
-        ...prev,
-        name: customer.full_name || prev.name,
-        email: customer.email || prev.email
-      }));
-    }
   };
 
   const content = (
@@ -85,47 +71,6 @@ const ClientDetailsStep = ({
         </div>
       )}
 
-      {/* Returning Customer Section */}
-      {isReturning && customer && (
-        <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" />
-              <h4 className="font-medium text-primary">¡Te reconocemos!</h4>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleFillFromProfile}
-              className="text-xs"
-            >
-              Usar mis datos
-            </Button>
-          </div>
-          <p className="text-sm text-muted-foreground mb-3">
-            Tienes {customer.bookingHistory.length} cita{customer.bookingHistory.length !== 1 ? 's' : ''} anterior{customer.bookingHistory.length !== 1 ? 'es' : ''} con nosotros.
-          </p>
-          {customer.bookingHistory.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                Últimas citas:
-              </p>
-              {customer.bookingHistory.slice(0, 2).map((booking) => (
-                <div key={booking.id} className="flex items-center justify-between text-xs bg-background/50 p-2 rounded">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-3 w-3" />
-                    <span>{booking.service_name}</span>
-                  </div>
-                  <span className="text-muted-foreground">
-                    {format(new Date(booking.booking_date), "dd/MM/yyyy", { locale: es })}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
       
       <div className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

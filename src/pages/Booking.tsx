@@ -234,23 +234,7 @@ const Booking = () => {
             <div className="gradient-primary p-4 rounded-full w-fit mx-auto mb-6">
               <CheckCircle className="h-12 w-12 text-primary-foreground checkmark-animation" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-4">¡Reserva Creada Exitosamente!</h2>
-            
-            {/* Account Creation Message */}
-            <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold text-foreground mb-2">✨ Tu cuenta ha sido creada automáticamente</h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                Ahora puedes gestionar tus citas, contactar al profesional y dejar reseñas.
-              </p>
-              <Button 
-                onClick={() => navigate('/mi-cuenta')}
-                className="w-full sm:w-auto"
-                size="sm"
-              >
-                Acceder a Mi Cuenta
-              </Button>
-            </div>
-
+            <h2 className="text-2xl font-bold text-foreground mb-4">¡Reserva Confirmada!</h2>
             <div className="space-y-3 text-left bg-secondary/50 p-4 rounded-lg mb-6">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Negocio:</span>
@@ -274,23 +258,14 @@ const Booking = () => {
               </div>
             </div>
             <p className="text-muted-foreground mb-6 font-inter">
-              Tu reserva ha sido guardada exitosamente. {provider.business_name} se pondrá en contacto contigo para confirmar la disponibilidad.
+              Te enviaremos un SMS de confirmación y un recordatorio 2 horas antes de tu cita.
             </p>
-            <div className="space-y-3">
-              <Button 
-                onClick={() => navigate(`/${provider.username}`)}
-                variant="outline"
-                className="w-full"
-              >
-                Ver Perfil
-              </Button>
-              <Button 
-                onClick={() => navigate('/')}
-                className="btn-primary w-full"
-              >
-                Finalizar
-              </Button>
-            </div>
+            <Button 
+              onClick={() => navigate('/')}
+              className="btn-primary w-full"
+            >
+              Finalizar
+            </Button>
           </CardContent>
         </Card>
       </div>

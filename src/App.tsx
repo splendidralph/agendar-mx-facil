@@ -17,8 +17,6 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import PublicProfile from "./pages/PublicProfile";
 import Booking from "./pages/Booking";
-import CustomerLogin from "./pages/CustomerLogin";
-import CustomerDashboard from "./pages/CustomerDashboard";
 import TestNotifications from "./pages/TestNotifications";
 
 const queryClient = new QueryClient();
@@ -41,8 +39,6 @@ const App = () => (
             <Route path="/test-notifications" element={<TestNotifications />} />
             <Route path="/booking/demo" element={<BookingDemo />} />
             <Route path="/explore" element={<Explore />} />
-            <Route path="/mi-cuenta-login" element={<CustomerLogin />} />
-            <Route path="/mi-cuenta" element={<CustomerDashboard />} />
             {/* Booking routes - must come before username route */}
             <Route path="/:username/booking" element={<Booking />} />
             <Route path="/:username/booking/:serviceId" element={<Booking />} />

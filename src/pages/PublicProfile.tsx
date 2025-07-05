@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import ReviewCard from '@/components/reviews/ReviewCard';
+
 import { MapPin, Instagram, Clock, DollarSign, ArrowLeft, Phone, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { categoryLabels } from '@/utils/serviceCategories';
@@ -25,15 +25,6 @@ interface Provider {
   review_count: number;
 }
 
-interface Review {
-  id: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-  users: {
-    full_name: string;
-  };
-}
 
 interface Service {
   id: string;
@@ -55,7 +46,7 @@ const PublicProfile = () => {
   const navigate = useNavigate();
   const [provider, setProvider] = useState<Provider | null>(null);
   const [services, setServices] = useState<Service[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -127,26 +118,6 @@ const PublicProfile = () => {
         console.log('PublicProfile: Successfully loaded provider and services');
       }
 
-      // Fetch reviews - simplified for now
-      const { data: reviewsData, error: reviewsError } = await supabase
-        .from('reviews')
-        .select('id, rating, comment, created_at')
-        .eq('provider_id', providerData.id)
-        .eq('is_public', true)
-        .eq('is_verified', true)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (reviewsError) {
-        console.error('PublicProfile: Error fetching reviews:', reviewsError);
-      } else {
-        // Add mock user data for now
-        const reviewsWithUsers = reviewsData?.map(review => ({
-          ...review,
-          users: { full_name: 'Cliente verificado' }
-        })) || [];
-        setReviews(reviewsWithUsers);
-      }
     } catch (error) {
       console.error('PublicProfile: Unexpected error:', error);
       toast.error('Error inesperado cargando el perfil');
@@ -309,24 +280,6 @@ const PublicProfile = () => {
             </CardContent>
           </Card>
 
-          {/* Reviews Section */}
-          {reviews.length > 0 && (
-            <Card className="border-border/50 shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Star className="h-5 w-5" />
-                  <span>Reseñas ({reviews.length})</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {reviews.map((review) => (
-                    <ReviewCard key={review.id} review={review} />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
     </div>
