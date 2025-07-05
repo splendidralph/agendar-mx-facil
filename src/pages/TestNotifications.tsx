@@ -15,7 +15,7 @@ const TestNotifications = () => {
     businessName: 'Barberia El Rafas',
     serviceName: 'Corte de Cabello',
     clientName: 'Cliente Prueba',
-    clientPhone: '+11234567890',
+    clientPhone: '+52',
     bookingDate: '2025-07-05',
     bookingTime: '14:00',
     price: '200',
