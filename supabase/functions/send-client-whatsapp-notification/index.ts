@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -21,7 +20,7 @@ serve(async (req) => {
 
     const { bookingId } = await req.json()
 
-    console.log('Sending WhatsApp notification for booking:', bookingId)
+    console.log('Sending client WhatsApp notification for booking:', bookingId)
 
     // Get booking details with provider and service information
     const { data: booking, error: bookingError } = await supabase
@@ -49,13 +48,18 @@ serve(async (req) => {
     const service = booking.services
     const guestInfo = booking.guest_bookings?.[0]
 
-    // Check if provider has WhatsApp phone number
-    if (!provider.whatsapp_phone) {
-      console.log('Provider has no WhatsApp phone number, skipping WhatsApp notification')
+    // Determine client phone number
+    let clientPhone = null
+    if (guestInfo && guestInfo.guest_phone) {
+      clientPhone = guestInfo.guest_phone
+    }
+
+    if (!clientPhone) {
+      console.log('No client phone number available, skipping client WhatsApp notification')
       return new Response(
         JSON.stringify({ 
           success: false, 
-          message: 'Provider has no WhatsApp phone number configured' 
+          message: 'No client phone number available for WhatsApp notification' 
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -74,28 +78,30 @@ serve(async (req) => {
 
     const bookingTime = booking.booking_time
 
-    // Determine client information
-    const clientName = guestInfo ? guestInfo.guest_name : 'Cliente registrado'
-    const clientPhone = guestInfo ? guestInfo.guest_phone : 'No disponible'
+    // Determine client name
+    const clientName = guestInfo ? guestInfo.guest_name : 'Cliente'
 
-    // Create WhatsApp message
-    const whatsappMessage = `🗓️ *Nueva reserva para ${provider.business_name}*
+    // Create client WhatsApp message
+    const whatsappMessage = `✅ *Reserva confirmada - ${provider.business_name}*
 
-📋 *Detalles:*
+¡Hola ${clientName}! Tu reserva ha sido registrada exitosamente.
+
+📋 *Detalles de tu cita:*
 • Servicio: ${service.name}
 • Fecha: ${bookingDate}
 • Hora: ${bookingTime}
 • Duración: ${service.duration_minutes} min
 • Precio: $${service.price}
 
-👤 *Cliente:*
-• Nombre: ${clientName}
-• Teléfono: ${clientPhone}
-${booking.client_notes ? `• Notas: ${booking.client_notes}` : ''}
+🏢 *Información del proveedor:*
+• Negocio: ${provider.business_name}
+${provider.whatsapp_phone ? `• WhatsApp: ${provider.whatsapp_phone}` : ''}
 
-⏳ Estado: Pendiente de confirmación
+⏳ *Estado:* Pendiente de confirmación
 
-Para confirmar la reserva, contacta al cliente al ${clientPhone}.
+El proveedor se pondrá en contacto contigo para confirmar la cita.
+
+${booking.client_notes ? `*Tus notas:* ${booking.client_notes}` : ''}
 
 _Mensaje automático de BookEasy.mx_`
 
@@ -111,8 +117,8 @@ _Mensaje automático de BookEasy.mx_`
     const auth = btoa(`${twilioAccountSid}:${twilioAuthToken}`)
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`
 
-    // Ensure phone number has proper WhatsApp format
-    let toWhatsAppNumber = provider.whatsapp_phone
+    // Ensure client phone number has proper WhatsApp format
+    let toWhatsAppNumber = clientPhone
     if (!toWhatsAppNumber.startsWith('whatsapp:')) {
       // Add country code if not present (default to Mexico +52)
       if (!toWhatsAppNumber.startsWith('+')) {
@@ -141,12 +147,12 @@ _Mensaje automático de BookEasy.mx_`
     }
 
     const twilioResponse = await response.json()
-    console.log('WhatsApp message sent successfully:', twilioResponse.sid)
+    console.log('Client WhatsApp message sent successfully:', twilioResponse.sid)
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'WhatsApp notification sent successfully',
+        message: 'Client WhatsApp notification sent successfully',
         messageSid: twilioResponse.sid 
       }),
       { 
@@ -156,7 +162,7 @@ _Mensaje automático de BookEasy.mx_`
     )
 
   } catch (error) {
-    console.error('Error sending WhatsApp notification:', error)
+    console.error('Error sending client WhatsApp notification:', error)
     return new Response(
       JSON.stringify({ 
         success: false, 

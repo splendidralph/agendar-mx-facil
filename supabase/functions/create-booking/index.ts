@@ -306,13 +306,21 @@ serve(async (req) => {
     }
 
     if (shouldSendWhatsApp) {
-      console.log('Queuing WhatsApp notification...')
+      console.log('Queuing provider WhatsApp notification...')
       notificationPromises.push(
         supabase.functions.invoke('send-whatsapp-notification', {
           body: { bookingId: booking.id }
-        }).then(result => ({ type: 'whatsapp', result })).catch(error => ({ type: 'whatsapp', error }))
+        }).then(result => ({ type: 'provider-whatsapp', result })).catch(error => ({ type: 'provider-whatsapp', error }))
       )
     }
+
+    // Always try to send client WhatsApp notification (if they have phone)
+    console.log('Queuing client WhatsApp notification...')
+    notificationPromises.push(
+      supabase.functions.invoke('send-client-whatsapp-notification', {
+        body: { bookingId: booking.id }
+      }).then(result => ({ type: 'client-whatsapp', result })).catch(error => ({ type: 'client-whatsapp', error }))
+    )
 
     // Send notifications and handle results
     if (notificationPromises.length > 0) {
