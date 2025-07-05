@@ -181,6 +181,63 @@ serve(async (req) => {
           clientId = user.id
         }
       }
+    } else {
+      // For guest bookings, auto-create a customer account
+      console.log('Creating customer account for guest booking')
+      
+      // Check if user already exists by phone
+      const { data: existingUser, error: existingUserError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('phone', clientData.phone)
+        .maybeSingle()
+
+      if (existingUser) {
+        console.log('Found existing customer account:', existingUser.id)
+        clientId = existingUser.id
+      } else {
+        // Create new customer account
+        try {
+          const { data: newAuthUser, error: authError } = await supabase.auth.admin.createUser({
+            phone: clientData.phone,
+            user_metadata: {
+              full_name: clientData.name,
+              role: 'client'
+            },
+            email_confirm: true,
+            phone_confirm: true
+          })
+
+          if (authError) {
+            console.error('Error creating auth user:', authError)
+            // Continue with guest booking if user creation fails
+            clientId = null
+          } else {
+            console.log('Created new customer account:', newAuthUser.user.id)
+            clientId = newAuthUser.user.id
+            
+            // The users table record should be created automatically by the trigger
+            // but let's ensure it exists
+            const { error: userRecordError } = await supabase
+              .from('users')
+              .upsert({
+                id: newAuthUser.user.id,
+                email: clientData.email || `${clientData.phone}@guest.bookeasy.mx`,
+                full_name: clientData.name,
+                phone: clientData.phone,
+                role: 'client'
+              })
+
+            if (userRecordError) {
+              console.error('Error creating user record:', userRecordError)
+            }
+          }
+        } catch (error) {
+          console.error('Unexpected error creating customer account:', error)
+          // Continue with guest booking if user creation fails
+          clientId = null
+        }
+      }
     }
 
     // Check for booking conflicts
