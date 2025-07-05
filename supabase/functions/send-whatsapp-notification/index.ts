@@ -177,11 +177,8 @@ _Mensaje automático de BookEasy.mx_`
           "2": service.name,
           "3": bookingDate,
           "4": bookingTime,
-          "5": service.duration_minutes.toString() + " min",
-          "6": "$" + service.price.toString(),
-          "7": clientName,
-          "8": clientPhone,
-          "9": booking.client_notes || 'Sin notas adicionales'
+          "5": clientName,
+          "6": clientPhone
         })
       }
       useTemplate = true
