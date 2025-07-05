@@ -27,7 +27,7 @@ const TestNotifications = () => {
     try {
       console.log('Creating test booking with data:', testData);
       
-      // Get provider data with better error handling
+      // Get provider data
       const { data: providers, error: providerError } = await supabase
         .from('providers')
         .select('id, user_id, business_name, is_active')
@@ -35,36 +35,24 @@ const TestNotifications = () => {
         .eq('is_active', true)
         .limit(5);
 
-      console.log('Found providers:', providers);
-      
-      if (providerError) {
-        console.error('Provider query error:', providerError);
-        toast.error(`Provider query failed: ${providerError.message}`);
-        return null;
-      }
-
-      if (!providers || providers.length === 0) {
+      if (providerError || !providers || providers.length === 0) {
         toast.error('No providers found with "barberia" in name');
         return null;
       }
 
-      // Use the first provider found
       const provider = providers[0];
       console.log('Using provider:', provider);
 
       // Get or create service
-      const { data: services, error: serviceError } = await supabase
+      const { data: services } = await supabase
         .from('services')
         .select('id, name, is_active')
         .eq('provider_id', provider.id)
         .eq('is_active', true)
         .limit(1);
 
-      console.log('Found services:', services);
-
       let serviceId;
       if (!services || services.length === 0) {
-        console.log('Creating new service...');
         const { data: newService, error: createServiceError } = await supabase
           .from('services')
           .insert({
@@ -79,60 +67,40 @@ const TestNotifications = () => {
           .single();
 
         if (createServiceError) {
-          console.error('Service creation error:', createServiceError);
           toast.error(`Failed to create service: ${createServiceError.message}`);
           return null;
         }
         serviceId = newService.id;
-        console.log('Created service:', newService);
       } else {
         serviceId = services[0].id;
-        console.log('Using existing service:', services[0]);
       }
 
-      // Create test booking
-      console.log('Creating booking...');
-      const { data: booking, error: bookingError } = await supabase
-        .from('bookings')
-        .insert({
-          provider_id: provider.id,
-          service_id: serviceId,
-          booking_date: testData.bookingDate,
-          booking_time: testData.bookingTime,
-          total_price: parseInt(testData.price),
-          status: 'pending',
-          client_notes: testData.notes
-        })
-        .select()
-        .single();
+      // Use the create-booking edge function instead of direct database calls
+      const { data, error } = await supabase.functions.invoke('create-booking', {
+        body: {
+          providerId: provider.id,
+          serviceId: serviceId,
+          bookingDate: testData.bookingDate,
+          bookingTime: testData.bookingTime,
+          clientData: {
+            name: testData.clientName,
+            phone: testData.clientPhone,
+            email: 'cliente@test.com',
+            notes: testData.notes
+          },
+          isGuest: true
+        }
+      });
 
-      if (bookingError) {
-        console.error('Booking creation error:', bookingError);
-        toast.error(`Booking creation failed: ${bookingError.message}`);
+      if (error) {
+        console.error('Booking creation error:', error);
+        toast.error(`Booking creation failed: ${error.message}`);
         return null;
       }
 
-      console.log('Created booking:', booking);
-
-      // Create guest booking info
-      console.log('Creating guest booking info...');
-      const { error: guestError } = await supabase
-        .from('guest_bookings')
-        .insert({
-          booking_id: booking.id,
-          guest_name: testData.clientName,
-          guest_phone: testData.clientPhone,
-          guest_email: 'cliente@test.com'
-        });
-
-      if (guestError) {
-        console.error('Guest booking error:', guestError);
-        toast.error(`Guest booking failed: ${guestError.message}`);
-        return null;
-      }
-
-      console.log('Test booking created successfully:', booking.id);
-      return booking.id;
+      console.log('Booking created successfully:', data);
+      toast.success('Test booking created successfully!');
+      return data.bookingId;
     } catch (error) {
       console.error('Error creating test booking:', error);
       toast.error(`Error creating test booking: ${error.message}`);
