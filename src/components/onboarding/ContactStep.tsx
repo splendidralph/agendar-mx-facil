@@ -5,9 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, ArrowLeft, MessageCircle, MapPin, Instagram, CheckCircle, AlertCircle, Smartphone } from 'lucide-react';
-import PhoneInput from 'react-phone-number-input/input';
 import { Input } from '@/components/ui/input';
-import 'react-phone-number-input/style.css';
+import { CustomPhoneInput } from '@/components/ui/phone-input';
 
 const ContactStep = () => {
   const { data, nextStep, prevStep, loading } = useOnboarding();
@@ -109,22 +108,21 @@ const ContactStep = () => {
             </div>
           </div>
           
-          <div className="mt-4">
+            <div className="mt-4">
             <Label htmlFor="whatsapp" className="text-green-800 font-medium">
               Número de WhatsApp
             </Label>
             <div className="relative mt-2">
-              <Smartphone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 h-4 w-4 z-10" />
-              <PhoneInput
-                country="MX"
+              <CustomPhoneInput
                 value={formData.whatsappPhone}
                 onChange={handleWhatsAppChange}
-                className={`pl-10 w-full h-10 px-3 py-2 border rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-green-200 focus:border-green-400 focus:ring-green-400 ${
+                placeholder="(55) 1234-5678"
+                defaultCountry="MX"
+                className={`border-green-200 focus:border-green-400 focus:ring-green-400 ${
                   formData.whatsappPhone && !phoneValidation.isValid ? 'border-red-300' : ''
                 } ${
                   formData.whatsappPhone && phoneValidation.isValid ? 'border-green-300' : ''
                 }`}
-                placeholder="Número de WhatsApp"
               />
               {formData.whatsappPhone && (
                 <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${

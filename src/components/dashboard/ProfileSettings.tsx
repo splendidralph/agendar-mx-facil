@@ -13,6 +13,7 @@ import { Settings, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { checkUsernameAvailability } from '@/utils/usernameUtils';
 import ProfilePictureUpload from './ProfilePictureUpload';
+import { CustomPhoneInput } from '@/components/ui/phone-input';
 
 interface ProfileSettingsProps {
   provider: any;
@@ -182,10 +183,11 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
 
               <div>
                 <Label htmlFor="phone">Teléfono</Label>
-                <Input
-                  id="phone"
+                <CustomPhoneInput
                   value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={(value) => setFormData(prev => ({ ...prev, phone: value || '' }))}
+                  placeholder="(55) 1234-5678"
+                  defaultCountry="MX"
                 />
               </div>
 

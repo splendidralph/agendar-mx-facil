@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Mail, Send, MessageCircle } from 'lucide-react';
+import { CustomPhoneInput } from '@/components/ui/phone-input';
 
 const TestNotifications = () => {
   const [loading, setLoading] = useState(false);
@@ -15,7 +16,7 @@ const TestNotifications = () => {
     businessName: 'Barberia El Rafas',
     serviceName: 'Corte de Cabello',
     clientName: 'Cliente Prueba',
-    clientPhone: '+52',
+    clientPhone: '',
     bookingDate: '2025-07-05',
     bookingTime: '14:00',
     price: '200',
@@ -268,9 +269,11 @@ const TestNotifications = () => {
             </div>
             <div>
               <Label>Client Phone</Label>
-              <Input
+              <CustomPhoneInput
                 value={testData.clientPhone}
-                onChange={(e) => setTestData(prev => ({ ...prev, clientPhone: e.target.value }))}
+                onChange={(value) => setTestData(prev => ({ ...prev, clientPhone: value || '' }))}
+                placeholder="(55) 1234-5678"
+                defaultCountry="MX"
               />
             </div>
             <div>

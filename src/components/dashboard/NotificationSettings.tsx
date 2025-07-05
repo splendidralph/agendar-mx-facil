@@ -9,8 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Bell, Settings } from 'lucide-react';
 import { toast } from 'sonner';
-import PhoneInput from 'react-phone-number-input/input';
-import 'react-phone-number-input/style.css';
+import { CustomPhoneInput } from '@/components/ui/phone-input';
 
 interface NotificationSettingsProps {
   provider: any;
@@ -187,15 +186,13 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
               <DialogTitle>Configurar Notificaciones</DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
-              <div>
+            <div>
                 <Label htmlFor="whatsapp_phone">Número de WhatsApp</Label>
-                <PhoneInput
-                  international
-                  defaultCountry="MX"
+                <CustomPhoneInput
                   value={formData.whatsapp_phone}
                   onChange={handleWhatsAppChange}
-                  className="w-full h-10 px-3 py-2 border border-input rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1"
-                  placeholder="Número de WhatsApp"
+                  placeholder="(55) 1234-5678"
+                  defaultCountry="MX"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   El número se guardará automáticamente con el código de país
