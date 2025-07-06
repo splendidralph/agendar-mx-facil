@@ -1,1 +1,11 @@
 project_id = "gobbezdstkpaciwcvpjh"
+
+[functions.create-booking]
+
+[functions.send-booking-notification]
+
+[functions.send-client-whatsapp-notification]
+
+[functions.send-whatsapp-notification]
+
+[functions.generate-share-image]

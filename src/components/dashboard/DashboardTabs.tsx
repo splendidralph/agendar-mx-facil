@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link, BarChart3, Calendar, Settings, ClipboardList } from "lucide-react";
+import { Link, BarChart3, Calendar, Settings, ClipboardList, Share2 } from "lucide-react";
 import ProfileSettings from "@/components/dashboard/ProfileSettings";
 import ServicesManager from "@/components/dashboard/ServicesManager";
 import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import AvailabilityManager from "@/components/availability/AvailabilityManager";
 import MobileStats from "@/components/dashboard/MobileStats";
 import MobileBookingsTable from "@/components/dashboard/MobileBookingsTable";
+import PromotionManager from "@/components/dashboard/PromotionManager";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardTabsProps {
@@ -96,6 +97,9 @@ const DashboardTabs = ({
       case "availability":
         return <AvailabilityManager providerId={provider.id} />;
       
+      case "promote":
+        return <PromotionManager provider={provider} />;
+      
       case "settings":
         return (
           <div className="space-y-6">
@@ -116,7 +120,7 @@ const DashboardTabs = ({
       {/* Desktop Tabs */}
       {!isMobile ? (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 glassmorphism mb-8 h-12">
+          <TabsList className="grid w-full grid-cols-6 glassmorphism mb-8 h-12">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Overview
@@ -132,6 +136,10 @@ const DashboardTabs = ({
             <TabsTrigger value="availability" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Horarios
+            </TabsTrigger>
+            <TabsTrigger value="promote" className="flex items-center gap-2">
+              <Share2 className="h-4 w-4" />
+              Promocionar
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
@@ -149,6 +157,9 @@ const DashboardTabs = ({
             {renderTabContent()}
           </TabsContent>
           <TabsContent value="availability">
+            {renderTabContent()}
+          </TabsContent>
+          <TabsContent value="promote">
             {renderTabContent()}
           </TabsContent>
           <TabsContent value="settings" className="space-y-6">
