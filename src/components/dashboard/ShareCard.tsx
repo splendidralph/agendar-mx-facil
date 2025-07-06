@@ -94,42 +94,67 @@ const ShareCard = ({ provider }: ShareCardProps) => {
   };
 
   const handleInstagramShare = async () => {
-    const caption = `¡Reserva tu cita conmigo! ${provider.business_name} 📱✨\n\n${provider.bio || ''}\n\nbookeasy.mx/${provider.username}`;
+    // Stories-optimized caption with hashtags and location
+    const locationHashtags = provider.colonia ? `#${provider.colonia.replace(/\s+/g, '')} #${provider.category?.replace(/\s+/g, '')}` : `#${provider.category?.replace(/\s+/g, '')}`;
+    const caption = `¡Reserva tu cita conmigo! ${provider.business_name} 📱✨\n\n${provider.bio || ''}\n\n✨ Agenda fácil y rápido\n📍 ${provider.colonia || 'Tu zona'}\n🔗 bookeasy.mx/${provider.username}\n\n${locationHashtags} #reserva #story #bookeasy`;
     
     if (isMobile) {
-      // Try Instagram deep link first
       try {
-        // Copy caption to clipboard
+        // Copy Stories-optimized caption to clipboard first
         await copyToClipboard(caption);
         
-        // Try to open Instagram app
-        const instagramUrl = `instagram://camera`;
-        window.location.href = instagramUrl;
+        // Show immediate feedback
+        toast.success('📱 Abriendo Instagram Stories...', {
+          description: 'Texto copiado al portapapeles',
+          duration: 3000
+        });
         
-        toast.success('Texto copiado. Instagram se abrirá para que puedas crear tu story');
+        // Try Stories-specific deep links in sequence
+        const storyUrls = [
+          'instagram://story-camera',
+          'instagram://stories/new', 
+          'instagram://camera'
+        ];
         
-        // Fallback after a short delay
+        let linkWorked = false;
+        for (const url of storyUrls) {
+          try {
+            window.location.href = url;
+            linkWorked = true;
+            break;
+          } catch (e) {
+            continue;
+          }
+        }
+        
+        // Fallback after attempting deep links
         setTimeout(() => {
           if (generatedImage) {
             downloadImage();
-            toast.info('Si Instagram no se abrió, usa la imagen descargada');
+            toast.info('📸 Si Instagram no se abrió:', {
+              description: '• Usa la imagen descargada\n• Abre Instagram manualmente\n• Crea nueva Story\n• El texto ya está copiado',
+              duration: 6000
+            });
           }
-        }, 1500);
+        }, 2000);
         
       } catch (error) {
-        // Fallback to download
+        // Complete fallback
         downloadImage();
         await copyToClipboard(caption);
-        toast.info('Imagen descargada y texto copiado. Abre Instagram y comparte en tu story');
+        toast.info('📱 Compartir en Stories:', {
+          description: '1. Imagen descargada\n2. Texto copiado\n3. Abre Instagram\n4. Crea nueva Story',
+          duration: 5000
+        });
       }
     } else {
-      // Desktop: Auto-download + show instructions
+      // Desktop: Enhanced Stories workflow
       if (generatedImage) {
         downloadImage();
         await copyToClipboard(caption);
-        toast.success('Imagen descargada y texto copiado. Ahora:', {
-          description: '1. Abre Instagram en tu teléfono\n2. Crea nueva story\n3. Selecciona la imagen descargada\n4. Pega el texto copiado',
-          duration: 8000
+        toast.success('✨ ¡Perfecto para Instagram Stories!', {
+          description: '📱 En tu móvil:\n1. Abre Instagram\n2. Toca tu foto de perfil (+)\n3. Selecciona la imagen descargada\n4. Pega el texto copiado\n5. ¡Comparte tu Story!',
+          duration: 10000
         });
       }
     }
@@ -333,7 +358,7 @@ const ShareCard = ({ provider }: ShareCardProps) => {
                         className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 hover:from-pink-600 hover:to-purple-700 text-base py-6 rounded-2xl shadow-lg"
                       >
                         <Instagram className="h-5 w-5 mr-3" />
-                        {isMobile ? '📸 Abrir Instagram' : '📸 Compartir en Instagram'}
+                        {isMobile ? '📸 Crear Instagram Story' : '📸 Compartir en Stories'}
                       </Button>
                     </div>
                     
