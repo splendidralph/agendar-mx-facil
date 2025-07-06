@@ -123,9 +123,9 @@
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
@@ -140,14 +140,14 @@
 .glassmorphism h4:not([class*="text-"]),
 .glassmorphism h5:not([class*="text-"]),
 .glassmorphism h6:not([class*="text-"]) {
-  color: white;
+  color: hsl(var(--foreground));
 }
 
 .glassmorphism p:not([class*="text-"]),
 .glassmorphism span:not([class*="text-"]),
 .glassmorphism div:not([class*="text-"]),
 .glassmorphism label:not([class*="text-"]) {
-  color: white;
+  color: hsl(var(--foreground));
 }
 
 /* Modern homepage-specific styles */
