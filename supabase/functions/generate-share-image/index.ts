@@ -37,14 +37,50 @@ async function generateQRCodeBase64(text: string, size: number = 200): Promise<s
   }
 }
 
-// Convert SVG to Canvas and then to JPEG
-async function svgToJpeg(svgString: string, width: number, height: number): Promise<string> {
-  // For server-side conversion, we'll return the SVG as base64 for now
-  // and handle the conversion on the client side if needed
-  const encoder = new TextEncoder();
-  const svgBytes = encoder.encode(svgString);
-  const svgBase64 = btoa(String.fromCharCode(...svgBytes));
-  return `data:image/svg+xml;base64,${svgBase64}`;
+// Convert SVG to PNG using external service
+async function svgToPng(svgString: string, width: number, height: number): Promise<string> {
+  try {
+    // Use htmlcsstoimage.com API for SVG to PNG conversion
+    const response = await fetch('https://hcti.io/v1/image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + btoa('demo:demo'), // Using demo credentials
+      },
+      body: JSON.stringify({
+        html: `<div style="width:${width}px;height:${height}px;">${svgString}</div>`,
+        css: 'body{margin:0;padding:0;}',
+        width: width,
+        height: height,
+        device_scale: 2 // For higher quality
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      // Convert the URL to base64
+      const imageResponse = await fetch(data.url);
+      if (imageResponse.ok) {
+        const arrayBuffer = await imageResponse.arrayBuffer();
+        const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+        return `data:image/png;base64,${base64}`;
+      }
+    }
+    
+    // Fallback: return SVG as data URL
+    console.log('PNG conversion failed, falling back to SVG');
+    const encoder = new TextEncoder();
+    const svgBytes = encoder.encode(svgString);
+    const svgBase64 = btoa(String.fromCharCode(...svgBytes));
+    return `data:image/svg+xml;base64,${svgBase64}`;
+  } catch (error) {
+    console.error('SVG to PNG conversion error:', error);
+    // Fallback: return SVG as data URL
+    const encoder = new TextEncoder();
+    const svgBytes = encoder.encode(svgString);
+    const svgBase64 = btoa(String.fromCharCode(...svgBytes));
+    return `data:image/svg+xml;base64,${svgBase64}`;
+  }
 }
 
 serve(async (req) => {
@@ -235,8 +271,8 @@ serve(async (req) => {
       </svg>
     `;
 
-    // Convert SVG to base64 data URL
-    const finalImageUrl = await svgToJpeg(svg, dimensions.width, dimensions.height);
+    // Convert SVG to PNG
+    const finalImageUrl = await svgToPng(svg, dimensions.width, dimensions.height);
 
     console.log('Generated image for provider:', provider.username);
     console.log('SVG size:', svg.length, 'characters');

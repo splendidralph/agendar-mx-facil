@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Share2, Download, Instagram, MessageCircle, Facebook, Twitter, Copy, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Share2, Download, Instagram, MessageCircle, Facebook, Twitter, Copy, Sparkles, Image as ImageIcon, Smartphone } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ShareCardProps {
   provider: any;
@@ -14,6 +15,7 @@ const ShareCard = ({ provider }: ShareCardProps) => {
   const [loading, setLoading] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<'story' | 'square'>('story');
+  const isMobile = useIsMobile();
 
   const generateShareImage = async (format: 'story' | 'square') => {
     if (!provider?.id) {
@@ -53,11 +55,15 @@ const ShareCard = ({ provider }: ShareCardProps) => {
     if (!generatedImage) return;
 
     const link = document.createElement('a');
-    link.download = `${provider.username || 'mi-negocio'}-${selectedFormat}.jpg`;
+    link.download = `${provider.username || 'mi-negocio'}-${selectedFormat}.png`;
     link.href = generatedImage;
     link.click();
     
-    toast.success('Imagen descargada');
+    // Auto-copy caption for easier sharing
+    const caption = `¡Reserva tu cita conmigo! ${provider.business_name} - bookeasy.mx/${provider.username}`;
+    copyToClipboard(caption);
+    
+    toast.success('Imagen descargada y texto de promoción copiado');
   };
 
   const copyToClipboard = async (text: string) => {
@@ -77,15 +83,82 @@ const ShareCard = ({ provider }: ShareCardProps) => {
       whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
-      instagram: '#', // Instagram doesn't support direct web sharing
     };
 
     if (platform === 'instagram') {
-      toast.info('Descarga la imagen y compártela manualmente en Instagram Stories');
+      handleInstagramShare();
       return;
     }
 
     window.open(urls[platform as keyof typeof urls], '_blank');
+  };
+
+  const handleInstagramShare = async () => {
+    const caption = `¡Reserva tu cita conmigo! ${provider.business_name} 📱✨\n\n${provider.bio || ''}\n\nbookeasy.mx/${provider.username}`;
+    
+    if (isMobile) {
+      // Try Instagram deep link first
+      try {
+        // Copy caption to clipboard
+        await copyToClipboard(caption);
+        
+        // Try to open Instagram app
+        const instagramUrl = `instagram://camera`;
+        window.location.href = instagramUrl;
+        
+        toast.success('Texto copiado. Instagram se abrirá para que puedas crear tu story');
+        
+        // Fallback after a short delay
+        setTimeout(() => {
+          if (generatedImage) {
+            downloadImage();
+            toast.info('Si Instagram no se abrió, usa la imagen descargada');
+          }
+        }, 1500);
+        
+      } catch (error) {
+        // Fallback to download
+        downloadImage();
+        await copyToClipboard(caption);
+        toast.info('Imagen descargada y texto copiado. Abre Instagram y comparte en tu story');
+      }
+    } else {
+      // Desktop: Auto-download + show instructions
+      if (generatedImage) {
+        downloadImage();
+        await copyToClipboard(caption);
+        toast.success('Imagen descargada y texto copiado. Ahora:', {
+          description: '1. Abre Instagram en tu teléfono\n2. Crea nueva story\n3. Selecciona la imagen descargada\n4. Pega el texto copiado',
+          duration: 8000
+        });
+      }
+    }
+  };
+
+  // Web Share API for native sharing when available
+  const handleNativeShare = async () => {
+    if (navigator.share && generatedImage) {
+      try {
+        // Convert data URL to blob for sharing
+        const response = await fetch(generatedImage);
+        const blob = await response.blob();
+        const file = new File([blob], `${provider.username}-promo.png`, { type: 'image/png' });
+        
+        await navigator.share({
+          title: `${provider.business_name} - Reserva tu cita`,
+          text: `¡Reserva tu cita conmigo! ${provider.business_name}`,
+          url: `https://bookeasy.mx/${provider.username}`,
+          files: [file]
+        });
+        
+        toast.success('¡Compartido exitosamente!');
+      } catch (error) {
+        // Fallback to regular sharing
+        downloadImage();
+      }
+    } else {
+      downloadImage();
+    }
   };
 
   const bookingUrl = `https://bookeasy.mx/${provider.username}`;
@@ -210,14 +283,25 @@ const ShareCard = ({ provider }: ShareCardProps) => {
                 {/* Primary Actions */}
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Button
-                      onClick={downloadImage}
-                      size="lg"
-                      className="gradient-primary text-primary-foreground hover:opacity-90 shadow-lg text-base py-6 rounded-2xl"
-                    >
-                      <Download className="h-5 w-5 mr-3" />
-                      📱 Descargar imagen
-                    </Button>
+                    {isMobile && navigator.share ? (
+                      <Button
+                        onClick={handleNativeShare}
+                        size="lg"
+                        className="gradient-primary text-primary-foreground hover:opacity-90 shadow-lg text-base py-6 rounded-2xl"
+                      >
+                        <Share2 className="h-5 w-5 mr-3" />
+                        📱 Compartir imagen
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={downloadImage}
+                        size="lg"
+                        className="gradient-primary text-primary-foreground hover:opacity-90 shadow-lg text-base py-6 rounded-2xl"
+                      >
+                        <Download className="h-5 w-5 mr-3" />
+                        📱 Descargar imagen
+                      </Button>
+                    )}
                     <Button
                       onClick={() => copyToClipboard(bookingUrl)}
                       variant="outline"
@@ -246,10 +330,10 @@ const ShareCard = ({ provider }: ShareCardProps) => {
                         onClick={() => shareToSocial('instagram')}
                         variant="outline"
                         size="lg"
-                        className="bg-pink-50 border-2 border-pink-200 text-pink-700 hover:bg-pink-100 hover:border-pink-300 text-base py-6 rounded-2xl"
+                        className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 hover:from-pink-600 hover:to-purple-700 text-base py-6 rounded-2xl shadow-lg"
                       >
                         <Instagram className="h-5 w-5 mr-3" />
-                        📸 Compartir en Instagram
+                        {isMobile ? '📸 Abrir Instagram' : '📸 Compartir en Instagram'}
                       </Button>
                     </div>
                     
