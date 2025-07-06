@@ -110,11 +110,11 @@ const Dashboard = () => {
   if (!provider) return null;
 
   return (
-    <div className="min-h-screen gradient-hero relative overflow-hidden">
-      {/* Hero Background Elements */}
-      <div className="absolute inset-0 gradient-hero-overlay"></div>
-      <div className="absolute top-20 left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"></div>
-      <div className="absolute bottom-20 right-10 w-48 h-48 bg-accent/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '1s' }}></div>
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Subtle Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background to-muted/20"></div>
+      <div className="absolute top-20 left-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl animate-float"></div>
+      <div className="absolute bottom-20 right-10 w-24 h-24 bg-accent/5 rounded-full blur-xl animate-float" style={{ animationDelay: '1s' }}></div>
       
       {/* Mobile-First Header */}
       <MobileHeader
