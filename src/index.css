@@ -123,10 +123,15 @@
 }
 
 .glassmorphism {
-  background: hsl(var(--card) / 0.95);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
-  border: 1px solid hsl(var(--border) / 0.2);
-  box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.05), 0 2px 4px -1px hsl(var(--foreground) / 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Glassmorphism text styles - allow explicit color classes to override */
+.glassmorphism * {
+  color: inherit;
 }
 
 .glassmorphism h1:not([class*="text-"]),
@@ -135,13 +140,14 @@
 .glassmorphism h4:not([class*="text-"]),
 .glassmorphism h5:not([class*="text-"]),
 .glassmorphism h6:not([class*="text-"]) {
-  color: hsl(var(--card-foreground));
+  color: white;
 }
 
 .glassmorphism p:not([class*="text-"]),
 .glassmorphism span:not([class*="text-"]),
-.glassmorphism div:not([class*="text-"]) {
-  color: hsl(var(--card-foreground));
+.glassmorphism div:not([class*="text-"]),
+.glassmorphism label:not([class*="text-"]) {
+  color: white;
 }
 
 /* Modern homepage-specific styles */
