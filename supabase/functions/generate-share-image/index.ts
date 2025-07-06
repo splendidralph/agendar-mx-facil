@@ -6,26 +6,33 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// QR Code generation function
-function generateQRCodeSVG(text: string, size: number = 100): string {
-  // Simple QR code pattern for demonstration - in production, use a proper QR library
-  const qrPattern = `
-    <svg width="${size}" height="${size}" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-      <rect width="21" height="21" fill="white"/>
-      <g fill="black">
-        <rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="white"/>
-        <rect x="2" y="2" width="3" height="3"/><rect x="14" y="0" width="7" height="7"/>
-        <rect x="15" y="1" width="5" height="5" fill="white"/><rect x="16" y="2" width="3" height="3"/>
-        <rect x="0" y="14" width="7" height="7"/><rect x="1" y="15" width="5" height="5" fill="white"/>
-        <rect x="2" y="16" width="3" height="3"/><rect x="8" y="8" width="1" height="1"/>
-        <rect x="10" y="8" width="1" height="1"/><rect x="12" y="8" width="1" height="1"/>
-        <rect x="8" y="10" width="1" height="1"/><rect x="10" y="10" width="1" height="1"/>
-        <rect x="12" y="10" width="1" height="1"/><rect x="8" y="12" width="1" height="1"/>
-        <rect x="10" y="12" width="1" height="1"/><rect x="12" y="12" width="1" height="1"/>
-      </g>
-    </svg>
-  `;
-  return qrPattern;
+// Generate QR Code using QR Server API
+async function generateQRCodeSVG(text: string, size: number = 200): Promise<string> {
+  try {
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&format=svg&margin=0`;
+    const response = await fetch(qrApiUrl);
+    
+    if (!response.ok) {
+      throw new Error(`QR API failed: ${response.status}`);
+    }
+    
+    return await response.text();
+  } catch (error) {
+    console.error('QR generation failed:', error);
+    // Fallback to a simple pattern if API fails
+    return `
+      <svg width="${size}" height="${size}" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+        <rect width="25" height="25" fill="white"/>
+        <g fill="black">
+          <rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="white"/>
+          <rect x="2" y="2" width="3" height="3"/><rect x="18" y="0" width="7" height="7"/>
+          <rect x="19" y="1" width="5" height="5" fill="white"/><rect x="20" y="2" width="3" height="3"/>
+          <rect x="0" y="18" width="7" height="7"/><rect x="1" y="19" width="5" height="5" fill="white"/>
+          <rect x="2" y="20" width="3" height="3"/><rect x="10" y="10" width="5" height="5"/>
+        </g>
+      </svg>
+    `;
+  }
 }
 
 serve(async (req) => {
@@ -86,118 +93,132 @@ serve(async (req) => {
 
     // Generate QR code SVG
     const bookingUrl = `https://bookeasy.mx/${provider.username}`;
-    const qrCodeSVG = generateQRCodeSVG(bookingUrl, 100);
+    const qrCodeSVG = await generateQRCodeSVG(bookingUrl, 200);
 
-    // Create enhanced SVG with proper profile image and QR code
+    // Create modern SVG inspired by CashApp design
     const svg = `
       <svg width="${dimensions.width}" height="${dimensions.height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
           <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#2d2d2d;stop-opacity:1" />
+          </linearGradient>
+          <filter id="shadow">
+            <feDropShadow dx="0" dy="8" stdDeviation="16" flood-opacity="0.3"/>
+          </filter>
+          <clipPath id="profileClip">
+            <circle cx="0" cy="0" r="80"/>
+          </clipPath>
+          <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
             <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
           </linearGradient>
-          <filter id="shadow">
-            <feDropShadow dx="0" dy="4" stdDeviation="12" flood-opacity="0.25"/>
-          </filter>
-          <clipPath id="profileClip">
-            <circle cx="0" cy="0" r="110"/>
-          </clipPath>
         </defs>
         
-        <!-- Background -->
+        <!-- Dark Background -->
         <rect width="100%" height="100%" fill="url(#bgGradient)"/>
         
         <!-- Main content container -->
-        <g transform="translate(${dimensions.width/2}, ${format === 'story' ? 450 : 250})">
-          <!-- Profile image container -->
-          <circle cx="0" cy="0" r="120" fill="white" filter="url(#shadow)"/>
-          
+        <g transform="translate(${dimensions.width/2}, ${format === 'story' ? 300 : 200})">
+          <!-- Profile section -->
           ${profileImageBase64 ? `
-            <image x="-110" y="-110" width="220" height="220" 
+            <circle cx="0" cy="0" r="85" fill="white" filter="url(#shadow)"/>
+            <image x="-80" y="-80" width="160" height="160" 
                    href="data:image/jpeg;base64,${profileImageBase64}" 
                    clip-path="url(#profileClip)" 
                    preserveAspectRatio="xMidYMid slice"/>
           ` : `
-            <circle cx="0" cy="0" r="110" fill="#f0f0f0"/>
-            <text x="0" y="15" text-anchor="middle" 
-                  font-family="Arial, sans-serif" 
-                  font-size="48" 
-                  font-weight="bold" 
-                  fill="#999">
+            <circle cx="0" cy="0" r="85" fill="url(#accentGradient)" filter="url(#shadow)"/>
+            <text x="0" y="20" text-anchor="middle" 
+                  font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+                  font-size="64" 
+                  font-weight="600" 
+                  fill="white">
               ${(provider.business_name || 'Usuario').charAt(0).toUpperCase()}
             </text>
           `}
           
           <!-- Business name -->
-          <text x="0" y="200" text-anchor="middle" 
-                font-family="Arial, sans-serif" 
-                font-size="52" 
-                font-weight="bold" 
-                fill="white"
-                filter="url(#shadow)">
+          <text x="0" y="150" text-anchor="middle" 
+                font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+                font-size="42" 
+                font-weight="700" 
+                fill="white">
             ${provider.business_name || 'Mi Negocio'}
           </text>
           
-          <!-- Username -->
-          <text x="0" y="260" text-anchor="middle" 
-                font-family="Arial, sans-serif" 
-                font-size="38" 
-                fill="white" 
-                opacity="0.95">
+          <!-- Username handle -->
+          <text x="0" y="190" text-anchor="middle" 
+                font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+                font-size="24" 
+                fill="#999" 
+                font-weight="400">
             @${provider.username}
           </text>
           
-          <!-- Category -->
-          <text x="0" y="320" text-anchor="middle" 
-                font-family="Arial, sans-serif" 
-                font-size="32" 
-                fill="white" 
-                opacity="0.85">
+          <!-- Category tag -->
+          <rect x="-100" y="220" width="200" height="36" 
+                rx="18" fill="rgba(102, 126, 234, 0.2)" stroke="rgba(102, 126, 234, 0.4)" stroke-width="1"/>
+          <text x="0" y="242" text-anchor="middle" 
+                font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+                font-size="16" 
+                fill="#667eea" 
+                font-weight="500">
             ${provider.category || 'Servicios Profesionales'}
           </text>
+        </g>
+        
+        <!-- QR Code Section -->
+        <g transform="translate(${dimensions.width/2}, ${format === 'story' ? 700 : 450})">
+          <!-- QR Background -->
+          <rect x="-140" y="-140" width="280" height="280" 
+                fill="white" rx="24" filter="url(#shadow)"/>
           
-          <!-- Call to action button -->
-          <rect x="-220" y="380" width="440" height="90" 
-                rx="45" fill="white" filter="url(#shadow)"/>
-          <text x="0" y="440" text-anchor="middle" 
-                font-family="Arial, sans-serif" 
-                font-size="36" 
+          <!-- QR Code -->
+          <g transform="translate(-100, -100)">
+            ${qrCodeSVG.replace(/<svg[^>]*>/, '').replace('</svg>', '').replace(/width="[^"]*"/, '').replace(/height="[^"]*"/, '')}
+          </g>
+          
+          <!-- BookEasy logo in center -->
+          <circle cx="0" cy="0" r="20" fill="url(#accentGradient)"/>
+          <text x="0" y="6" text-anchor="middle" 
+                font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+                font-size="18" 
                 font-weight="bold" 
-                fill="#667eea">
-            ¡Reserva tu cita ahora!
+                fill="white">
+            B
           </text>
-          
-          <!-- Booking URL -->
-          <text x="0" y="530" text-anchor="middle" 
-                font-family="Arial, sans-serif" 
+        </g>
+        
+        <!-- Call to action -->
+        <g transform="translate(${dimensions.width/2}, ${format === 'story' ? 1050 : 750})">
+          <text x="0" y="0" text-anchor="middle" 
+                font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
                 font-size="28" 
                 fill="white" 
-                opacity="0.9"
-                font-weight="500">
+                font-weight="600">
+            Escanea para reservar tu cita
+          </text>
+          
+          <!-- URL -->
+          <text x="0" y="40" text-anchor="middle" 
+                font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+                font-size="20" 
+                fill="#999" 
+                font-weight="400">
             bookeasy.mx/${provider.username}
           </text>
         </g>
         
-        <!-- BookEasy branding at bottom -->
-        <g transform="translate(${dimensions.width/2}, ${dimensions.height - 120})">
-          <rect x="-180" y="-35" width="360" height="70" 
-                rx="35" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-          <text x="0" y="8" text-anchor="middle" 
-                font-family="Arial, sans-serif" 
-                font-size="28" 
-                font-weight="bold" 
-                fill="white">
-            BookEasy.mx
+        <!-- BookEasy branding -->
+        <g transform="translate(${dimensions.width/2}, ${dimensions.height - 60})">
+          <text x="0" y="0" text-anchor="middle" 
+                font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+                font-size="16" 
+                font-weight="500" 
+                fill="#666">
+            Powered by BookEasy.mx
           </text>
-        </g>
-        
-        <!-- QR Code -->
-        <g transform="translate(${dimensions.width - 180}, ${dimensions.height - 200})">
-          <rect x="-60" y="-60" width="120" height="120" 
-                fill="white" rx="15" filter="url(#shadow)"/>
-          <g transform="translate(-50, -50) scale(4.76, 4.76)">
-            ${qrCodeSVG.replace('<svg width="100" height="100" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">', '').replace('</svg>', '')}
-          </g>
         </g>
       </svg>
     `;
