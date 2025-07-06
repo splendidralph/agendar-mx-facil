@@ -319,30 +319,30 @@
 
 /* PhoneInput default styling */
 .PhoneInput {
-  --PhoneInput-color--focus: hsl(var(--ring));
+  --PhoneInput-color--focus: rgba(255, 255, 255, 0.4);
 }
 
 .PhoneInput .PhoneInputInput {
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  border: none;
-  outline: none;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border: none !important;
+  outline: none !important;
   font-size: 0.875rem;
 }
 
 .PhoneInput .PhoneInputInput::placeholder {
-  color: hsl(var(--muted-foreground));
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 .PhoneInput .PhoneInputCountrySelect {
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  border: none;
-  outline: none;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border: none !important;
+  outline: none !important;
 }
 
 .PhoneInput .PhoneInputCountrySelectArrow {
-  color: hsl(var(--muted-foreground));
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .PhoneInput .PhoneInputCountryIcon {
@@ -380,13 +380,13 @@
 
 /* PhoneInput on glassmorphism backgrounds */
 .glassmorphism .PhoneInput .PhoneInputInput {
-  background: hsl(var(--background) / 0.8);
-  color: hsl(var(--foreground));
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
 }
 
 .glassmorphism .PhoneInput .PhoneInputCountrySelect {
-  background: hsl(var(--background) / 0.8);
-  color: hsl(var(--foreground));
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
 }
 
 /* Responsive font sizing */
