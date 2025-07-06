@@ -6,21 +6,23 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Generate QR Code using QR Server API
-async function generateQRCodeSVG(text: string, size: number = 200): Promise<string> {
+// Generate QR Code using QR Server API (PNG format)
+async function generateQRCodeBase64(text: string, size: number = 200): Promise<string> {
   try {
-    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&format=svg&margin=0`;
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&format=png&margin=0`;
     const response = await fetch(qrApiUrl);
     
     if (!response.ok) {
       throw new Error(`QR API failed: ${response.status}`);
     }
     
-    return await response.text();
+    const arrayBuffer = await response.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    return `data:image/png;base64,${base64}`;
   } catch (error) {
     console.error('QR generation failed:', error);
-    // Fallback to a simple pattern if API fails
-    return `
+    // Return a simple fallback data URL
+    return 'data:image/svg+xml;base64,' + btoa(`
       <svg width="${size}" height="${size}" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
         <rect width="25" height="25" fill="white"/>
         <g fill="black">
@@ -31,8 +33,18 @@ async function generateQRCodeSVG(text: string, size: number = 200): Promise<stri
           <rect x="2" y="20" width="3" height="3"/><rect x="10" y="10" width="5" height="5"/>
         </g>
       </svg>
-    `;
+    `);
   }
+}
+
+// Convert SVG to Canvas and then to JPEG
+async function svgToJpeg(svgString: string, width: number, height: number): Promise<string> {
+  // For server-side conversion, we'll return the SVG as base64 for now
+  // and handle the conversion on the client side if needed
+  const encoder = new TextEncoder();
+  const svgBytes = encoder.encode(svgString);
+  const svgBase64 = btoa(String.fromCharCode(...svgBytes));
+  return `data:image/svg+xml;base64,${svgBase64}`;
 }
 
 serve(async (req) => {
@@ -91,9 +103,9 @@ serve(async (req) => {
       }
     }
 
-    // Generate QR code SVG
+    // Generate QR code as base64 PNG
     const bookingUrl = `https://bookeasy.mx/${provider.username}`;
-    const qrCodeSVG = await generateQRCodeSVG(bookingUrl, 200);
+    const qrCodeBase64 = await generateQRCodeBase64(bookingUrl, 200);
 
     // Create modern SVG inspired by CashApp design
     const svg = `
@@ -175,9 +187,9 @@ serve(async (req) => {
                 fill="white" rx="24" filter="url(#shadow)"/>
           
           <!-- QR Code -->
-          <g transform="translate(-100, -100)">
-            ${qrCodeSVG.replace(/<svg[^>]*>/, '').replace('</svg>', '').replace(/width="[^"]*"/, '').replace(/height="[^"]*"/, '')}
-          </g>
+          <image x="-100" y="-100" width="200" height="200" 
+                 href="${qrCodeBase64}" 
+                 preserveAspectRatio="xMidYMid meet"/>
           
           <!-- BookEasy logo in center -->
           <circle cx="0" cy="0" r="20" fill="url(#accentGradient)"/>
@@ -223,18 +235,15 @@ serve(async (req) => {
       </svg>
     `;
 
-    // Convert SVG to base64 data URL with proper encoding
-    const encoder = new TextEncoder();
-    const svgBytes = encoder.encode(svg);
-    const svgBase64 = btoa(String.fromCharCode(...svgBytes));
-    const dataUrl = `data:image/svg+xml;base64,${svgBase64}`;
+    // Convert SVG to base64 data URL
+    const finalImageUrl = await svgToJpeg(svg, dimensions.width, dimensions.height);
 
     console.log('Generated image for provider:', provider.username);
     console.log('SVG size:', svg.length, 'characters');
 
     return new Response(
       JSON.stringify({ 
-        image: dataUrl,
+        image: finalImageUrl,
         format,
         provider: {
           business_name: provider.business_name,

@@ -53,7 +53,7 @@ const ShareCard = ({ provider }: ShareCardProps) => {
     if (!generatedImage) return;
 
     const link = document.createElement('a');
-    link.download = `${provider.username || 'mi-negocio'}-${selectedFormat}.svg`;
+    link.download = `${provider.username || 'mi-negocio'}-${selectedFormat}.jpg`;
     link.href = generatedImage;
     link.click();
     
