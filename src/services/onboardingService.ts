@@ -243,6 +243,16 @@ export const updateProviderStep = async (userId: string, step: number) => {
 
 export const completeProviderOnboarding = async (userId: string) => {
   try {
+    // First get the provider ID
+    const { data: provider, error: providerError } = await supabase
+      .from('providers')
+      .select('id')
+      .eq('user_id', userId)
+      .single();
+
+    if (providerError) throw providerError;
+
+    // Update provider completion status
     const { error } = await supabase
       .from('providers')
       .update({
@@ -252,6 +262,34 @@ export const completeProviderOnboarding = async (userId: string) => {
       .eq('user_id', userId);
 
     if (error) throw error;
+
+    // Create default availability (Monday to Saturday, 9 AM to 7 PM)
+    const defaultAvailability = [
+      { day_of_week: 1, start_time: '09:00', end_time: '19:00' }, // Monday
+      { day_of_week: 2, start_time: '09:00', end_time: '19:00' }, // Tuesday
+      { day_of_week: 3, start_time: '09:00', end_time: '19:00' }, // Wednesday
+      { day_of_week: 4, start_time: '09:00', end_time: '19:00' }, // Thursday
+      { day_of_week: 5, start_time: '09:00', end_time: '19:00' }, // Friday
+      { day_of_week: 6, start_time: '09:00', end_time: '19:00' }, // Saturday
+    ];
+
+    const availabilityToInsert = defaultAvailability.map(slot => ({
+      provider_id: provider.id,
+      day_of_week: slot.day_of_week,
+      start_time: slot.start_time,
+      end_time: slot.end_time,
+      is_active: true
+    }));
+
+    const { error: availabilityError } = await supabase
+      .from('availability')
+      .insert(availabilityToInsert);
+
+    if (availabilityError) {
+      console.error('Error creating default availability:', availabilityError);
+      // Don't throw here - we don't want to block onboarding completion
+    }
+
     return true;
   } catch (error) {
     console.error('Error completing onboarding:', error);

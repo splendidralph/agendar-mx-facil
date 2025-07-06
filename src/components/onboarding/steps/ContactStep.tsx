@@ -195,7 +195,7 @@ export const ContactStep = ({
             </Badge>
           </CardTitle>
           <CardDescription className="text-blue-700 text-sm">
-            Esto nos ayuda a conectarte con clientes cercanos para un servicio más rápido y confiable
+            Selecciona tu ubicación
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
