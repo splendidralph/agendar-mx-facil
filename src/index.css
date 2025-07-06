@@ -129,18 +129,18 @@
   box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.05), 0 2px 4px -1px hsl(var(--foreground) / 0.03);
 }
 
-.glassmorphism h1,
-.glassmorphism h2,
-.glassmorphism h3,
-.glassmorphism h4,
-.glassmorphism h5,
-.glassmorphism h6 {
+.glassmorphism h1:not([class*="text-"]),
+.glassmorphism h2:not([class*="text-"]),
+.glassmorphism h3:not([class*="text-"]),
+.glassmorphism h4:not([class*="text-"]),
+.glassmorphism h5:not([class*="text-"]),
+.glassmorphism h6:not([class*="text-"]) {
   color: hsl(var(--card-foreground));
 }
 
-.glassmorphism p,
-.glassmorphism span,
-.glassmorphism div {
+.glassmorphism p:not([class*="text-"]),
+.glassmorphism span:not([class*="text-"]),
+.glassmorphism div:not([class*="text-"]) {
   color: hsl(var(--card-foreground));
 }
 
