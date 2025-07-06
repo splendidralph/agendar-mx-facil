@@ -51,19 +51,67 @@ const ShareCard = ({ provider }: ShareCardProps) => {
     }
   };
 
-  const downloadImage = () => {
+  // Convert SVG to PNG using Canvas API
+  const convertSvgToPng = async (svgDataUrl: string, width: number, height: number): Promise<string> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      // Set canvas dimensions with device pixel ratio for high quality
+      const pixelRatio = window.devicePixelRatio || 1;
+      canvas.width = width * pixelRatio;
+      canvas.height = height * pixelRatio;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      
+      if (ctx) {
+        ctx.scale(pixelRatio, pixelRatio);
+      }
+      
+      img.onload = () => {
+        if (ctx) {
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+        }
+        resolve(canvas.toDataURL('image/png', 0.9));
+      };
+      
+      img.src = svgDataUrl;
+    });
+  };
+
+  const downloadImage = async () => {
     if (!generatedImage) return;
 
-    const link = document.createElement('a');
-    link.download = `${provider.username || 'mi-negocio'}-${selectedFormat}.png`;
-    link.href = generatedImage;
-    link.click();
-    
-    // Auto-copy caption for easier sharing
-    const caption = `¡Reserva tu cita conmigo! ${provider.business_name} - bookeasy.mx/${provider.username}`;
-    copyToClipboard(caption);
-    
-    toast.success('Imagen descargada y texto de promoción copiado');
+    try {
+      let finalImageUrl = generatedImage;
+      
+      // Convert SVG to PNG if needed
+      if (generatedImage.startsWith('data:image/svg+xml')) {
+        const dimensions = selectedFormat === 'story' 
+          ? { width: 1080, height: 1920 } 
+          : { width: 1080, height: 1080 };
+        
+        toast.info('Convirtiendo imagen...');
+        finalImageUrl = await convertSvgToPng(generatedImage, dimensions.width, dimensions.height);
+      }
+
+      const link = document.createElement('a');
+      link.download = `${provider.username || 'mi-negocio'}-${selectedFormat}.png`;
+      link.href = finalImageUrl;
+      link.click();
+      
+      // Auto-copy caption for easier sharing
+      const caption = `¡Reserva tu cita conmigo! ${provider.business_name} - bookeasy.mx/${provider.username}`;
+      copyToClipboard(caption);
+      
+      toast.success('Imagen PNG descargada y texto de promoción copiado');
+    } catch (error) {
+      console.error('Error converting image:', error);
+      toast.error('Error convirtiendo la imagen');
+    }
   };
 
   const copyToClipboard = async (text: string) => {
@@ -164,8 +212,19 @@ const ShareCard = ({ provider }: ShareCardProps) => {
   const handleNativeShare = async () => {
     if (navigator.share && generatedImage) {
       try {
+        let finalImageUrl = generatedImage;
+        
+        // Convert SVG to PNG if needed
+        if (generatedImage.startsWith('data:image/svg+xml')) {
+          const dimensions = selectedFormat === 'story' 
+            ? { width: 1080, height: 1920 } 
+            : { width: 1080, height: 1080 };
+          
+          finalImageUrl = await convertSvgToPng(generatedImage, dimensions.width, dimensions.height);
+        }
+        
         // Convert data URL to blob for sharing
-        const response = await fetch(generatedImage);
+        const response = await fetch(finalImageUrl);
         const blob = await response.blob();
         const file = new File([blob], `${provider.username}-promo.png`, { type: 'image/png' });
         
