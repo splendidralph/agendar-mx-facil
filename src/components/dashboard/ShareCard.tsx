@@ -153,11 +153,16 @@ const ShareCard = ({ provider }: ShareCardProps) => {
           <div className="space-y-4">
             <div className="border rounded-lg p-4 bg-white/5">
               <div className="flex justify-center mb-4">
-                <div className={`${selectedFormat === 'story' ? 'w-48 h-80' : 'w-64 h-64'} border rounded-lg overflow-hidden bg-white`}>
+                <div className={`${selectedFormat === 'story' ? 'w-48 h-80' : 'w-64 h-64'} border rounded-lg overflow-hidden bg-white shadow-lg`}>
                   <img 
                     src={generatedImage} 
                     alt="Imagen promocional generada"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
+                    onLoad={() => console.log('Image loaded successfully')}
+                    onError={(e) => {
+                      console.error('Image failed to load:', e);
+                      console.log('Image src:', generatedImage);
+                    }}
                   />
                 </div>
               </div>
