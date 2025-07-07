@@ -83,10 +83,10 @@ const ModernFeaturesSection = () => {
               ¿Qué es la Fase 1?
             </Badge>
             <div className="text-center mb-16">
-              <h3 className="text-3xl md:text-4xl font-bold mb-6">
-                <span className="text-gradient-accent">Fase 1</span> = Tu link profesional. <span className="text-gradient-primary">Siempre gratis</span>.
+              <h3 className="text-3xl md:text-4xl font-bold mb-6 text-on-dark">
+                <span className="text-gradient-accent-light">Fase 1</span> = Tu link profesional. <span className="text-gradient-primary-light">Siempre gratis</span>.
               </h3>
-              <p className="text-muted-foreground text-xl leading-relaxed max-w-3xl mx-auto">
+              <p className="text-muted-on-dark text-xl leading-relaxed max-w-3xl mx-auto">
                 Si ofreces servicios uno a uno en tu colonia, puedes crear tu perfil, 
                 compartir tu link y empezar a recibir reservas con confirmaciones automáticas por WhatsApp.
               </p>
@@ -114,8 +114,8 @@ const ModernFeaturesSection = () => {
             </div>
 
             <div className="text-center">
-              <p className="text-lg font-semibold">
-                <span className="text-gradient-coral">Tu link será siempre tuyo y siempre gratuito.</span>
+              <p className="text-lg font-semibold text-on-dark">
+                <span className="text-gradient-coral-light">Tu link será siempre tuyo y siempre gratuito.</span>
               </p>
             </div>
           </div>
@@ -127,12 +127,12 @@ const ModernFeaturesSection = () => {
         <div className="container mx-auto">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
-                <span className="text-gradient-accent">Ahorra tiempo.</span> Deja de coordinar por mensajes
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-on-dark">
+                <span className="text-gradient-accent-light">Ahorra tiempo.</span> Deja de coordinar por mensajes
               </h2>
-              <p className="text-muted-foreground text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
+              <p className="text-muted-on-dark text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
                 Con Bookeasy, tus clientes ven tu disponibilidad y reservan en automático.
-                <span className="block mt-2 font-medium text-gradient-primary">
+                <span className="block mt-2 font-medium text-gradient-primary-light">
                   Tú solo ajustas tu calendario — y el sistema se encarga del resto.
                 </span>
               </p>
@@ -168,10 +168,10 @@ const ModernFeaturesSection = () => {
         <div className="container mx-auto">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
-                <span className="text-gradient-primary">¿Quién puede usar</span> Bookeasy?
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-on-dark">
+                <span className="text-gradient-primary-light">¿Quién puede usar</span> Bookeasy?
               </h2>
-              <p className="text-muted-foreground text-xl leading-relaxed mb-8">
+              <p className="text-muted-on-dark text-xl leading-relaxed mb-8">
                 Este lanzamiento es para ti si:
               </p>
               <div className="card-primary-inverse p-8 md:p-10 max-w-3xl mx-auto text-left">
@@ -201,8 +201,8 @@ const ModernFeaturesSection = () => {
             </div>
 
             <div className="text-center">
-              <h3 className="text-2xl font-bold mb-8">
-                <span className="text-gradient-accent">Ideal para:</span>
+              <h3 className="text-2xl font-bold mb-8 text-on-dark">
+                <span className="text-gradient-accent-light">Ideal para:</span>
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
                 {whoCanUse.map((profession, index) => (
@@ -223,8 +223,8 @@ const ModernFeaturesSection = () => {
       <section className="py-20 md:py-28 px-4 section-coral">
         <div className="container mx-auto">
           <div className="text-center mb-20 md:mb-24">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 leading-tight">
-              <span className="text-gradient-primary">¿Qué incluye</span> tu perfil Bookeasy?
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 leading-tight text-on-dark">
+              <span className="text-gradient-primary-light">¿Qué incluye</span> tu perfil Bookeasy?
             </h2>
           </div>
 
@@ -307,12 +307,12 @@ const ModernFeaturesSection = () => {
       <section className="py-20 md:py-28 px-4 section-dark">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
-              <span className="text-gradient-accent">Nuestra</span> Visión
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-on-dark">
+              <span className="text-gradient-accent-light">Nuestra</span> Visión
             </h2>
-            <p className="text-muted-foreground text-xl md:text-2xl mb-12 leading-relaxed">
+            <p className="text-muted-on-dark text-xl md:text-2xl mb-12 leading-relaxed">
               Queremos digitalizar los servicios profesionales en México, colonia por colonia.
-              <span className="block mt-4 text-gradient-primary font-semibold">
+              <span className="block mt-4 text-gradient-primary-light font-semibold">
                 Empezamos en Tijuana, pero vamos por mucho más.
               </span>
             </p>
