@@ -269,7 +269,7 @@ const ModernFeaturesSection = () => {
       <section className="py-20 md:py-28 px-4 section-light">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-8 solid-card-primary px-6 py-3 rounded-full text-base font-medium">
+            <Badge className="mb-8 bg-primary text-primary-foreground px-6 py-3 rounded-full text-base font-semibold border-2 border-primary/20">
               Lanzamiento Beta: Tijuana
             </Badge>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
