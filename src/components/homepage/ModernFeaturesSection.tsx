@@ -56,7 +56,7 @@ const ModernFeaturesSection = () => {
   return (
     <>
       {/* Nueva forma de trabajar */}
-      <section className="py-20 md:py-28 px-4 section-primary pattern-grid">
+      <section className="py-20 md:py-28 px-4 section-light pattern-grid">
         <div className="container mx-auto">
           <div className="text-center mb-16 md:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight">
@@ -76,10 +76,10 @@ const ModernFeaturesSection = () => {
       </section>
 
       {/* Qué es Fase 1 */}
-      <section className="py-20 md:py-28 px-4 bg-muted/30">
+      <section className="py-20 md:py-28 px-4 section-primary-dark">
         <div className="container mx-auto">
         <div className="max-w-5xl mx-auto">
-            <Badge className="mb-8 solid-card-primary px-6 py-3 rounded-full text-base font-medium mx-auto block w-fit">
+            <Badge className="mb-8 card-primary-inverse px-6 py-3 rounded-full text-base font-medium mx-auto block w-fit">
               ¿Qué es la Fase 1?
             </Badge>
             <div className="text-center mb-16">
@@ -97,7 +97,7 @@ const ModernFeaturesSection = () => {
               {mainFeatures.map((feature, index) => (
                 <div 
                   key={index}
-                  className="solid-card group p-8 md:p-10 text-center transition-all duration-500"
+                  className="card-primary-inverse group p-8 md:p-10 text-center transition-all duration-500"
                 >
                   <h4 className="text-foreground text-xl md:text-2xl font-semibold mb-4">{feature.title}</h4>
                   <p className="text-muted-foreground mb-6 leading-relaxed">
@@ -105,7 +105,7 @@ const ModernFeaturesSection = () => {
                   </p>
                   <Badge 
                     variant="secondary" 
-                    className="solid-card-accent px-4 py-2 rounded-full border-0 font-medium text-foreground"
+                    className="bg-accent/20 text-accent-foreground px-4 py-2 rounded-full border-0 font-medium"
                   >
                     {feature.highlight}
                   </Badge>
@@ -123,7 +123,7 @@ const ModernFeaturesSection = () => {
       </section>
 
       {/* Ahorra tiempo section */}
-      <section className="py-20 md:py-28 px-4 gradient-mesh-dark">
+      <section className="py-20 md:py-28 px-4 section-dark">
         <div className="container mx-auto">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -140,7 +140,7 @@ const ModernFeaturesSection = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16">
               {/* Sin más */}
-              <div className="solid-card p-8 md:p-10 bg-destructive/5 border-l-4 border-destructive">
+              <div className="card-white p-8 md:p-10 bg-destructive/5 border-l-4 border-destructive">
                 <h3 className="text-2xl font-bold text-destructive mb-6">Sin más:</h3>
                 <div className="space-y-4">
                   <p className="text-muted-foreground text-lg">"¿Qué días tienes?"</p>
@@ -150,12 +150,12 @@ const ModernFeaturesSection = () => {
               </div>
 
               {/* Con Bookeasy */}
-              <div className="solid-card p-8 md:p-10 bg-accent/5 border-l-4 border-accent">
+              <div className="card-white p-8 md:p-10 bg-accent/5 border-l-4 border-accent">
                 <h3 className="text-2xl font-bold text-accent mb-6">Con Bookeasy:</h3>
                 <div className="space-y-4">
-                  <p className="text-foreground text-lg font-medium">✓ Horarios claros</p>
-                  <p className="text-foreground text-lg font-medium">✓ Reservas automáticas</p>
-                  <p className="text-foreground text-lg font-medium">✓ Confirmación directa por WhatsApp</p>
+                  <p className="text-accent text-lg font-medium">✓ Horarios claros</p>
+                  <p className="text-accent text-lg font-medium">✓ Reservas automáticas</p>
+                  <p className="text-accent text-lg font-medium">✓ Confirmación directa por WhatsApp</p>
                 </div>
               </div>
             </div>
@@ -164,7 +164,7 @@ const ModernFeaturesSection = () => {
       </section>
 
       {/* Quién puede usar */}
-      <section className="py-20 md:py-28 px-4 bg-muted/30">
+      <section className="py-20 md:py-28 px-4 section-accent-dark">
         <div className="container mx-auto">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
@@ -174,8 +174,8 @@ const ModernFeaturesSection = () => {
               <p className="text-muted-foreground text-xl leading-relaxed mb-8">
                 Este lanzamiento es para ti si:
               </p>
-              <div className="solid-card-strong p-8 md:p-10 max-w-3xl mx-auto text-left">
-                <ul className="space-y-3 text-lg text-muted-foreground">
+              <div className="card-primary-inverse p-8 md:p-10 max-w-3xl mx-auto text-left">
+                <ul className="space-y-3 text-lg text-foreground">
                   <li className="flex items-start gap-3">
                     <span className="text-accent font-bold mt-1">•</span>
                     Ofreces servicios uno a uno en tu colonia
@@ -208,7 +208,7 @@ const ModernFeaturesSection = () => {
                 {whoCanUse.map((profession, index) => (
                   <div 
                     key={index}
-                    className="solid-card p-4 text-center transition-all duration-300"
+                    className="card-primary-inverse p-4 text-center transition-all duration-300"
                   >
                     <span className="text-foreground font-medium">{profession}</span>
                   </div>
@@ -220,7 +220,7 @@ const ModernFeaturesSection = () => {
       </section>
 
       {/* Qué incluye */}
-      <section className="py-20 md:py-28 px-4 gradient-mesh">
+      <section className="py-20 md:py-28 px-4 section-coral">
         <div className="container mx-auto">
           <div className="text-center mb-20 md:mb-24">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 leading-tight">
@@ -233,7 +233,7 @@ const ModernFeaturesSection = () => {
             {whatIncludes.map((feature, index) => (
               <div 
                 key={index}
-                className="solid-card-strong group p-8 md:p-10 relative overflow-hidden transition-all duration-500"
+                className="card-white group p-8 md:p-10 relative overflow-hidden transition-all duration-500"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative z-10">
@@ -243,7 +243,7 @@ const ModernFeaturesSection = () => {
                   </p>
                   <Badge 
                     variant="secondary" 
-                    className="solid-card-accent px-4 py-2 rounded-full border-0 font-medium text-foreground"
+                    className="bg-primary/10 text-primary px-4 py-2 rounded-full border-0 font-medium"
                   >
                     {feature.highlight}
                   </Badge>
@@ -253,7 +253,7 @@ const ModernFeaturesSection = () => {
           </div>
 
           <div className="text-center">
-            <div className="solid-card-strong p-8 md:p-10 max-w-2xl mx-auto">
+            <div className="card-white p-8 md:p-10 max-w-2xl mx-auto">
               <h3 className="text-2xl md:text-3xl font-bold mb-4">
                 <span className="text-gradient-accent">Sin comisiones.</span> Sin aplicaciones. <span className="text-gradient-primary">Sin complicaciones</span>
               </h3>
@@ -266,7 +266,7 @@ const ModernFeaturesSection = () => {
       </section>
 
       {/* Lanzamiento Beta */}
-      <section className="py-20 md:py-28 px-4 bg-muted/30">
+      <section className="py-20 md:py-28 px-4 section-light">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
             <Badge className="mb-8 solid-card-primary px-6 py-3 rounded-full text-base font-medium">
@@ -304,7 +304,7 @@ const ModernFeaturesSection = () => {
       </section>
 
       {/* Nuestra Visión */}
-      <section className="py-20 md:py-28 px-4 gradient-mesh-dark">
+      <section className="py-20 md:py-28 px-4 section-dark">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
@@ -318,21 +318,21 @@ const ModernFeaturesSection = () => {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              <div className="solid-card p-8 text-center transition-all duration-300">
+              <div className="card-white p-8 text-center transition-all duration-300">
                 <h3 className="text-xl font-bold text-gradient-accent mb-4">No somos una app más.</h3>
                 <p className="text-muted-foreground">Diseñados específicamente para profesionales locales</p>
               </div>
-              <div className="solid-card p-8 text-center transition-all duration-300">
+              <div className="card-white p-8 text-center transition-all duration-300">
                 <h3 className="text-xl font-bold text-gradient-accent mb-4">No somos un marketplace saturado.</h3>
                 <p className="text-muted-foreground">Tu propio espacio profesional sin competencia</p>
               </div>
-              <div className="solid-card p-8 text-center transition-all duration-300">
+              <div className="card-white p-8 text-center transition-all duration-300">
                 <h3 className="text-xl font-bold text-gradient-accent mb-4">Somos una herramienta</h3>
                 <p className="text-muted-foreground">Diseñada para quienes trabajan desde su comunidad</p>
               </div>
             </div>
 
-            <div className="solid-card-strong p-8 md:p-10">
+            <div className="card-white p-8 md:p-10">
               <h3 className="text-2xl font-bold mb-4">
                 <span className="text-gradient-coral">¿Tienes dudas o quieres saber si calificas?</span>
               </h3>

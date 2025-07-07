@@ -184,6 +184,61 @@
   box-shadow: 0 8px 20px hsl(var(--foreground) / 0.12);
 }
 
+/* Enhanced section backgrounds */
+.section-primary-dark {
+  background: linear-gradient(135deg, hsl(214 84% 56%) 0%, hsl(214 84% 48%) 100%);
+  color: hsl(0 0% 98%);
+}
+
+.section-accent-dark {
+  background: linear-gradient(135deg, hsl(142 71% 49%) 0%, hsl(142 71% 41%) 100%);
+  color: hsl(0 0% 98%);
+}
+
+.section-coral {
+  background: linear-gradient(135deg, hsl(15 86% 59%) 0%, hsl(351 83% 61%) 100%);
+  color: hsl(0 0% 98%);
+}
+
+.section-dark {
+  background: linear-gradient(135deg, hsl(220 15% 15%) 0%, hsl(220 20% 10%) 100%);
+  color: hsl(0 0% 95%);
+}
+
+.section-light {
+  background: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(214 32% 98%) 100%);
+  color: hsl(220 15% 15%);
+}
+
+/* Enhanced header */
+.enhanced-header {
+  background: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid hsl(var(--border) / 0.2);
+  box-shadow: 0 1px 3px 0 hsl(var(--foreground) / 0.1);
+}
+
+/* Card variants for different sections */
+.card-white {
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(214 20% 88%);
+  box-shadow: 0 4px 12px hsl(220 15% 15% / 0.1);
+}
+
+.card-dark {
+  background: hsl(220 15% 15%);
+  border: 1px solid hsl(220 15% 25%);
+  box-shadow: 0 4px 12px hsl(0 0% 0% / 0.2);
+  color: hsl(0 0% 95%);
+}
+
+.card-primary-inverse {
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(var(--primary) / 0.3);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.15);
+  color: hsl(220 15% 15%);
+}
+
 /* Text gradients */
 .text-gradient-primary {
   background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 75% 35%) 100%);

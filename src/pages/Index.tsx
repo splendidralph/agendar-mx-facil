@@ -26,29 +26,32 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="homepage-header sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-3 md:py-4">
+      {/* Enhanced Header */}
+      <header className="enhanced-header sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-4 md:py-5">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2 md:space-x-3">
-              <div className="gradient-primary text-primary-foreground p-2 md:p-2.5 rounded-xl shadow-lg">
-                <Calendar className="h-5 w-5 md:h-6 md:w-6" />
+            <div className="flex items-center space-x-3 md:space-x-4">
+              <div className="gradient-primary text-primary-foreground p-3 rounded-2xl shadow-lg transform hover:scale-105 transition-transform duration-200">
+                <Calendar className="h-6 w-6 md:h-7 md:w-7" />
               </div>
-              <span className="text-lg md:text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
+              <div>
+                <span className="text-xl md:text-3xl font-bold text-foreground font-poppins tracking-tight">Bookeasy.mx</span>
+                <p className="text-xs md:text-sm text-muted-foreground font-medium">Reservas profesionales</p>
+              </div>
             </div>
             
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-6">
               <LanguageToggle />
               {user ? (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-muted-foreground px-3 py-2 bg-muted/50 rounded-full">
                     {t('header.hello', { name: user.user_metadata?.full_name || user.email })}
                   </span>
                   <Button 
                     onClick={() => navigate('/dashboard')}
                     variant="default"
-                    className="hover-lift"
+                    className="px-6 py-2 rounded-full hover:scale-105 transition-all duration-200 font-semibold"
                   >
                     {t('header.dashboard')}
                   </Button>
@@ -56,6 +59,7 @@ const Index = () => {
                     onClick={signOut}
                     variant="ghost"
                     size="sm"
+                    className="rounded-full p-3"
                   >
                     <LogOut className="h-4 w-4" />
                   </Button>
@@ -64,7 +68,7 @@ const Index = () => {
                 <Button 
                   onClick={() => navigate('/auth')}
                   variant="default"
-                  className="hover-lift"
+                  className="px-8 py-3 rounded-full hover:scale-105 transition-all duration-200 font-semibold text-base"
                 >
                   {t('header.login')}
                 </Button>
