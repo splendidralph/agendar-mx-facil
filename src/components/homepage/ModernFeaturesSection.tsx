@@ -56,11 +56,11 @@ const ModernFeaturesSection = () => {
   return (
     <>
       {/* Nueva forma de trabajar */}
-      <section className="py-20 md:py-28 px-4 section-modern">
+      <section className="py-20 md:py-28 px-4 gradient-mesh">
         <div className="container mx-auto">
           <div className="text-center mb-16 md:mb-20">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-8 leading-tight">
-              Una nueva forma de trabajar localmente
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight">
+              <span className="text-gradient-primary">Una nueva forma</span> de trabajar localmente
             </h2>
             <div className="max-w-4xl mx-auto">
               <p className="text-muted-foreground text-xl md:text-2xl mb-8 leading-relaxed">
@@ -79,12 +79,12 @@ const ModernFeaturesSection = () => {
       <section className="py-20 md:py-28 px-4 bg-muted/30">
         <div className="container mx-auto">
           <div className="max-w-5xl mx-auto">
-            <Badge className="mb-8 bg-primary/10 text-primary border border-primary/20 px-6 py-3 rounded-full text-base font-medium shadow-sm mx-auto block w-fit">
+            <Badge className="mb-8 glass-card-strong neon-glow text-white px-6 py-3 rounded-full text-base font-medium mx-auto block w-fit">
               ¿Qué es la Fase 1?
             </Badge>
             <div className="text-center mb-16">
-              <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Fase 1 = Tu link profesional. Siempre gratis.
+              <h3 className="text-3xl md:text-4xl font-bold mb-6">
+                <span className="text-gradient-accent">Fase 1</span> = Tu link profesional. <span className="text-gradient-primary">Siempre gratis</span>.
               </h3>
               <p className="text-muted-foreground text-xl leading-relaxed max-w-3xl mx-auto">
                 Si ofreces servicios uno a uno en tu colonia, puedes crear tu perfil, 
@@ -97,7 +97,7 @@ const ModernFeaturesSection = () => {
               {mainFeatures.map((feature, index) => (
                 <div 
                   key={index}
-                  className="modern-card group p-8 md:p-10 text-center"
+                  className="glass-card-strong group p-8 md:p-10 text-center hover:neon-glow transition-all duration-500"
                 >
                   <h4 className="text-foreground text-xl md:text-2xl font-semibold mb-4">{feature.title}</h4>
                   <p className="text-muted-foreground mb-6 leading-relaxed">
@@ -105,7 +105,7 @@ const ModernFeaturesSection = () => {
                   </p>
                   <Badge 
                     variant="secondary" 
-                    className="bg-accent/10 text-accent border-accent/20 px-4 py-2 rounded-full border font-medium"
+                    className="glass-card neon-glow-accent text-white px-4 py-2 rounded-full border-0 font-medium"
                   >
                     {feature.highlight}
                   </Badge>
@@ -114,8 +114,8 @@ const ModernFeaturesSection = () => {
             </div>
 
             <div className="text-center">
-              <p className="text-lg font-semibold text-foreground">
-                Tu link será siempre tuyo y siempre gratuito.
+              <p className="text-lg font-semibold">
+                <span className="text-gradient-coral">Tu link será siempre tuyo y siempre gratuito.</span>
               </p>
             </div>
           </div>
@@ -123,16 +123,16 @@ const ModernFeaturesSection = () => {
       </section>
 
       {/* Ahorra tiempo section */}
-      <section className="py-20 md:py-28 px-4 section-modern">
+      <section className="py-20 md:py-28 px-4 gradient-mesh-dark">
         <div className="container mx-auto">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-8">
-                Ahorra tiempo. Deja de coordinar por mensajes
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
+                <span className="text-gradient-accent">Ahorra tiempo.</span> Deja de coordinar por mensajes
               </h2>
               <p className="text-muted-foreground text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
                 Con Bookeasy, tus clientes ven tu disponibilidad y reservan en automático.
-                <span className="block mt-2 font-medium">
+                <span className="block mt-2 font-medium text-gradient-primary">
                   Tú solo ajustas tu calendario — y el sistema se encarga del resto.
                 </span>
               </p>
@@ -140,7 +140,7 @@ const ModernFeaturesSection = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16">
               {/* Sin más */}
-              <div className="modern-card p-8 md:p-10 bg-destructive/5 border-destructive/20">
+              <div className="glass-card-strong p-8 md:p-10 bg-destructive/10 border border-destructive/20 neon-glow">
                 <h3 className="text-2xl font-bold text-destructive mb-6">Sin más:</h3>
                 <div className="space-y-4">
                   <p className="text-muted-foreground text-lg">"¿Qué días tienes?"</p>
@@ -150,7 +150,7 @@ const ModernFeaturesSection = () => {
               </div>
 
               {/* Con Bookeasy */}
-              <div className="modern-card p-8 md:p-10 bg-accent/5 border-accent/20">
+              <div className="glass-card-strong p-8 md:p-10 bg-accent/10 border border-accent/20 neon-glow-accent">
                 <h3 className="text-2xl font-bold text-accent mb-6">Con Bookeasy:</h3>
                 <div className="space-y-4">
                   <p className="text-foreground text-lg font-medium">✓ Horarios claros</p>
@@ -168,13 +168,13 @@ const ModernFeaturesSection = () => {
         <div className="container mx-auto">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-8">
-                ¿Quién puede usar Bookeasy?
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
+                <span className="text-gradient-primary">¿Quién puede usar</span> Bookeasy?
               </h2>
               <p className="text-muted-foreground text-xl leading-relaxed mb-8">
                 Este lanzamiento es para ti si:
               </p>
-              <div className="modern-card p-8 md:p-10 max-w-3xl mx-auto text-left">
+              <div className="glass-card-strong p-8 md:p-10 max-w-3xl mx-auto text-left neon-glow">
                 <ul className="space-y-3 text-lg text-muted-foreground">
                   <li className="flex items-start gap-3">
                     <span className="text-accent font-bold mt-1">•</span>
@@ -201,12 +201,14 @@ const ModernFeaturesSection = () => {
             </div>
 
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-foreground mb-8">Ideal para:</h3>
+              <h3 className="text-2xl font-bold mb-8">
+                <span className="text-gradient-accent">Ideal para:</span>
+              </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
                 {whoCanUse.map((profession, index) => (
                   <div 
                     key={index}
-                    className="modern-card p-4 text-center hover:bg-primary/5 transition-colors"
+                    className="glass-card p-4 text-center hover:neon-glow transition-all duration-300"
                   >
                     <span className="text-foreground font-medium">{profession}</span>
                   </div>
@@ -218,11 +220,11 @@ const ModernFeaturesSection = () => {
       </section>
 
       {/* Qué incluye */}
-      <section className="py-20 md:py-28 px-4 section-modern">
+      <section className="py-20 md:py-28 px-4 gradient-mesh">
         <div className="container mx-auto">
           <div className="text-center mb-20 md:mb-24">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-8 leading-tight">
-              ¿Qué incluye tu perfil Bookeasy?
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 leading-tight">
+              <span className="text-gradient-primary">¿Qué incluye</span> tu perfil Bookeasy?
             </h2>
           </div>
 
@@ -231,7 +233,7 @@ const ModernFeaturesSection = () => {
             {whatIncludes.map((feature, index) => (
               <div 
                 key={index}
-                className="modern-card group p-8 md:p-10 relative overflow-hidden"
+                className="glass-card-strong group p-8 md:p-10 relative overflow-hidden hover:neon-glow transition-all duration-500"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative z-10">
@@ -241,7 +243,7 @@ const ModernFeaturesSection = () => {
                   </p>
                   <Badge 
                     variant="secondary" 
-                    className="bg-primary/10 text-primary border-primary/20 px-4 py-2 rounded-full border font-medium"
+                    className="glass-card neon-glow-accent text-white px-4 py-2 rounded-full border-0 font-medium"
                   >
                     {feature.highlight}
                   </Badge>
@@ -251,11 +253,11 @@ const ModernFeaturesSection = () => {
           </div>
 
           <div className="text-center">
-            <div className="modern-card p-8 md:p-10 max-w-2xl mx-auto bg-accent/5 border-accent/20">
-              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                Sin comisiones. Sin aplicaciones. Sin complicaciones
+            <div className="glass-card-strong p-8 md:p-10 max-w-2xl mx-auto neon-glow-accent">
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                <span className="text-gradient-accent">Sin comisiones.</span> Sin aplicaciones. <span className="text-gradient-primary">Sin complicaciones</span>
               </h3>
-              <p className="text-accent text-xl font-semibold">
+              <p className="text-gradient-coral text-xl font-semibold">
                 Tu link será siempre gratuito
               </p>
             </div>
@@ -267,22 +269,22 @@ const ModernFeaturesSection = () => {
       <section className="py-20 md:py-28 px-4 bg-muted/30">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-8 bg-primary/10 text-primary border border-primary/20 px-6 py-3 rounded-full text-base font-medium shadow-sm">
+            <Badge className="mb-8 glass-card-strong neon-glow text-white px-6 py-3 rounded-full text-base font-medium">
               Lanzamiento Beta: Tijuana
             </Badge>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-8">
-              Actualmente estamos activando Bookeasy únicamente en estas colonias:
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
+              <span className="text-gradient-primary">Actualmente estamos activando</span> Bookeasy únicamente en estas colonias:
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              <div className="modern-card p-6 bg-primary/5 border-primary/20">
-                <h3 className="text-xl font-bold text-primary">Buenos Aires Norte</h3>
+              <div className="glass-card-strong p-6 neon-glow">
+                <h3 className="text-xl font-bold text-gradient-primary">Buenos Aires Norte</h3>
               </div>
-              <div className="modern-card p-6 bg-primary/5 border-primary/20">
-                <h3 className="text-xl font-bold text-primary">Buenos Aires Sur</h3>
+              <div className="glass-card-strong p-6 neon-glow">
+                <h3 className="text-xl font-bold text-gradient-primary">Buenos Aires Sur</h3>
               </div>
-              <div className="modern-card p-6 bg-primary/5 border-primary/20">
-                <h3 className="text-xl font-bold text-primary">Jardín Dorado</h3>
+              <div className="glass-card-strong p-6 neon-glow">
+                <h3 className="text-xl font-bold text-gradient-primary">Jardín Dorado</h3>
               </div>
             </div>
 
@@ -293,7 +295,7 @@ const ModernFeaturesSection = () => {
 
             <Button 
               size="lg" 
-              className="accent-gradient text-white hover:opacity-90 text-lg font-semibold px-10 py-5 h-auto rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg"
+              className="accent-gradient text-white hover:opacity-90 text-lg font-semibold px-10 py-5 h-auto rounded-2xl hover:scale-105 transition-all duration-300 neon-glow-accent"
             >
               Crear Mi Perfil – Gratis
             </Button>
@@ -302,40 +304,40 @@ const ModernFeaturesSection = () => {
       </section>
 
       {/* Nuestra Visión */}
-      <section className="py-20 md:py-28 px-4 section-modern">
+      <section className="py-20 md:py-28 px-4 gradient-mesh-dark">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-8">
-              Nuestra Visión
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
+              <span className="text-gradient-accent">Nuestra</span> Visión
             </h2>
             <p className="text-muted-foreground text-xl md:text-2xl mb-12 leading-relaxed">
               Queremos digitalizar los servicios profesionales en México, colonia por colonia.
-              <span className="block mt-4 text-foreground font-semibold">
+              <span className="block mt-4 text-gradient-primary font-semibold">
                 Empezamos en Tijuana, pero vamos por mucho más.
               </span>
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              <div className="modern-card p-8 text-center">
-                <h3 className="text-xl font-bold text-foreground mb-4">No somos una app más.</h3>
+              <div className="glass-card-strong p-8 text-center hover:neon-glow transition-all duration-300">
+                <h3 className="text-xl font-bold text-gradient-accent mb-4">No somos una app más.</h3>
                 <p className="text-muted-foreground">Diseñados específicamente para profesionales locales</p>
               </div>
-              <div className="modern-card p-8 text-center">
-                <h3 className="text-xl font-bold text-foreground mb-4">No somos un marketplace saturado.</h3>
+              <div className="glass-card-strong p-8 text-center hover:neon-glow transition-all duration-300">
+                <h3 className="text-xl font-bold text-gradient-accent mb-4">No somos un marketplace saturado.</h3>
                 <p className="text-muted-foreground">Tu propio espacio profesional sin competencia</p>
               </div>
-              <div className="modern-card p-8 text-center">
-                <h3 className="text-xl font-bold text-foreground mb-4">Somos una herramienta</h3>
+              <div className="glass-card-strong p-8 text-center hover:neon-glow transition-all duration-300">
+                <h3 className="text-xl font-bold text-gradient-accent mb-4">Somos una herramienta</h3>
                 <p className="text-muted-foreground">Diseñada para quienes trabajan desde su comunidad</p>
               </div>
             </div>
 
-            <div className="modern-card p-8 md:p-10 bg-accent/5 border-accent/20">
-              <h3 className="text-2xl font-bold text-foreground mb-4">
-                ¿Tienes dudas o quieres saber si calificas?
+            <div className="glass-card-strong p-8 md:p-10 neon-glow-accent">
+              <h3 className="text-2xl font-bold mb-4">
+                <span className="text-gradient-coral">¿Tienes dudas o quieres saber si calificas?</span>
               </h3>
               <p className="text-muted-foreground text-lg mb-4">
-                Escríbenos a: <span className="font-semibold text-foreground">hello@bookeasy.mx</span>
+                Escríbenos a: <span className="font-semibold text-gradient-primary">hello@bookeasy.mx</span>
               </p>
               <p className="text-muted-foreground text-lg">
                 O mándanos un mensaje por WhatsApp
