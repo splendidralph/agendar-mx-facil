@@ -84,7 +84,7 @@ const ModernFeaturesSection = () => {
             </Badge>
             <div className="text-center mb-16">
               <h3 className="text-3xl md:text-4xl font-bold mb-6 text-on-dark">
-                <span className="text-gradient-accent-light">Fase 1</span> = Tu link profesional. <span className="text-gradient-primary-light">Siempre gratis</span>.
+                <span className="text-gradient-accent-light">Fase 1</span> = Tu link profesional. <span className="text-gradient-bright">Siempre gratis</span>.
               </h3>
               <p className="text-muted-on-dark text-xl leading-relaxed max-w-3xl mx-auto">
                 Si ofreces servicios uno a uno en tu colonia, puedes crear tu perfil, 
@@ -115,7 +115,7 @@ const ModernFeaturesSection = () => {
 
             <div className="text-center">
               <p className="text-lg font-semibold text-on-dark">
-                <span className="text-gradient-coral-light">Tu link será siempre tuyo y siempre gratuito.</span>
+                <span className="text-gradient-bright">Tu link será siempre tuyo y siempre gratuito.</span>
               </p>
             </div>
           </div>
@@ -222,11 +222,11 @@ const ModernFeaturesSection = () => {
       {/* Qué incluye */}
       <section className="py-20 md:py-28 px-4 section-coral">
         <div className="container mx-auto">
-          <div className="text-center mb-20 md:mb-24">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 leading-tight text-on-dark">
-              <span className="text-gradient-primary-light">¿Qué incluye</span> tu perfil Bookeasy?
-            </h2>
-          </div>
+            <div className="text-center mb-20 md:mb-24">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 leading-tight text-on-dark">
+                <span className="text-gradient-bright">¿Qué incluye</span> tu perfil Bookeasy?
+              </h2>
+            </div>
 
           {/* What includes features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 mb-16">
@@ -252,16 +252,16 @@ const ModernFeaturesSection = () => {
             ))}
           </div>
 
-          <div className="text-center">
-            <div className="card-white p-8 md:p-10 max-w-2xl mx-auto">
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">
-                <span className="text-gradient-accent">Sin comisiones.</span> Sin aplicaciones. <span className="text-gradient-primary">Sin complicaciones</span>
-              </h3>
-              <p className="text-gradient-coral text-xl font-semibold">
-                Tu link será siempre gratuito
-              </p>
+            <div className="text-center">
+              <div className="card-white p-8 md:p-10 max-w-2xl mx-auto">
+                <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                  <span className="text-gradient-accent">Sin comisiones.</span> Sin aplicaciones. <span className="text-gradient-primary">Sin complicaciones</span>
+                </h3>
+                <p className="text-foreground text-xl font-semibold">
+                  Tu link será siempre gratuito
+                </p>
+              </div>
             </div>
-          </div>
         </div>
       </section>
 
