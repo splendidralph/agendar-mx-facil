@@ -27,43 +27,51 @@ const HeroSection = () => {
           {/* Beta Badge */}
           <div className="inline-flex items-center gap-2 premium-badge text-white px-6 py-3 rounded-full mb-10 shadow-lg">
             <TrendingUp className="h-5 w-5" />
-            <span className="font-medium">{t('hero.badge')}</span>
+            <span className="font-medium">Bookeasy.mx – Fase 1 Beta Ya Disponible</span>
           </div>
 
           {/* Main headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-foreground mb-8 leading-[1.1] tracking-tight">
-            {t('hero.title')}
+            Estamos comenzando donde más importa:
             <span className="block mt-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              {t('hero.subtitle')}
+              en tu colonia
             </span>
           </h1>
 
           {/* Main value proposition */}
           <div className="mb-12 md:mb-16 max-w-4xl mx-auto">
             <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-8 leading-relaxed font-medium">
-              {t('hero.description1')} <span className="text-foreground font-semibold">{t('hero.description2')}</span> {t('hero.description3')}
+              Recibe reservas profesionales con tu propio <span className="text-foreground font-semibold">link personalizado</span>. Gratis.
             </p>
-            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground/80 mb-10 leading-relaxed">
-              {t('hero.description4')}
-            </p>
+            
+            {/* Location Badge */}
+            <div className="modern-card p-6 mb-10 bg-accent/5 border-accent/20">
+              <p className="text-lg font-semibold text-foreground mb-2">Activando solo en:</p>
+              <p className="text-muted-foreground text-lg">
+                Buenos Aires Norte, Buenos Aires Sur y Jardín Dorado – Tijuana, BC
+              </p>
+            </div>
             
             {/* Link preview */}
             <div className="modern-card p-8 inline-block max-w-full">
-              <span className="text-sm block text-muted-foreground mb-2">{t('hero.linkPreview')}</span>
-              <span className="font-mono text-foreground font-semibold text-xl break-all">bookeasy.mx/@tuusername</span>
+              <span className="text-sm block text-muted-foreground mb-2">Tu link personalizado:</span>
+              <span className="font-mono text-foreground font-semibold text-xl break-all">bookeasy.mx/@tuusuario</span>
             </div>
           </div>
 
           {/* CTA Button */}
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-4">
             <Button 
               size="lg" 
               className="accent-gradient text-white hover:opacity-90 text-xl font-semibold group border-0 px-12 py-6 h-auto rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl"
               onClick={handleGetStarted}
             >
-              {user ? t('hero.cta.dashboard') : t('hero.cta.create')}
+              Crear Mi Perfil – Totalmente Gratis
               <ArrowRight className="h-6 w-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
+            <p className="text-sm text-muted-foreground font-medium">
+              Cupos limitados en esta primera etapa
+            </p>
           </div>
         </div>
       </div>

@@ -145,11 +145,11 @@ const Index = () => {
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-              {t('finalCta.title')}
+              ¿Listo para comenzar?
             </h2>
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-              {t('finalCta.description')}
-              <span className="block mt-3 font-semibold text-xl md:text-2xl text-foreground">{t('finalCta.subtitle')}</span>
+              Crea tu perfil profesional y empieza a recibir reservas automáticamente
+              <span className="block mt-3 font-semibold text-xl md:text-2xl text-foreground">Totalmente gratis en la Fase 1 Beta</span>
             </p>
             <div className="flex justify-center">
               <Button 
@@ -157,7 +157,7 @@ const Index = () => {
                 className="accent-gradient text-white hover:opacity-90 text-lg font-semibold px-10 py-5 h-auto rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg"
                 onClick={handleGetStarted}
               >
-                {t('finalCta.button')}
+                Crear mi perfil ahora
               </Button>
             </div>
           </div>
@@ -178,7 +178,7 @@ const Index = () => {
                 <span className="text-2xl font-bold">Bookeasy.mx</span>
               </div>
               <p className="text-background/70 max-w-sm mx-auto md:mx-0 leading-relaxed">
-                {t('footer.description')}
+                Una nueva forma de reservar servicios locales
               </p>
             </div>
             
@@ -195,20 +195,12 @@ const Index = () => {
                   <Instagram className="h-5 w-5" />
                 </a>
                 <a 
-                  href="https://facebook.com" 
+                  href="https://wa.me/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="bg-background/10 hover:bg-background/20 p-3 rounded-full smooth-transition hover:scale-110"
                 >
                   <Facebook className="h-5 w-5" />
-                </a>
-                <a 
-                  href="https://x.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-background/10 hover:bg-background/20 p-3 rounded-full smooth-transition hover:scale-110"
-                >
-                  <Twitter className="h-5 w-5" />
                 </a>
               </div>
             </div>
@@ -216,15 +208,18 @@ const Index = () => {
             {/* Contact/Info Section */}
             <div className="text-center md:text-right">
               <h3 className="text-lg font-semibold mb-4">Contacto</h3>
-              <p className="text-background/70">
+              <p className="text-background/70 mb-2">
                 hello@bookeasy.mx
+              </p>
+              <p className="text-background/70">
+                WhatsApp: Próximamente
               </p>
             </div>
           </div>
           
           <div className="border-t border-background/20 pt-6 text-center">
             <div className="text-background/60 text-sm">
-              {t('footer.copyright')}
+              © 2025 Bookeasy.mx - Digitalizando servicios profesionales en México
             </div>
           </div>
         </div>
