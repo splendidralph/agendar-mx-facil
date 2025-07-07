@@ -56,7 +56,7 @@ const ModernFeaturesSection = () => {
   return (
     <>
       {/* Nueva forma de trabajar */}
-      <section className="py-20 md:py-28 px-4 gradient-mesh">
+      <section className="py-20 md:py-28 px-4 section-primary pattern-grid">
         <div className="container mx-auto">
           <div className="text-center mb-16 md:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight">
@@ -78,8 +78,8 @@ const ModernFeaturesSection = () => {
       {/* Qué es Fase 1 */}
       <section className="py-20 md:py-28 px-4 bg-muted/30">
         <div className="container mx-auto">
-          <div className="max-w-5xl mx-auto">
-            <Badge className="mb-8 glass-card-strong neon-glow text-white px-6 py-3 rounded-full text-base font-medium mx-auto block w-fit">
+        <div className="max-w-5xl mx-auto">
+            <Badge className="mb-8 solid-card-primary px-6 py-3 rounded-full text-base font-medium mx-auto block w-fit">
               ¿Qué es la Fase 1?
             </Badge>
             <div className="text-center mb-16">
@@ -97,7 +97,7 @@ const ModernFeaturesSection = () => {
               {mainFeatures.map((feature, index) => (
                 <div 
                   key={index}
-                  className="glass-card-strong group p-8 md:p-10 text-center hover:neon-glow transition-all duration-500"
+                  className="solid-card group p-8 md:p-10 text-center transition-all duration-500"
                 >
                   <h4 className="text-foreground text-xl md:text-2xl font-semibold mb-4">{feature.title}</h4>
                   <p className="text-muted-foreground mb-6 leading-relaxed">
@@ -105,7 +105,7 @@ const ModernFeaturesSection = () => {
                   </p>
                   <Badge 
                     variant="secondary" 
-                    className="glass-card neon-glow-accent text-white px-4 py-2 rounded-full border-0 font-medium"
+                    className="solid-card-accent px-4 py-2 rounded-full border-0 font-medium text-foreground"
                   >
                     {feature.highlight}
                   </Badge>
@@ -140,7 +140,7 @@ const ModernFeaturesSection = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16">
               {/* Sin más */}
-              <div className="glass-card-strong p-8 md:p-10 bg-destructive/10 border border-destructive/20 neon-glow">
+              <div className="solid-card p-8 md:p-10 bg-destructive/5 border-l-4 border-destructive">
                 <h3 className="text-2xl font-bold text-destructive mb-6">Sin más:</h3>
                 <div className="space-y-4">
                   <p className="text-muted-foreground text-lg">"¿Qué días tienes?"</p>
@@ -150,7 +150,7 @@ const ModernFeaturesSection = () => {
               </div>
 
               {/* Con Bookeasy */}
-              <div className="glass-card-strong p-8 md:p-10 bg-accent/10 border border-accent/20 neon-glow-accent">
+              <div className="solid-card p-8 md:p-10 bg-accent/5 border-l-4 border-accent">
                 <h3 className="text-2xl font-bold text-accent mb-6">Con Bookeasy:</h3>
                 <div className="space-y-4">
                   <p className="text-foreground text-lg font-medium">✓ Horarios claros</p>
@@ -174,7 +174,7 @@ const ModernFeaturesSection = () => {
               <p className="text-muted-foreground text-xl leading-relaxed mb-8">
                 Este lanzamiento es para ti si:
               </p>
-              <div className="glass-card-strong p-8 md:p-10 max-w-3xl mx-auto text-left neon-glow">
+              <div className="solid-card-strong p-8 md:p-10 max-w-3xl mx-auto text-left">
                 <ul className="space-y-3 text-lg text-muted-foreground">
                   <li className="flex items-start gap-3">
                     <span className="text-accent font-bold mt-1">•</span>
@@ -208,7 +208,7 @@ const ModernFeaturesSection = () => {
                 {whoCanUse.map((profession, index) => (
                   <div 
                     key={index}
-                    className="glass-card p-4 text-center hover:neon-glow transition-all duration-300"
+                    className="solid-card p-4 text-center transition-all duration-300"
                   >
                     <span className="text-foreground font-medium">{profession}</span>
                   </div>
@@ -233,7 +233,7 @@ const ModernFeaturesSection = () => {
             {whatIncludes.map((feature, index) => (
               <div 
                 key={index}
-                className="glass-card-strong group p-8 md:p-10 relative overflow-hidden hover:neon-glow transition-all duration-500"
+                className="solid-card-strong group p-8 md:p-10 relative overflow-hidden transition-all duration-500"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative z-10">
@@ -243,7 +243,7 @@ const ModernFeaturesSection = () => {
                   </p>
                   <Badge 
                     variant="secondary" 
-                    className="glass-card neon-glow-accent text-white px-4 py-2 rounded-full border-0 font-medium"
+                    className="solid-card-accent px-4 py-2 rounded-full border-0 font-medium text-foreground"
                   >
                     {feature.highlight}
                   </Badge>
@@ -253,7 +253,7 @@ const ModernFeaturesSection = () => {
           </div>
 
           <div className="text-center">
-            <div className="glass-card-strong p-8 md:p-10 max-w-2xl mx-auto neon-glow-accent">
+            <div className="solid-card-strong p-8 md:p-10 max-w-2xl mx-auto">
               <h3 className="text-2xl md:text-3xl font-bold mb-4">
                 <span className="text-gradient-accent">Sin comisiones.</span> Sin aplicaciones. <span className="text-gradient-primary">Sin complicaciones</span>
               </h3>
@@ -269,7 +269,7 @@ const ModernFeaturesSection = () => {
       <section className="py-20 md:py-28 px-4 bg-muted/30">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-8 glass-card-strong neon-glow text-white px-6 py-3 rounded-full text-base font-medium">
+            <Badge className="mb-8 solid-card-primary px-6 py-3 rounded-full text-base font-medium">
               Lanzamiento Beta: Tijuana
             </Badge>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
@@ -277,13 +277,13 @@ const ModernFeaturesSection = () => {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              <div className="glass-card-strong p-6 neon-glow">
+              <div className="solid-card-primary p-6">
                 <h3 className="text-xl font-bold text-gradient-primary">Buenos Aires Norte</h3>
               </div>
-              <div className="glass-card-strong p-6 neon-glow">
+              <div className="solid-card-primary p-6">
                 <h3 className="text-xl font-bold text-gradient-primary">Buenos Aires Sur</h3>
               </div>
-              <div className="glass-card-strong p-6 neon-glow">
+              <div className="solid-card-primary p-6">
                 <h3 className="text-xl font-bold text-gradient-primary">Jardín Dorado</h3>
               </div>
             </div>
@@ -295,7 +295,7 @@ const ModernFeaturesSection = () => {
 
             <Button 
               size="lg" 
-              className="accent-gradient text-white hover:opacity-90 text-lg font-semibold px-10 py-5 h-auto rounded-2xl hover:scale-105 transition-all duration-300 neon-glow-accent"
+              className="accent-gradient text-white hover:opacity-90 text-lg font-semibold px-10 py-5 h-auto rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Crear Mi Perfil – Gratis
             </Button>
@@ -318,21 +318,21 @@ const ModernFeaturesSection = () => {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              <div className="glass-card-strong p-8 text-center hover:neon-glow transition-all duration-300">
+              <div className="solid-card p-8 text-center transition-all duration-300">
                 <h3 className="text-xl font-bold text-gradient-accent mb-4">No somos una app más.</h3>
                 <p className="text-muted-foreground">Diseñados específicamente para profesionales locales</p>
               </div>
-              <div className="glass-card-strong p-8 text-center hover:neon-glow transition-all duration-300">
+              <div className="solid-card p-8 text-center transition-all duration-300">
                 <h3 className="text-xl font-bold text-gradient-accent mb-4">No somos un marketplace saturado.</h3>
                 <p className="text-muted-foreground">Tu propio espacio profesional sin competencia</p>
               </div>
-              <div className="glass-card-strong p-8 text-center hover:neon-glow transition-all duration-300">
+              <div className="solid-card p-8 text-center transition-all duration-300">
                 <h3 className="text-xl font-bold text-gradient-accent mb-4">Somos una herramienta</h3>
                 <p className="text-muted-foreground">Diseñada para quienes trabajan desde su comunidad</p>
               </div>
             </div>
 
-            <div className="glass-card-strong p-8 md:p-10 neon-glow-accent">
+            <div className="solid-card-strong p-8 md:p-10">
               <h3 className="text-2xl font-bold mb-4">
                 <span className="text-gradient-coral">¿Tienes dudas o quieres saber si calificas?</span>
               </h3>

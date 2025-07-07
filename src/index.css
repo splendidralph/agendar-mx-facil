@@ -122,54 +122,66 @@
   background: linear-gradient(135deg, hsl(214 84% 56% / 0.05) 0%, hsl(214 84% 70% / 0.1) 100%);
 }
 
-/* Dynamic background patterns */
+/* Modern pattern backgrounds */
+.pattern-dots {
+  background-image: radial-gradient(circle, hsl(var(--primary) / 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}
+
+.pattern-grid {
+  background-image: 
+    linear-gradient(hsl(var(--border) / 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
 .gradient-mesh {
-  background: 
-    radial-gradient(circle at 20% 80%, hsl(var(--primary) / 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, hsl(var(--accent) / 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, hsl(142 71% 65% / 0.1) 0%, transparent 50%),
-    linear-gradient(135deg, hsl(var(--background)) 0%, hsl(214 32% 97%) 100%);
+  background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(214 32% 97%) 50%, hsl(var(--background)) 100%);
 }
 
-.gradient-mesh-dark {
-  background: 
-    radial-gradient(circle at 20% 80%, hsl(var(--primary) / 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, hsl(var(--accent) / 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, hsl(142 71% 65% / 0.05) 0%, transparent 50%),
-    hsl(var(--background));
+.gradient-mesh-accent {
+  background: linear-gradient(135deg, hsl(var(--accent) / 0.03) 0%, hsl(var(--background)) 50%, hsl(var(--primary) / 0.03) 100%);
 }
 
-/* Enhanced card system */
-.glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+.section-primary {
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, hsl(var(--background)) 100%);
 }
 
-.glass-card-strong {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+.section-accent {
+  background: linear-gradient(135deg, hsl(var(--accent) / 0.05) 0%, hsl(var(--background)) 100%);
 }
 
-.neon-glow {
-  box-shadow: 
-    0 0 20px hsl(var(--primary) / 0.3),
-    0 0 40px hsl(var(--primary) / 0.1),
-    0 0 80px hsl(var(--primary) / 0.05);
+/* Modern solid card system */
+.solid-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.neon-glow-accent {
-  box-shadow: 
-    0 0 20px hsl(var(--accent) / 0.3),
-    0 0 40px hsl(var(--accent) / 0.1),
-    0 0 80px hsl(var(--accent) / 0.05);
+.solid-card:hover {
+  box-shadow: 0 8px 25px hsl(var(--foreground) / 0.15);
+  transform: translateY(-2px);
+}
+
+.solid-card-primary {
+  background: hsl(var(--primary) / 0.05);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.1);
+}
+
+.solid-card-accent {
+  background: hsl(var(--accent) / 0.05);
+  border: 1px solid hsl(var(--accent) / 0.2);
+  box-shadow: 0 4px 12px hsl(var(--accent) / 0.1);
+}
+
+.solid-card-strong {
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--primary) / 0.1);
+  box-shadow: 0 8px 20px hsl(var(--foreground) / 0.12);
 }
 
 /* Text gradients */
