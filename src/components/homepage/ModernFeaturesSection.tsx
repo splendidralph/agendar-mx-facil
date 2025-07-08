@@ -23,15 +23,13 @@ const ModernFeaturesSection = () => {
   ];
 
   const whoCanUse = [
-    "Estilistas y barberos",
-    "Técnicas de uñas o pestañas", 
-    "Lavado de autos a domicilio",
-    "Coach, terapeuta o instructora",
-    "Nutriólogas",
-    "Fotógrafos",
-    "Servicios de limpieza",
-    "Masajistas",
-    "Consultas profesionales"
+    "Barberos y estilistas",
+    "Técnicas de uñas",
+    "Especialistas en faciales y depilación",
+    "Masajistas y terapeutas de bienestar",
+    "Nutriólogas y entrenadoras personales",
+    "Psicólogas y coaches",
+    "Fotógrafas y creativas"
   ];
 
   const whatIncludes = [
@@ -268,18 +266,18 @@ const ModernFeaturesSection = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               <div className="solid-card-primary p-6">
-                <h3 className="text-xl font-bold text-gradient-primary">Buenos Aires Norte</h3>
+                <h3 className="text-xl font-bold text-gradient-primary">Tijuana</h3>
               </div>
               <div className="solid-card-primary p-6">
-                <h3 className="text-xl font-bold text-gradient-primary">Buenos Aires Sur</h3>
+                <h3 className="text-xl font-bold text-gradient-primary">Rosarito</h3>
               </div>
               <div className="solid-card-primary p-6">
-                <h3 className="text-xl font-bold text-gradient-primary">Jardín Dorado</h3>
+                <h3 className="text-xl font-bold text-gradient-primary">Tecate</h3>
               </div>
             </div>
 
             <p className="text-muted-foreground text-xl leading-relaxed mb-8">
-              Si trabajas o vives en una de estas zonas, puedes crear tu cuenta y formar parte del grupo 
+              Si trabajas o vives en una de estas ciudades, puedes crear tu cuenta y formar parte del grupo 
               que dará forma al futuro de los servicios locales en México.
             </p>
 
