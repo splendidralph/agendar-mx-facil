@@ -53,25 +53,6 @@ const ModernFeaturesSection = () => {
 
   return (
     <>
-      {/* Nueva forma de trabajar */}
-      <section className="py-20 md:py-28 px-4 section-light pattern-grid">
-        <div className="container mx-auto">
-          <div className="text-center mb-16 md:mb-20">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight">
-              <span className="text-gradient-primary">Una nueva forma</span> de trabajar localmente
-            </h2>
-            <div className="max-w-4xl mx-auto">
-              <p className="text-muted-foreground text-xl md:text-2xl mb-8 leading-relaxed">
-                En Bookeasy.mx estamos construyendo más que una herramienta de reservas.
-              </p>
-              <p className="text-foreground text-xl md:text-2xl font-semibold leading-relaxed">
-                Estamos creando la infraestructura digital para que miles de profesionales en México 
-                puedan recibir citas, ofrecer sus servicios y crecer — todo desde su barrio.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Qué es Fase 1 */}
       <section className="py-20 md:py-28 px-4 section-primary-dark">

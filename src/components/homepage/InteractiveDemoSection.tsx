@@ -22,7 +22,7 @@ const InteractiveDemoSection = () => {
         <div className="demo-card p-4 sm:p-6 md:p-8 lg:p-10 max-w-md mx-auto">
           <div className="text-center mb-6 md:mb-8">
             <Avatar className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 mx-auto mb-4 md:mb-6 shadow-lg">
-              <AvatarImage src="/lovable-uploads/30a9bf27-b08c-4982-8961-b073c91ad537.png" />
+              <AvatarImage src="https://images.unsplash.com/photo-1494790108755-2616b612b631?w=150&h=150&fit=crop&crop=face" />
               <AvatarFallback className="bg-primary text-primary-foreground text-lg sm:text-xl md:text-2xl font-bold">
                 MG
               </AvatarFallback>
