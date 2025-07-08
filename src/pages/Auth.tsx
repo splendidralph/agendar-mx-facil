@@ -357,7 +357,7 @@ const Auth = () => {
                           required
                           disabled={isSubmitting}
                           placeholder="tu@email.com"
-                          className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                          className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                         />
                       </div>
                       <div className="space-y-3">
@@ -398,7 +398,7 @@ const Auth = () => {
                           required
                           disabled={isSubmitting}
                           placeholder="tu@email.com"
-                          className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                          className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                         />
                       </div>
                       <div>
@@ -412,7 +412,7 @@ const Auth = () => {
                           disabled={isSubmitting}
                           minLength={6}
                           placeholder="Tu contraseña"
-                          className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                          className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                         />
                       </div>
                       <div className="space-y-3">
@@ -455,8 +455,8 @@ const Auth = () => {
                         onChange={(e) => setSignUpData({ ...signUpData, fullName: e.target.value })}
                         required
                         disabled={isSubmitting}
-                        placeholder="Tu nombre completo"
-                        className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                          placeholder="Tu nombre completo"
+                          className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                       />
                     </div>
                     <div>
@@ -468,8 +468,8 @@ const Auth = () => {
                         onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
                         required
                         disabled={isSubmitting}
-                        placeholder="tu@email.com"
-                        className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                          placeholder="tu@email.com"
+                          className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                       />
                     </div>
                     <div>
@@ -482,10 +482,10 @@ const Auth = () => {
                         onChange={(phone) => setSignUpData({ ...signUpData, phone: phone || '' })}
                         disabled={isSubmitting}
                         placeholder="Ingresa tu número de teléfono"
-                        className="mt-2 flex h-12 w-full rounded-lg border-2 border-white/20 bg-white/10 backdrop-blur-sm px-4 py-3 text-white ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:border-white/40 smooth-transition disabled:cursor-not-allowed disabled:opacity-50"
+                        className="mt-2 flex h-12 w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-gray-900 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:border-primary smooth-transition disabled:cursor-not-allowed disabled:opacity-50"
                         style={{
                           '--PhoneInputCountryFlag-height': '1em',
-                          '--PhoneInputCountrySelectArrow-color': 'rgba(255, 255, 255, 0.7)',
+                          '--PhoneInputCountrySelectArrow-color': 'rgba(107, 114, 128, 0.7)',
                         } as React.CSSProperties}
                       />
                     </div>
@@ -499,8 +499,8 @@ const Auth = () => {
                         required
                         disabled={isSubmitting}
                         minLength={6}
-                        placeholder="Mínimo 6 caracteres"
-                        className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                          placeholder="Mínimo 6 caracteres"
+                          className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                       />
                     </div>
                     <Button
