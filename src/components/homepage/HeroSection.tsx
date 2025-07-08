@@ -53,7 +53,7 @@ const HeroSection = () => {
             <div className="solid-card-accent p-6 mb-10">
               <p className="text-lg font-semibold text-foreground mb-2">Activando solo en:</p>
               <p className="text-muted-foreground text-lg">
-                Buenos Aires Norte, Buenos Aires Sur y Jardín Dorado – Tijuana, BC
+                Tijuana, Rosarito, and Tecate
               </p>
             </div>
             
