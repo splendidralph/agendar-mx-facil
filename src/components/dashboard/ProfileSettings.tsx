@@ -29,8 +29,7 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
     category: provider.category || '',
     address: provider.address || '',
     instagram_handle: provider.instagram_handle || '',
-    username: provider.username || '',
-    phone: provider.whatsapp_phone || ''
+    username: provider.username || ''
   });
 
   const categories = [
@@ -63,8 +62,7 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
           category: formData.category,
           address: formData.address,
           instagram_handle: formData.instagram_handle,
-          username: formData.username,
-          whatsapp_phone: formData.phone
+          username: formData.username
         })
         .eq('id', provider.id);
 
@@ -195,15 +193,6 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
                 />
               </div>
 
-              <div>
-                <Label htmlFor="phone">Teléfono</Label>
-                <CustomPhoneInput
-                  value={formData.phone}
-                  onChange={(value) => setFormData(prev => ({ ...prev, phone: value || '' }))}
-                  placeholder="(55) 1234-5678"
-                  defaultCountry="MX"
-                />
-              </div>
 
               <div>
                 <Label htmlFor="instagram_handle">Instagram (sin @)</Label>

@@ -312,32 +312,32 @@ export const ContactStep = ({
         </CardContent>
       </Card>
 
-      {/* WhatsApp Benefits Card */}
+      {/* Phone Number Card */}
       <Card className="border-green-200 bg-green-50">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-green-800 text-base">
             <div className="p-2 bg-green-500 rounded-lg">
               <MessageCircle className="h-4 w-4 text-white" />
             </div>
-            WhatsApp para tu Negocio
+            Tu Número de Teléfono
             <Badge variant="destructive" className="bg-red-100 text-red-700 border-red-200 text-xs">
               Requerido
             </Badge>
           </CardTitle>
           <CardDescription className="text-green-700 text-sm">
-            Recibe notificaciones instantáneas de nuevas citas directamente en tu WhatsApp
+            Recibe notificaciones de nuevas citas por WhatsApp
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div>
             <Label htmlFor="whatsapp" className="text-green-800 font-medium text-sm">
-              Número de WhatsApp *
+              Número de Teléfono *
             </Label>
             <div className="relative mt-2">
               <CustomPhoneInput
                 value={formData.whatsappPhone}
                 onChange={(value) => handleChange('whatsappPhone', value || '')}
-                placeholder="Número de WhatsApp"
+                placeholder="Número de teléfono"
                 defaultCountry="MX"
                 required={true}
                 className={`border-green-200 focus:border-green-400 focus:ring-green-400 ${
