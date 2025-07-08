@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import PublicProfile from "./pages/PublicProfile";
 import Booking from "./pages/Booking";
 import TestNotifications from "./pages/TestNotifications";
+import TestScenarios from "./pages/TestScenarios";
 
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<Admin />} />
         <Route path="/test-notifications" element={<TestNotifications />} />
+            <Route path="/test-scenarios" element={<TestScenarios />} />
             <Route path="/booking/demo" element={<BookingDemo />} />
             <Route path="/explore" element={<Explore />} />
             {/* Booking routes - must come before username route */}
