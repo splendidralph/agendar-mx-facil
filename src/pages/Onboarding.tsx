@@ -5,8 +5,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { useOnboardingFlow } from '@/hooks/useOnboardingFlow';
 import { OnboardingLayout } from '@/components/onboarding/OnboardingLayout';
 import { ProfileUsernameStep } from '@/components/onboarding/steps/ProfileUsernameStep';
-import { ContactStep } from '@/components/onboarding/steps/ContactStep';
+import { MainCategoryStep } from '@/components/onboarding/steps/MainCategoryStep';
+import { SubcategoryStep } from '@/components/onboarding/steps/SubcategoryStep';
 import { ServicesStep } from '@/components/onboarding/steps/ServicesStep';
+import { ContactStep } from '@/components/onboarding/steps/ContactStep';
 import { PreviewStep } from '@/components/onboarding/steps/PreviewStep';
 
 const Onboarding = () => {
@@ -44,6 +46,8 @@ const Onboarding = () => {
 
   const steps = [
     'Perfil & Username',
+    'Categoría Principal',
+    'Especialidad',
     'Servicios',
     'Contacto',
     'Vista Previa'
@@ -63,7 +67,7 @@ const Onboarding = () => {
         );
       case 2:
         return (
-          <ServicesStep 
+          <MainCategoryStep 
             data={data} 
             onUpdate={updateData} 
             onNext={nextStep} 
@@ -74,6 +78,28 @@ const Onboarding = () => {
         );
       case 3:
         return (
+          <SubcategoryStep 
+            data={data} 
+            onUpdate={updateData} 
+            onNext={nextStep} 
+            onPrevious={prevStep}
+            loading={loading}
+            validationErrors={validationErrors}
+          />
+        );
+      case 4:
+        return (
+          <ServicesStep 
+            data={data} 
+            onUpdate={updateData} 
+            onNext={nextStep} 
+            onPrevious={prevStep}
+            loading={loading}
+            validationErrors={validationErrors}
+          />
+        );
+      case 5:
+        return (
           <ContactStep 
             data={data} 
             onUpdate={updateData} 
@@ -82,7 +108,7 @@ const Onboarding = () => {
             loading={loading}
           />
         );
-      case 4:
+      case 6:
         return (
           <PreviewStep 
             data={data} 

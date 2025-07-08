@@ -8,5 +8,7 @@ export interface Service {
   price: number;
   duration: number;
   description: string;
-  category: ServiceCategory;
+  category: ServiceCategory; // Keep for backward compatibility
+  mainCategoryId?: string;
+  subcategoryId?: string;
 }

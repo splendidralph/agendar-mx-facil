@@ -1,12 +1,15 @@
 
 import { Database } from '@/integrations/supabase/types';
+import { MainCategory, Subcategory } from './category';
 
 export type ServiceCategory = Database['public']['Enums']['service_category'];
 
 export interface OnboardingData {
   step: number;
   businessName: string;
-  category: string;
+  category: string; // Keep for backward compatibility during migration
+  mainCategory?: MainCategory;
+  subcategory?: Subcategory;
   bio: string;
   address: string;
   instagramHandle: string;
@@ -36,5 +39,7 @@ export interface OnboardingService {
   price: number;
   duration: number;
   description: string;
-  category: ServiceCategory;
+  category: ServiceCategory; // Keep for backward compatibility
+  mainCategoryId?: string;
+  subcategoryId?: string;
 }

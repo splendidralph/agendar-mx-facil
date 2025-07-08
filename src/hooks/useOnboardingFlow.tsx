@@ -72,7 +72,9 @@ export const useOnboardingFlow = () => {
           const loadedData: OnboardingData = {
             step: provider.onboarding_step || 1,
             businessName: provider.business_name || '',
-            category: provider.category || '',
+            category: provider.category || '', // Keep for backward compatibility
+            mainCategory: provider.main_categories || undefined,
+            subcategory: provider.subcategories || undefined,
             bio: provider.bio || '',
             address: provider.address || '',
             instagramHandle: provider.instagram_handle || '',
@@ -92,7 +94,9 @@ export const useOnboardingFlow = () => {
               price: service.price,
               duration: service.duration_minutes,
               description: service.description || '',
-              category: service.category
+              category: service.category,
+              mainCategoryId: service.main_category_id || undefined,
+              subcategoryId: service.subcategory_id || undefined
             }))
           };
           
@@ -115,7 +119,7 @@ export const useOnboardingFlow = () => {
     loadExistingData();
   }, [user?.id]);
 
-  // Validate step data - aligned with new step order
+  // Validate step data - aligned with new 6-step order
   const validateStep = useCallback((step: number, data: OnboardingData): ValidationError[] => {
     const errors: ValidationError[] = [];
     
@@ -129,7 +133,19 @@ export const useOnboardingFlow = () => {
           }
           break;
           
-        case 2: // Services - Require at least one valid service
+        case 2: // Main Category Selection - Require main category
+          if (!data.mainCategory) {
+            errors.push({ field: 'mainCategory', message: 'Debes seleccionar una categoría principal' });
+          }
+          break;
+          
+        case 3: // Subcategory Selection - Require subcategory
+          if (!data.subcategory) {
+            errors.push({ field: 'subcategory', message: 'Debes seleccionar una especialidad' });
+          }
+          break;
+          
+        case 4: // Services - Require at least one valid service
           const validServices = data.services.filter(s => s.name?.trim() && s.price > 0);
           if (validServices.length === 0) {
             errors.push({ field: 'services', message: 'Debes agregar al menos un servicio válido' });
@@ -151,7 +167,7 @@ export const useOnboardingFlow = () => {
           });
           break;
           
-        case 3: // Contact Info - Optional fields with format validation
+        case 5: // Contact Info - Optional fields with format validation
           if (data.whatsappPhone && data.whatsappPhone.trim() && !/^\+?[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
             errors.push({ field: 'whatsappPhone', message: 'El formato del número de WhatsApp no es válido' });
           }
@@ -163,12 +179,15 @@ export const useOnboardingFlow = () => {
           }
           break;
           
-        case 4: // Preview - Final validation before completion
+        case 6: // Preview - Final validation before completion
           if (!data.businessName || !data.businessName.trim()) {
             errors.push({ field: 'businessName', message: 'El nombre del negocio es requerido para completar el perfil' });
           }
-          if (!data.category || !data.category.trim()) {
-            errors.push({ field: 'category', message: 'La categoría es requerida para completar el perfil' });
+          if (!data.mainCategory) {
+            errors.push({ field: 'mainCategory', message: 'La categoría principal es requerida para completar el perfil' });
+          }
+          if (!data.subcategory) {
+            errors.push({ field: 'subcategory', message: 'La especialidad es requerida para completar el perfil' });
           }
           if (!data.username || !data.username.trim()) {
             errors.push({ field: 'username', message: 'El nombre de usuario es requerido para completar el perfil' });
@@ -271,8 +290,8 @@ export const useOnboardingFlow = () => {
         return false;
       }
 
-      // Save services if we're on step 2 or later
-      if (state.currentStep >= 2 && finalData.services.length > 0 && providerId) {
+      // Save services if we're on step 4 or later
+      if (state.currentStep >= 4 && finalData.services.length > 0 && providerId) {
         try {
           await saveServices(providerId, finalData.services);
           console.log('nextStep: Services saved successfully');
@@ -285,7 +304,7 @@ export const useOnboardingFlow = () => {
       }
 
       // Move to next step
-      if (state.currentStep < 4) {
+      if (state.currentStep < 6) {
         const nextStepNumber = state.currentStep + 1;
         setState(prev => ({
           ...prev,

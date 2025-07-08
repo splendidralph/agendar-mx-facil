@@ -7,7 +7,11 @@ export const loadProviderData = async (userId: string) => {
     console.log('onboardingService: Fetching provider data for user:', userId);
     const { data: provider, error } = await supabase
       .from('providers')
-      .select('*')
+      .select(`
+        *,
+        main_categories:main_category_id(*),
+        subcategories:subcategory_id(*)
+      `)
       .eq('user_id', userId)
       .single();
 
@@ -22,7 +26,11 @@ export const loadProviderData = async (userId: string) => {
       // Load services if they exist
       const { data: services } = await supabase
         .from('services')
-        .select('*')
+        .select(`
+          *,
+          main_categories:main_category_id(*),
+          subcategories:subcategory_id(*)
+        `)
         .eq('provider_id', provider.id);
 
       return {
@@ -84,7 +92,9 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
     const providerData: any = {
       user_id: userId,
       business_name: data.businessName?.trim() || null, // Allow null during onboarding
-      category: data.category?.trim() || null,
+      category: data.category?.trim() || null, // Keep for backward compatibility
+      main_category_id: data.mainCategory?.id || null,
+      subcategory_id: data.subcategory?.id || null,
       bio: data.bio?.trim() || null,
       address: data.address?.trim() || null,
       instagram_handle: data.instagramHandle?.trim() || null,
@@ -187,7 +197,7 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
   }
 };
 
-export const saveServices = async (providerId: string, services: OnboardingData['services']) => {
+export const saveServices = async (providerId: string, services: any[]) => {
   try {
     console.log('onboardingService: Saving services for provider:', providerId);
     
@@ -204,7 +214,9 @@ export const saveServices = async (providerId: string, services: OnboardingData[
       price: service.price,
       duration_minutes: service.duration,
       description: service.description,
-      category: service.category as ServiceCategory,
+      category: service.category as ServiceCategory, // Keep for backward compatibility
+      main_category_id: service.mainCategoryId || null,
+      subcategory_id: service.subcategoryId || null,
       is_active: true
     }));
 
@@ -257,7 +269,7 @@ export const completeProviderOnboarding = async (userId: string) => {
       .from('providers')
       .update({
         profile_completed: true,
-        onboarding_step: 5
+        onboarding_step: 6
       })
       .eq('user_id', userId);
 

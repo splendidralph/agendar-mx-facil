@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { Service, ServiceCategory } from '@/types/service';
@@ -27,7 +28,15 @@ export const ServicesStep = ({
   const [services, setServices] = useState<Service[]>(
     data.services.length > 0 
       ? data.services 
-      : [{ name: '', price: 0, duration: 30, description: '', category: 'corte_barberia' as ServiceCategory }]
+      : [{ 
+          name: '', 
+          price: 0, 
+          duration: 30, 
+          description: '', 
+          category: 'corte_barberia' as ServiceCategory,
+          mainCategoryId: data.mainCategory?.id,
+          subcategoryId: data.subcategory?.id
+        }]
   );
 
   const addService = () => {
@@ -36,7 +45,9 @@ export const ServicesStep = ({
       price: 0, 
       duration: 30, 
       description: '', 
-      category: 'corte_barberia' as ServiceCategory 
+      category: 'corte_barberia' as ServiceCategory,
+      mainCategoryId: data.mainCategory?.id,
+      subcategoryId: data.subcategory?.id
     };
     const newServices = [...services, newService];
     setServices(newServices);
@@ -86,11 +97,21 @@ export const ServicesStep = ({
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-2">
-          Agrega tus Servicios
+          Agrega tus Servicios de {data.subcategory?.display_name}
         </h3>
         <p className="text-muted-foreground mb-4">
-          Debes agregar al menos un servicio para continuar
+          Agrega los servicios específicos que ofreces en {data.subcategory?.display_name?.toLowerCase()}
         </p>
+        {data.mainCategory && data.subcategory && (
+          <div className="mb-4">
+            <Badge variant="secondary" className="mr-2">
+              {data.mainCategory.display_name}
+            </Badge>
+            <Badge variant="outline">
+              {data.subcategory.display_name}
+            </Badge>
+          </div>
+        )}
         {getFieldError('services') && (
           <p className="text-sm text-red-500 mb-4">{getFieldError('services')}</p>
         )}
