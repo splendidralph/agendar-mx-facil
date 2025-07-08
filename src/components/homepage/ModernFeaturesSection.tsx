@@ -272,9 +272,6 @@ const ModernFeaturesSection = () => {
               <p className="text-muted-foreground text-lg mb-4">
                 Escríbenos a: <span className="font-semibold text-gradient-primary">hello@bookeasy.mx</span>
               </p>
-              <p className="text-muted-foreground text-lg">
-                O mándanos un mensaje por WhatsApp
-              </p>
             </div>
           </div>
         </div>

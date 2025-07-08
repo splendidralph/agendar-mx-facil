@@ -214,9 +214,6 @@ const Index = () => {
               <p className="text-background/70 mb-2">
                 hello@bookeasy.mx
               </p>
-              <p className="text-background/70">
-                WhatsApp: Próximamente
-              </p>
             </div>
           </div>
           
