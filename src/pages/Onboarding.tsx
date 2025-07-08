@@ -46,8 +46,6 @@ const Onboarding = () => {
 
   const steps = [
     'Perfil & Username',
-    'Categoría Principal',
-    'Especialidad',
     'Servicios',
     'Contacto',
     'Vista Previa'
@@ -67,7 +65,7 @@ const Onboarding = () => {
         );
       case 2:
         return (
-          <MainCategoryStep 
+          <ServicesStep 
             data={data} 
             onUpdate={updateData} 
             onNext={nextStep} 
@@ -78,28 +76,6 @@ const Onboarding = () => {
         );
       case 3:
         return (
-          <SubcategoryStep 
-            data={data} 
-            onUpdate={updateData} 
-            onNext={nextStep} 
-            onPrevious={prevStep}
-            loading={loading}
-            validationErrors={validationErrors}
-          />
-        );
-      case 4:
-        return (
-          <ServicesStep 
-            data={data} 
-            onUpdate={updateData} 
-            onNext={nextStep} 
-            onPrevious={prevStep}
-            loading={loading}
-            validationErrors={validationErrors}
-          />
-        );
-      case 5:
-        return (
           <ContactStep 
             data={data} 
             onUpdate={updateData} 
@@ -108,7 +84,7 @@ const Onboarding = () => {
             loading={loading}
           />
         );
-      case 6:
+      case 4:
         return (
           <PreviewStep 
             data={data} 

@@ -176,7 +176,7 @@ export const ProfileUsernameStep = ({
             Tu Username Único *
           </Label>
           <div className="relative mt-2">
-            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black text-sm font-bold">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm font-bold z-10" style={{ color: '#000000' }}>
               bookeasy.mx/
             </span>
             <Input
