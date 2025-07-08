@@ -89,10 +89,20 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
     let providerId = existingProvider?.id;
 
     // Prepare provider data - allow null values during onboarding
+    // Populate legacy category field from new category system for backward compatibility
+    let categoryName = null;
+    if (data.subcategory?.display_name) {
+      categoryName = data.subcategory.display_name;
+    } else if (data.mainCategory?.display_name) {
+      categoryName = data.mainCategory.display_name;
+    } else if (data.category?.trim()) {
+      categoryName = data.category.trim();
+    }
+
     const providerData: any = {
       user_id: userId,
       business_name: data.businessName?.trim() || null, // Allow null during onboarding
-      category: data.category?.trim() || null, // Keep for backward compatibility
+      category: categoryName, // Keep for backward compatibility
       main_category_id: data.mainCategory?.id || null,
       subcategory_id: data.subcategory?.id || null,
       bio: data.bio?.trim() || null,
@@ -255,22 +265,43 @@ export const updateProviderStep = async (userId: string, step: number) => {
 
 export const completeProviderOnboarding = async (userId: string) => {
   try {
-    // First get the provider ID
+    // First get the provider data to check if category is populated
     const { data: provider, error: providerError } = await supabase
       .from('providers')
-      .select('id')
+      .select(`
+        id, 
+        category, 
+        main_categories:main_category_id(display_name),
+        subcategories:subcategory_id(display_name)
+      `)
       .eq('user_id', userId)
       .single();
 
     if (providerError) throw providerError;
 
-    // Update provider completion status
+    // Ensure category field is populated for validation
+    let categoryToUpdate = provider.category;
+    if (!categoryToUpdate) {
+      if (provider.subcategories?.display_name) {
+        categoryToUpdate = provider.subcategories.display_name;
+      } else if (provider.main_categories?.display_name) {
+        categoryToUpdate = provider.main_categories.display_name;
+      }
+    }
+
+    // Update provider completion status with category if needed
+    const updateData: any = {
+      profile_completed: true,
+      onboarding_step: 6
+    };
+    
+    if (categoryToUpdate && categoryToUpdate !== provider.category) {
+      updateData.category = categoryToUpdate;
+    }
+
     const { error } = await supabase
       .from('providers')
-      .update({
-        profile_completed: true,
-        onboarding_step: 6
-      })
+      .update(updateData)
       .eq('user_id', userId);
 
     if (error) throw error;
