@@ -37,17 +37,17 @@ const HeroSection = () => {
 
           {/* Main headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-foreground mb-8 leading-[1.1] tracking-tight">
-            Estamos comenzando donde más importa:
+            Recibe reservas profesionales con tu propio
             <span className="block mt-3 text-gradient-primary">
-              en tu colonia
+              link personalizado
+            </span>
+            <span className="block mt-2 text-gradient-accent text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
+              Gratis.
             </span>
           </h1>
 
-          {/* Main value proposition */}
+          {/* Supporting content */}
           <div className="mb-12 md:mb-16 max-w-4xl mx-auto">
-            <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-8 leading-relaxed font-medium">
-              Recibe reservas profesionales con tu propio <span className="text-gradient-accent font-semibold">link personalizado</span>. Gratis.
-            </p>
             
             {/* Location Badge */}
             <div className="solid-card-accent p-6 mb-10">
