@@ -115,6 +115,7 @@ _Mensaje automático de BookEasy.mx_`
     const twilioAccountSid = Deno.env.get('twilio_account_sid')
     const twilioAuthToken = Deno.env.get('twilio_auth_token')
     const twilioWhatsAppNumber = 'whatsapp:+18777036062' // New approved number
+    const templateSid = Deno.env.get('booking_confirmation')
 
     if (!twilioAccountSid || !twilioAuthToken) {
       console.error('Twilio credentials missing:', {
@@ -144,21 +145,70 @@ _Mensaje automático de BookEasy.mx_`
       client_name: clientName,
       provider_business: provider.business_name,
       booking_date: bookingDate,
-      booking_time: bookingTime
+      booking_time: bookingTime,
+      using_template: !!templateSid
     })
 
-    const response = await fetch(twilioUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        From: twilioWhatsAppNumber,
-        To: toWhatsAppNumber,
-        Body: whatsappMessage,
-      }),
-    })
+    let response;
+    
+    // Try template message first if available
+    if (templateSid) {
+      console.log('Attempting to send template message with SID:', templateSid)
+      
+      const templateVariables = JSON.stringify([
+        clientName,
+        service.name,
+        bookingDate,
+        bookingTime,
+        provider.business_name
+      ])
+
+      response = await fetch(twilioUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          From: twilioWhatsAppNumber,
+          To: toWhatsAppNumber,
+          ContentSid: templateSid,
+          ContentVariables: templateVariables,
+        }),
+      })
+
+      // If template fails, fall back to plain text
+      if (!response.ok) {
+        console.log('Template message failed, falling back to plain text')
+        response = await fetch(twilioUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            From: twilioWhatsAppNumber,
+            To: toWhatsAppNumber,
+            Body: whatsappMessage,
+          }),
+        })
+      }
+    } else {
+      // No template available, use plain text
+      console.log('No template SID available, using plain text message')
+      response = await fetch(twilioUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          From: twilioWhatsAppNumber,
+          To: toWhatsAppNumber,
+          Body: whatsappMessage,
+        }),
+      })
+    }
 
     if (!response.ok) {
       const errorText = await response.text()
