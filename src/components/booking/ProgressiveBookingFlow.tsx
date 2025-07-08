@@ -45,6 +45,7 @@ const ProgressiveBookingFlow = ({
 }: ProgressiveBookingFlowProps) => {
   const [currentStep, setCurrentStep] = useState<BookingStep>('service');
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isManualNavigation, setIsManualNavigation] = useState(false);
   const isMobile = useIsMobile();
 
   const steps = [
@@ -79,16 +80,39 @@ const ProgressiveBookingFlow = ({
     }
   };
 
-  // Auto-advance logic
+  // Auto-advance logic with manual navigation protection
   useEffect(() => {
+    // Reset manual navigation flag after delay
+    if (isManualNavigation) {
+      const timer = setTimeout(() => {
+        console.log('Booking Flow: Resetting manual navigation flag');
+        setIsManualNavigation(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isManualNavigation]);
+
+  useEffect(() => {
+    // Don't auto-advance if user just manually navigated or is transitioning
+    if (isManualNavigation || isTransitioning) {
+      console.log('Booking Flow: Skipping auto-advance - manual navigation or transitioning');
+      return;
+    }
+
     if (currentStep === 'service' && selectedService && !selectedDate) {
+      console.log('Booking Flow: Auto-advancing from service to datetime');
       setTimeout(() => setCurrentStep('datetime'), 300);
     } else if (currentStep === 'datetime' && selectedDate && selectedTime && !clientData.name) {
+      console.log('Booking Flow: Auto-advancing from datetime to details');
       setTimeout(() => setCurrentStep('details'), 300);
     }
-  }, [selectedService, selectedDate, selectedTime, clientData.name, currentStep]);
+  }, [selectedService, selectedDate, selectedTime, clientData.name, currentStep, isManualNavigation, isTransitioning]);
 
-  const handleStepTransition = (newStep: BookingStep) => {
+  const handleStepTransition = (newStep: BookingStep, isManual = false) => {
+    console.log(`Booking Flow: Transitioning to ${newStep}, manual: ${isManual}`);
+    if (isManual) {
+      setIsManualNavigation(true);
+    }
     setIsTransitioning(true);
     setTimeout(() => {
       setCurrentStep(newStep);
@@ -114,7 +138,7 @@ const ProgressiveBookingFlow = ({
   const handlePrev = () => {
     if (canGoPrev()) {
       const prevStep = steps[currentStepIndex - 1].id as BookingStep;
-      handleStepTransition(prevStep);
+      handleStepTransition(prevStep, true); // Mark as manual navigation
     }
   };
 
