@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { CustomPhoneInput } from "@/components/ui/phone-input";
+
 import { Label } from "@/components/ui/label";
 import { Calendar, ChevronLeft, Link2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,6 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
     category: ""
   });
 
@@ -43,12 +42,6 @@ const Register = () => {
     }));
   };
 
-  const handlePhoneChange = (value: string | undefined) => {
-    setFormData(prev => ({
-      ...prev,
-      phone: value || ""
-    }));
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-bookeasy-50 to-white">
@@ -140,17 +133,6 @@ const Register = () => {
                   </select>
                 </div>
 
-                <div>
-                  <Label htmlFor="phone" className="text-bookeasy-700">Teléfono *</Label>
-                  <CustomPhoneInput
-                    value={formData.phone}
-                    onChange={handlePhoneChange}
-                    placeholder="(55) 1234-5678"
-                    defaultCountry="MX"
-                    className="border-bookeasy-200 focus:border-bookeasy-400"
-                    required
-                  />
-                </div>
 
                 <Button 
                   type="submit" 

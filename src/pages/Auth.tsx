@@ -9,8 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, ArrowLeft, AlertCircle, Users, Star } from 'lucide-react';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -27,8 +25,7 @@ const Auth = () => {
   const [signUpData, setSignUpData] = useState({
     email: '',
     password: '',
-    fullName: '',
-    phone: ''
+    fullName: ''
   });
 
   // Sign in form state
@@ -148,7 +145,7 @@ const Auth = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!signUpData.email || !signUpData.password || !signUpData.fullName || !signUpData.phone) {
+    if (!signUpData.email || !signUpData.password || !signUpData.fullName) {
       console.error('All fields are required');
       return;
     }
@@ -160,8 +157,7 @@ const Auth = () => {
       const { error } = await signUp(
         signUpData.email.trim(), 
         signUpData.password, 
-        signUpData.fullName.trim(),
-        signUpData.phone.trim()
+        signUpData.fullName.trim()
       );
       
       console.log('Signup completed, error:', error);
@@ -170,8 +166,7 @@ const Auth = () => {
         setSignUpData({
           email: '',
           password: '',
-          fullName: '',
-          phone: ''
+          fullName: ''
         });
       }
     } catch (err) {
@@ -470,23 +465,6 @@ const Auth = () => {
                         disabled={isSubmitting}
                           placeholder="tu@email.com"
                           className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="signup-phone" className="text-white font-medium">Teléfono *</Label>
-                      <PhoneInput
-                        international
-                        countryCallingCodeEditable={false}
-                        defaultCountry="MX"
-                        value={signUpData.phone}
-                        onChange={(phone) => setSignUpData({ ...signUpData, phone: phone || '' })}
-                        disabled={isSubmitting}
-                        placeholder="Ingresa tu número de teléfono"
-                        className="mt-2 flex h-12 w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-gray-900 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:border-primary smooth-transition disabled:cursor-not-allowed disabled:opacity-50"
-                        style={{
-                          '--PhoneInputCountryFlag-height': '1em',
-                          '--PhoneInputCountrySelectArrow-color': 'rgba(107, 114, 128, 0.7)',
-                        } as React.CSSProperties}
                       />
                     </div>
                     <div>

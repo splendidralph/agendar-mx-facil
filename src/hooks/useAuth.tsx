@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName?: string, phone?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName?: string, phone?: string) => {
+  const signUp = async (email: string, password: string, fullName?: string) => {
     try {
       setLoading(true);
       const redirectUrl = `${window.location.origin}/`;
@@ -55,14 +55,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log('Attempting signup with:', { 
         email, 
         fullName: fullName || 'Not provided',
-        phone: phone || 'Not provided',
         role: 'provider',
         redirectUrl 
       });
 
       const metadata = {
         full_name: fullName || '',
-        phone: phone || '',
         role: 'provider'
       };
 

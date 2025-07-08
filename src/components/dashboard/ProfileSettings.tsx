@@ -37,7 +37,8 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
     subcategory_id: provider.subcategory_id || '',
     address: provider.address || '',
     instagram_handle: provider.instagram_handle || '',
-    username: provider.username || ''
+    username: provider.username || '',
+    whatsapp_phone: provider.whatsapp_phone || ''
   });
 
   const checkUsernameAvailabilityDebounced = async (username: string) => {
@@ -121,7 +122,8 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
           subcategory_id: formData.subcategory_id || null,
           address: formData.address,
           instagram_handle: formData.instagram_handle,
-          username: formData.username
+          username: formData.username,
+          whatsapp_phone: formData.whatsapp_phone
         })
         .eq('id', provider.id);
 
@@ -294,6 +296,19 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
                 />
               </div>
 
+              <div>
+                <Label htmlFor="whatsapp_phone">WhatsApp (para notificaciones)</Label>
+                <CustomPhoneInput
+                  value={formData.whatsapp_phone}
+                  onChange={(value) => setFormData(prev => ({ ...prev, whatsapp_phone: value || '' }))}
+                  placeholder="(55) 1234-5678"
+                  defaultCountry="MX"
+                  className="border-input focus:border-primary focus:ring-primary"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Recibirás notificaciones de nuevas citas en este número
+                </p>
+              </div>
 
               <div>
                 <Label htmlFor="instagram_handle">Instagram (sin @)</Label>
