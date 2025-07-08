@@ -206,7 +206,7 @@ export const ContactStep = ({
     });
   };
 
-  const canProceed = !formData.whatsappPhone || phoneValidation.isValid;
+  const canProceed = formData.whatsappPhone && phoneValidation.isValid;
 
   return (
     <div className="space-y-6">
@@ -330,8 +330,8 @@ export const ContactStep = ({
               <MessageCircle className="h-4 w-4 text-white" />
             </div>
             WhatsApp para tu Negocio
-            <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200 text-xs">
-              Recomendado
+            <Badge variant="destructive" className="bg-red-100 text-red-700 border-red-200 text-xs">
+              Requerido
             </Badge>
           </CardTitle>
           <CardDescription className="text-green-700 text-sm">
@@ -339,28 +339,9 @@ export const ContactStep = ({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <div className="flex items-center gap-2 text-sm text-green-700">
-              <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-              <span>Notificaciones instantáneas</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-green-700">
-              <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-              <span>Mayor tasa de respuesta</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-green-700">
-              <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-              <span>Comunicación directa</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-green-700">
-              <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-              <span>Gestión desde tu celular</span>
-            </div>
-          </div>
-          
-          <div className="mt-4">
+          <div>
             <Label htmlFor="whatsapp" className="text-green-800 font-medium text-sm">
-              Número de WhatsApp
+              Número de WhatsApp *
             </Label>
             <div className="relative mt-2">
               <CustomPhoneInput
@@ -368,6 +349,7 @@ export const ContactStep = ({
                 onChange={(value) => handleChange('whatsappPhone', value || '')}
                 placeholder="Número de WhatsApp"
                 defaultCountry="MX"
+                required={true}
                 className={`border-green-200 focus:border-green-400 focus:ring-green-400 ${
                   formData.whatsappPhone && !phoneValidation.isValid ? 'border-red-300' : ''
                 } ${
