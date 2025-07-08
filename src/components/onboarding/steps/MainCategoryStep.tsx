@@ -40,8 +40,14 @@ export const MainCategoryStep = ({
     toast.success(`${category.display_name} seleccionado`);
     
     setTimeout(async () => {
-      await onNext({ mainCategory: category });
-      setIsProgressing(false);
+      try {
+        await onNext({ mainCategory: category });
+      } catch (error) {
+        console.error('Error auto-advancing from main category step:', error);
+        toast.error('Error avanzando al siguiente paso');
+      } finally {
+        setIsProgressing(false);
+      }
     }, 800);
   };
 

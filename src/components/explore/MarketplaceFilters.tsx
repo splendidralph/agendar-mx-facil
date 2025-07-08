@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { MapPin, Tag, DollarSign, Star, X, Filter } from "lucide-react";
 import { useState } from "react";
+import { useCategories } from "@/hooks/useCategories";
 
 interface MarketplaceFiltersProps {
   selectedCity: string;
@@ -38,14 +39,7 @@ const MarketplaceFilters = ({
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const cities = ["Tijuana", "Ciudad de México", "Guadalajara", "Monterrey", "Puebla"];
-  const categories = [
-    { value: 'corte_barberia', label: 'Corte & Barbería' },
-    { value: 'unas', label: 'Uñas' },
-    { value: 'maquillaje_cejas', label: 'Maquillaje & Cejas' },
-    { value: 'cuidado_facial', label: 'Cuidado Facial' },
-    { value: 'masajes_relajacion', label: 'Masajes & Relajación' },
-    { value: 'color_alisado', label: 'Color & Alisado' }
-  ];
+  const { mainCategories } = useCategories();
   
   const priceRanges = [
     { value: "0-200", label: "$0 - $200" },
@@ -71,7 +65,7 @@ const MarketplaceFilters = ({
   const getActiveFilters = () => {
     const filters = [];
     if (selectedCity !== 'all') filters.push({ type: 'city', value: selectedCity });
-    if (selectedCategory !== 'all') filters.push({ type: 'category', value: categories.find(c => c.value === selectedCategory)?.label || selectedCategory });
+    if (selectedCategory !== 'all') filters.push({ type: 'category', value: mainCategories.find(c => c.id === selectedCategory)?.display_name || selectedCategory });
     if (priceRange !== 'all') filters.push({ type: 'price', value: priceRanges.find(p => p.value === priceRange)?.label || priceRange });
     if (minRating !== 'all') filters.push({ type: 'rating', value: ratings.find(r => r.value === minRating)?.label || minRating });
     return filters;
@@ -185,9 +179,9 @@ const MarketplaceFilters = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas las categorías</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
+                  {mainCategories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.display_name}
                     </SelectItem>
                   ))}
                 </SelectContent>

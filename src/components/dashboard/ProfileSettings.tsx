@@ -82,6 +82,19 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
   const handleSave = async () => {
     setLoading(true);
     try {
+      // Validate required fields
+      if (!formData.business_name.trim()) {
+        toast.error('El nombre del negocio es requerido');
+        setLoading(false);
+        return;
+      }
+
+      if (!formData.username.trim()) {
+        toast.error('El username es requerido');
+        setLoading(false);
+        return;
+      }
+
       // Check username availability if it changed
       if (formData.username !== provider.username && formData.username) {
         if (isUsernameAvailable === false) {
@@ -222,7 +235,10 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
                   <SelectContent>
                     {mainCategories.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
-                        {category.display_name}
+                        <span className="flex items-center gap-2">
+                          {category.icon && <span>{category.icon}</span>}
+                          {category.display_name}
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>

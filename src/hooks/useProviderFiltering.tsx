@@ -87,8 +87,9 @@ export const useProviderFiltering = (locationFilter?: LocationFilter) => {
     return (category: string) => {
       if (!category || category === 'all') return providers;
       return providers.filter(provider => 
+        provider.main_category_id === category ||
         provider.category === category ||
-        provider.services.some(service => service.category === category)
+        provider.services.some(service => service.main_category_id === category)
       );
     };
   }, [providers]);
