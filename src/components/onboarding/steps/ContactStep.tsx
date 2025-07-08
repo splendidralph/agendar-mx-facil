@@ -4,13 +4,14 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MessageCircle, MapPin, Instagram, CheckCircle, AlertCircle, Smartphone, MapPinIcon } from 'lucide-react';
+import { MessageCircle, MapPinIcon, CheckCircle, AlertCircle } from 'lucide-react';
 import { CustomPhoneInput } from '@/components/ui/phone-input';
 import { StepNavigation } from '../StepNavigation';
 import { OnboardingData } from '@/types/onboarding';
-import { supabase } from '@/integrations/supabase/client';
 import { validateInstagramHandle, validatePostalCode, sanitizeInput } from '@/utils/securityValidation';
 import { toast } from 'sonner';
+import { useLocations } from '@/hooks/useLocations';
+import { City, Zone, Location } from '@/types/location';
 
 interface ContactStepProps {
   data: OnboardingData;
@@ -27,21 +28,24 @@ export const ContactStep = ({
   onPrevious, 
   loading = false 
 }: ContactStepProps) => {
+  const { cities, loading: citiesLoading, getCityById, getZonesByCity, getLocationsByZone } = useLocations();
+  
   const [formData, setFormData] = useState({
     address: data.address || '',
     instagramHandle: data.instagramHandle || '',
     whatsappPhone: data.whatsappPhone || '',
-    delegacion: data.delegacion || '',
-    delegacionId: data.delegacionId || '',
-    colonia: data.colonia || '',
-    postalCode: data.postalCode || '',
-    groupLabel: data.groupLabel || ''
+    postalCode: data.postalCode || ''
   });
   
-  const [delegaciones, setDelegaciones] = useState<Array<{id: string, name: string}>>([]);
-  const [coloniaGroups, setColoniaGroups] = useState<Array<{id: string, name: string, colonia: string, postal_code: string, group_label: string, professional_count: number}>>([]);
-  const [loadingDelegaciones, setLoadingDelegaciones] = useState(false);
-  const [loadingColonias, setLoadingColonias] = useState(false);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  
+  const [zones, setZones] = useState<Zone[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  
+  const [loadingZones, setLoadingZones] = useState(false);
+  const [loadingLocations, setLoadingLocations] = useState(false);
   
   const [phoneValidation, setPhoneValidation] = useState<{
     isValid: boolean;
@@ -53,65 +57,71 @@ export const ContactStep = ({
       address: data.address || '',
       instagramHandle: data.instagramHandle || '',
       whatsappPhone: data.whatsappPhone || '',
-      delegacion: data.delegacion || '',
-      delegacionId: data.delegacionId || '',
-      colonia: data.colonia || '',
-      postalCode: data.postalCode || '',
-      groupLabel: data.groupLabel || ''
+      postalCode: data.postalCode || ''
     });
-  }, [data.address, data.instagramHandle, data.whatsappPhone, data.delegacion, data.delegacionId, data.colonia, data.postalCode, data.groupLabel]);
+  }, [data.address, data.instagramHandle, data.whatsappPhone, data.postalCode]);
 
-  // Load delegaciones on mount
+  // Load zones when city is selected
   useEffect(() => {
-    const loadDelegaciones = async () => {
-      setLoadingDelegaciones(true);
-      try {
-        const { data: delegacionData, error } = await supabase
-          .from('delegaciones')
-          .select('id, name')
-          .eq('is_active', true)
-          .order('name');
-        
-        if (error) throw error;
-        setDelegaciones(delegacionData || []);
-      } catch (error) {
-        console.error('Error loading delegaciones:', error);
-      } finally {
-        setLoadingDelegaciones(false);
-      }
-    };
-    
-    loadDelegaciones();
-  }, []);
-
-  // Load colonias when delegación is selected
-  useEffect(() => {
-    if (!formData.delegacionId) {
-      setColoniaGroups([]);
+    if (!selectedCity) {
+      setZones([]);
+      setSelectedZone(null);
       return;
     }
 
-    const loadColonias = async () => {
-      setLoadingColonias(true);
+    const loadZones = async () => {
+      setLoadingZones(true);
       try {
-        const { data: coloniaData, error } = await supabase
-          .from('locations')
-          .select('id, name, colonia, postal_code, group_label, professional_count')
-          .eq('delegacion_id', formData.delegacionId)
-          .not('colonia', 'is', null)
-          .order('group_label, colonia');
-        
-        if (error) throw error;
-        setColoniaGroups(coloniaData || []);
+        const zonesData = await getZonesByCity(selectedCity.id);
+        setZones(zonesData);
       } catch (error) {
-        console.error('Error loading colonias:', error);
+        console.error('Error loading zones:', error);
       } finally {
-        setLoadingColonias(false);
+        setLoadingZones(false);
       }
     };
-    
-    loadColonias();
-  }, [formData.delegacionId]);
+
+    loadZones();
+  }, [selectedCity, getZonesByCity]);
+
+  // Load locations when zone is selected
+  useEffect(() => {
+    if (!selectedZone) {
+      setLocations([]);
+      setSelectedLocation(null);
+      return;
+    }
+
+    const loadLocations = async () => {
+      setLoadingLocations(true);
+      try {
+        const locationsData = await getLocationsByZone(selectedZone.id);
+        setLocations(locationsData);
+      } catch (error) {
+        console.error('Error loading locations:', error);
+      } finally {
+        setLoadingLocations(false);
+      }
+    };
+
+    loadLocations();
+  }, [selectedZone, getLocationsByZone]);
+
+  // Update postal code and onboarding data when location is selected
+  useEffect(() => {
+    if (selectedLocation && selectedLocation.postal_code) {
+      const newFormData = { ...formData, postalCode: selectedLocation.postal_code };
+      setFormData(newFormData);
+      
+      // Update onboarding data with all location info
+      onUpdate({
+        ...newFormData,
+        colonia: selectedLocation.colonia || '',
+        city_id: selectedCity?.id,
+        zone_id: selectedZone?.id
+      });
+    }
+  }, [selectedLocation]);
 
   const validatePhoneNumber = (phoneValue?: string) => {
     if (!phoneValue) {
@@ -151,16 +161,41 @@ export const ContactStep = ({
     }
   };
 
-  const handleInstagramChange = (value: string) => {
-    const cleanValue = value.replace('@', '');
+  const handleCitySelect = (cityName: string) => {
+    const city = cities.find(c => c.name === cityName);
+    setSelectedCity(city || null);
+    setSelectedZone(null);
+    setSelectedLocation(null);
     
-    // Validate Instagram handle format
-    if (cleanValue && !validateInstagramHandle(cleanValue)) {
-      toast.error('El Instagram solo puede contener letras, números, puntos y guiones bajos');
-      return;
-    }
+    // Clear location-related data
+    const newFormData = { ...formData, postalCode: '' };
+    setFormData(newFormData);
+    onUpdate({
+      ...newFormData,
+      colonia: '',
+      city_id: city?.id,
+      zone_id: undefined
+    });
+  };
+
+  const handleZoneSelect = (zoneName: string) => {
+    const zone = zones.find(z => z.name === zoneName);
+    setSelectedZone(zone || null);
+    setSelectedLocation(null);
     
-    handleChange('instagramHandle', cleanValue);
+    // Clear location-related data
+    const newFormData = { ...formData, postalCode: '' };
+    setFormData(newFormData);
+    onUpdate({
+      ...newFormData,
+      colonia: '',
+      zone_id: zone?.id
+    });
+  };
+
+  const handleLocationSelect = (locationName: string) => {
+    const location = locations.find(l => l.colonia === locationName);
+    setSelectedLocation(location || null);
   };
 
   const handleNext = async () => {
@@ -175,7 +210,12 @@ export const ContactStep = ({
       return;
     }
     
-    await onNext(formData);
+    await onNext({
+      ...formData,
+      colonia: selectedLocation?.colonia || '',
+      city_id: selectedCity?.id,
+      zone_id: selectedZone?.id
+    });
   };
 
   const canProceed = !formData.whatsappPhone || phoneValidation.isValid;
@@ -195,7 +235,7 @@ export const ContactStep = ({
             </Badge>
           </CardTitle>
           <CardDescription className="text-blue-700 text-sm">
-            Selecciona tu ubicación
+            Selecciona tu ubicación para que los clientes te encuentren
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -212,76 +252,78 @@ export const ContactStep = ({
             />
           </div>
           
+          {/* City Selection */}
           <div>
-            <Label htmlFor="delegacion" className="text-blue-800 font-medium text-sm">
-              Selecciona tu Delegación
+            <Label htmlFor="city" className="text-blue-800 font-medium text-sm">
+              Selecciona tu Ciudad
             </Label>
             <Select 
-              value={formData.delegacion} 
-              onValueChange={(value) => {
-                const selectedDelegacion = delegaciones.find(d => d.name === value);
-                const newData = {
-                  ...formData,
-                  delegacion: value,
-                  delegacionId: selectedDelegacion?.id || '',
-                  colonia: '',
-                  postalCode: '',
-                  groupLabel: ''
-                };
-                setFormData(newData);
-                onUpdate(newData);
-              }}
-              disabled={loadingDelegaciones}
+              value={selectedCity?.name || ''} 
+              onValueChange={handleCitySelect}
+              disabled={citiesLoading}
             >
               <SelectTrigger className="mt-2 border-blue-200 focus:border-blue-400">
-                <SelectValue placeholder={loadingDelegaciones ? "Cargando delegaciones..." : "Elige tu delegación"} />
+                <SelectValue placeholder={citiesLoading ? "Cargando ciudades..." : "Elige tu ciudad"} />
               </SelectTrigger>
               <SelectContent className="z-50 bg-white border border-border shadow-lg">
-                {delegaciones.map((delegacion) => (
-                  <SelectItem key={delegacion.id} value={delegacion.name}>
-                    {delegacion.name}
+                {cities.map((city) => (
+                  <SelectItem key={city.id} value={city.name}>
+                    {city.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          {formData.delegacionId && (
+          {/* Zone Selection */}
+          {selectedCity && (
             <div>
-              <Label htmlFor="colonia" className="text-blue-800 font-medium text-sm">
-                Selecciona tu Área/Colonia
+              <Label htmlFor="zone" className="text-blue-800 font-medium text-sm">
+                Selecciona tu Zona
               </Label>
               <Select 
-                value={formData.colonia} 
-                onValueChange={(value) => {
-                  const selectedColonia = coloniaGroups.find(c => c.colonia === value);
-                  const newData = {
-                    ...formData,
-                    colonia: value,
-                    postalCode: selectedColonia?.postal_code || '',
-                    groupLabel: selectedColonia?.group_label || ''
-                  };
-                  setFormData(newData);
-                  onUpdate(newData);
-                }}
-                disabled={loadingColonias}
+                value={selectedZone?.name || ''} 
+                onValueChange={handleZoneSelect}
+                disabled={loadingZones}
               >
                 <SelectTrigger className="mt-2 border-blue-200 focus:border-blue-400">
-                  <SelectValue placeholder={loadingColonias ? "Cargando áreas..." : "Busca tu colonia/área"} />
+                  <SelectValue placeholder={loadingZones ? "Cargando zonas..." : "Elige tu zona"} />
                 </SelectTrigger>
                 <SelectContent className="z-50 bg-white border border-border shadow-lg">
-                  {coloniaGroups.map((colonia) => (
-                    <SelectItem key={colonia.id} value={colonia.colonia}>
+                  {zones.map((zone) => (
+                    <SelectItem key={zone.id} value={zone.name}>
+                      {zone.display_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Colonia Selection */}
+          {selectedZone && (
+            <div>
+              <Label htmlFor="colonia" className="text-blue-800 font-medium text-sm">
+                Selecciona tu Colonia
+              </Label>
+              <Select 
+                value={selectedLocation?.colonia || ''} 
+                onValueChange={handleLocationSelect}
+                disabled={loadingLocations}
+              >
+                <SelectTrigger className="mt-2 border-blue-200 focus:border-blue-400">
+                  <SelectValue placeholder={loadingLocations ? "Cargando colonias..." : "Busca tu colonia"} />
+                </SelectTrigger>
+                <SelectContent className="z-50 bg-white border border-border shadow-lg">
+                  {locations.map((location) => (
+                    <SelectItem key={location.id} value={location.colonia || ''}>
                       <div className="flex justify-between items-center w-full">
-                        <span>{colonia.colonia}</span>
-                        {colonia.professional_count > 0 && (
+                        <span>{location.colonia}</span>
+                        {location.professional_count && location.professional_count > 0 && (
                           <Badge variant="secondary" className="ml-2 text-xs">
-                            {colonia.professional_count} pros
+                            {location.professional_count} pros
                           </Badge>
                         )}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {colonia.group_label} • {colonia.postal_code}
                       </div>
                     </SelectItem>
                   ))}
@@ -300,6 +342,7 @@ export const ContactStep = ({
               onChange={(e) => handleChange('postalCode', e.target.value)}
               placeholder="Ej: 22150"
               className="mt-2 border-blue-200 focus:border-blue-400"
+              disabled={!!selectedLocation}
             />
           </div>
         </CardContent>
@@ -380,7 +423,6 @@ export const ContactStep = ({
           </div>
         </CardContent>
       </Card>
-
 
       <StepNavigation
         onPrevious={onPrevious}

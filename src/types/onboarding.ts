@@ -21,6 +21,9 @@ export interface OnboardingData {
   colonia: string;
   postalCode: string;
   groupLabel?: string;
+  // New three-tier location system
+  city_id?: string;
+  zone_id?: string;
   latitude?: number;
   longitude?: number;
   serviceRadiusKm: number;

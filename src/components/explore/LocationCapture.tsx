@@ -5,100 +5,110 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Search } from "lucide-react";
+import { useLocations } from '@/hooks/useLocations';
+import { City, Zone, Location } from '@/types/location';
 
 interface LocationCaptureProps {
   onLocationSelected: (location: { colonia: string; postalCode: string }) => void;
   className?: string;
 }
 
-import { supabase } from '@/integrations/supabase/client';
-
 const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps) => {
-  const [selectedDelegacion, setSelectedDelegacion] = useState('');
-  const [selectedColonia, setSelectedColonia] = useState('');
+  const { cities, loading: citiesLoading, getCityById, getZonesByCity, getLocationsByZone } = useLocations();
+  
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  
+  const [zones, setZones] = useState<Zone[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  
+  const [loadingZones, setLoadingZones] = useState(false);
+  const [loadingLocations, setLoadingLocations] = useState(false);
+  
+  const [useCustom, setUseCustom] = useState(false);
   const [customColonia, setCustomColonia] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [useCustom, setUseCustom] = useState(false);
-  
-  const [delegaciones, setDelegaciones] = useState<Array<{id: string, name: string}>>([]);
-  const [coloniaGroups, setColoniaGroups] = useState<Array<{id: string, name: string, colonia: string, postal_code: string, group_label: string, professional_count: number}>>([]);
-  const [loadingDelegaciones, setLoadingDelegaciones] = useState(false);
-  const [loadingColonias, setLoadingColonias] = useState(false);
 
-  // Load delegaciones on mount
+  // Load zones when city is selected
   useEffect(() => {
-    const loadDelegaciones = async () => {
-      setLoadingDelegaciones(true);
-      try {
-        const { data: delegacionData, error } = await supabase
-          .from('delegaciones')
-          .select('id, name')
-          .eq('is_active', true)
-          .order('name');
-        
-        if (error) throw error;
-        setDelegaciones(delegacionData || []);
-      } catch (error) {
-        console.error('Error loading delegaciones:', error);
-      } finally {
-        setLoadingDelegaciones(false);
-      }
-    };
-    
-    loadDelegaciones();
-  }, []);
-
-  // Load colonias when delegación is selected
-  useEffect(() => {
-    if (!selectedDelegacion) {
-      setColoniaGroups([]);
+    if (!selectedCity) {
+      setZones([]);
+      setSelectedZone(null);
       return;
     }
 
-    const loadColonias = async () => {
-      setLoadingColonias(true);
+    const loadZones = async () => {
+      setLoadingZones(true);
       try {
-        const selectedDel = delegaciones.find(d => d.name === selectedDelegacion);
-        if (!selectedDel) return;
-
-        const { data: coloniaData, error } = await supabase
-          .from('locations')
-          .select('id, name, colonia, postal_code, group_label, professional_count')
-          .eq('delegacion_id', selectedDel.id)
-          .not('colonia', 'is', null)
-          .order('group_label, colonia');
-        
-        if (error) throw error;
-        setColoniaGroups(coloniaData || []);
+        const zonesData = await getZonesByCity(selectedCity.id);
+        setZones(zonesData);
       } catch (error) {
-        console.error('Error loading colonias:', error);
+        console.error('Error loading zones:', error);
       } finally {
-        setLoadingColonias(false);
+        setLoadingZones(false);
       }
     };
-    
-    loadColonias();
-  }, [selectedDelegacion, delegaciones]);
 
-  const handleDelegacionSelect = (delegacionName: string) => {
-    setSelectedDelegacion(delegacionName);
-    setSelectedColonia('');
+    loadZones();
+  }, [selectedCity, getZonesByCity]);
+
+  // Load locations when zone is selected
+  useEffect(() => {
+    if (!selectedZone) {
+      setLocations([]);
+      setSelectedLocation(null);
+      return;
+    }
+
+    const loadLocations = async () => {
+      setLoadingLocations(true);
+      try {
+        const locationsData = await getLocationsByZone(selectedZone.id);
+        setLocations(locationsData);
+      } catch (error) {
+        console.error('Error loading locations:', error);
+      } finally {
+        setLoadingLocations(false);
+      }
+    };
+
+    loadLocations();
+  }, [selectedZone, getLocationsByZone]);
+
+  // Update postal code when location is selected
+  useEffect(() => {
+    if (selectedLocation && selectedLocation.postal_code) {
+      setPostalCode(selectedLocation.postal_code);
+    }
+  }, [selectedLocation]);
+
+  const handleCitySelect = (cityName: string) => {
+    const city = cities.find(c => c.name === cityName);
+    setSelectedCity(city || null);
+    setSelectedZone(null);
+    setSelectedLocation(null);
     setPostalCode('');
     setUseCustom(false);
   };
 
-  const handleColoniaSelect = (coloniaName: string) => {
-    const colonia = coloniaGroups.find(c => c.colonia === coloniaName);
-    if (colonia) {
-      setSelectedColonia(coloniaName);
-      setPostalCode(colonia.postal_code);
-      setUseCustom(false);
-    }
+  const handleZoneSelect = (zoneName: string) => {
+    const zone = zones.find(z => z.name === zoneName);
+    setSelectedZone(zone || null);
+    setSelectedLocation(null);
+    setPostalCode('');
+    setUseCustom(false);
+  };
+
+  const handleLocationSelect = (locationName: string) => {
+    const location = locations.find(l => l.colonia === locationName);
+    setSelectedLocation(location || null);
+    setUseCustom(false);
   };
 
   const handleSubmit = () => {
     const location = {
-      colonia: useCustom ? customColonia : selectedColonia,
+      colonia: useCustom ? customColonia : (selectedLocation?.colonia || ''),
       postalCode: postalCode
     };
     
@@ -109,7 +119,7 @@ const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps
 
   const isValid = useCustom 
     ? customColonia.trim() && postalCode.trim()
-    : selectedColonia && postalCode && selectedDelegacion;
+    : selectedLocation && postalCode;
 
   return (
     <Card className={`border-border/50 shadow-lg ${className}`}>
@@ -123,42 +133,60 @@ const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* City Selection */}
         <div>
-          <Label className="text-foreground font-semibold">Selecciona tu delegación</Label>
-          <Select value={selectedDelegacion} onValueChange={handleDelegacionSelect} disabled={useCustom || loadingDelegaciones}>
+          <Label className="text-foreground font-semibold">Selecciona tu ciudad</Label>
+          <Select value={selectedCity?.name || ''} onValueChange={handleCitySelect} disabled={useCustom || citiesLoading}>
             <SelectTrigger className="mt-2 border-border focus:border-primary">
-              <SelectValue placeholder={loadingDelegaciones ? "Cargando..." : "Elige tu delegación"} />
+              <SelectValue placeholder={citiesLoading ? "Cargando ciudades..." : "Elige tu ciudad"} />
             </SelectTrigger>
             <SelectContent className="bg-card border-border">
-              {delegaciones.map((delegacion) => (
-                <SelectItem key={delegacion.id} value={delegacion.name}>
-                  {delegacion.name}
+              {cities.map((city) => (
+                <SelectItem key={city.id} value={city.name}>
+                  {city.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        {selectedDelegacion && !useCustom && (
+        {/* Zone Selection */}
+        {selectedCity && !useCustom && (
           <div>
-            <Label className="text-foreground font-semibold">Selecciona tu área/colonia</Label>
-            <Select value={selectedColonia} onValueChange={handleColoniaSelect} disabled={loadingColonias}>
+            <Label className="text-foreground font-semibold">Selecciona tu zona</Label>
+            <Select value={selectedZone?.name || ''} onValueChange={handleZoneSelect} disabled={loadingZones}>
               <SelectTrigger className="mt-2 border-border focus:border-primary">
-                <SelectValue placeholder={loadingColonias ? "Cargando..." : "Elige tu colonia"} />
+                <SelectValue placeholder={loadingZones ? "Cargando zonas..." : "Elige tu zona"} />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
-                {coloniaGroups.map((colonia) => (
-                  <SelectItem key={colonia.id} value={colonia.colonia}>
+                {zones.map((zone) => (
+                  <SelectItem key={zone.id} value={zone.name}>
+                    {zone.display_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* Location/Colonia Selection */}
+        {selectedZone && !useCustom && (
+          <div>
+            <Label className="text-foreground font-semibold">Selecciona tu colonia</Label>
+            <Select value={selectedLocation?.colonia || ''} onValueChange={handleLocationSelect} disabled={loadingLocations}>
+              <SelectTrigger className="mt-2 border-border focus:border-primary">
+                <SelectValue placeholder={loadingLocations ? "Cargando colonias..." : "Elige tu colonia"} />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border">
+                {locations.map((location) => (
+                  <SelectItem key={location.id} value={location.colonia || ''}>
                     <div className="flex justify-between items-center w-full">
-                      <span>{colonia.colonia}</span>
-                      {colonia.professional_count > 0 && (
+                      <span>{location.colonia}</span>
+                      {location.professional_count && location.professional_count > 0 && (
                         <span className="text-xs text-muted-foreground ml-2">
-                          ({colonia.professional_count} pros)
+                          ({location.professional_count} pros)
                         </span>
                       )}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {colonia.group_label}
                     </div>
                   </SelectItem>
                 ))}
@@ -167,6 +195,7 @@ const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps
           </div>
         )}
 
+        {/* Custom Option Toggle */}
         <div className="text-center">
           <Button
             variant="ghost"
@@ -178,6 +207,7 @@ const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps
           </Button>
         </div>
 
+        {/* Custom Colonia Input */}
         {useCustom && (
           <div>
             <Label htmlFor="custom-colonia" className="text-foreground font-semibold">
@@ -193,6 +223,7 @@ const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps
           </div>
         )}
 
+        {/* Postal Code */}
         <div>
           <Label htmlFor="postal-code" className="text-foreground font-semibold">
             Código Postal
@@ -203,10 +234,11 @@ const LocationCapture = ({ onLocationSelected, className }: LocationCaptureProps
             onChange={(e) => setPostalCode(e.target.value)}
             placeholder="Ej. 22150"
             className="mt-2 border-border focus:border-primary"
-            disabled={!useCustom && !!selectedColonia}
+            disabled={!useCustom && !!selectedLocation}
           />
         </div>
 
+        {/* Submit Button */}
         <Button
           onClick={handleSubmit}
           disabled={!isValid}

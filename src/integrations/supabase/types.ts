@@ -275,6 +275,36 @@ export type Database = {
           },
         ]
       }
+      cities: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          state: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       customer_favorites: {
         Row: {
           client_id: string
@@ -396,6 +426,7 @@ export type Database = {
       locations: {
         Row: {
           city: string
+          city_id: string | null
           colonia: string | null
           created_at: string | null
           delegacion_id: string | null
@@ -409,9 +440,11 @@ export type Database = {
           postal_code: string | null
           professional_count: number | null
           state: string
+          zone_id: string | null
         }
         Insert: {
           city: string
+          city_id?: string | null
           colonia?: string | null
           created_at?: string | null
           delegacion_id?: string | null
@@ -425,9 +458,11 @@ export type Database = {
           postal_code?: string | null
           professional_count?: number | null
           state?: string
+          zone_id?: string | null
         }
         Update: {
           city?: string
+          city_id?: string | null
           colonia?: string | null
           created_at?: string | null
           delegacion_id?: string | null
@@ -441,13 +476,28 @@ export type Database = {
           postal_code?: string | null
           professional_count?: number | null
           state?: string
+          zone_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "locations_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "locations_delegacion_id_fkey"
             columns: ["delegacion_id"]
             isOneToOne: false
             referencedRelation: "delegaciones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "locations_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "zones"
             referencedColumns: ["id"]
           },
         ]
@@ -550,6 +600,7 @@ export type Database = {
           bio: string | null
           business_name: string | null
           category: string | null
+          city_id: string | null
           colonia: string | null
           created_at: string | null
           id: string
@@ -574,6 +625,7 @@ export type Database = {
           user_id: string
           username: string | null
           whatsapp_phone: string | null
+          zone_id: string | null
         }
         Insert: {
           address?: string | null
@@ -581,6 +633,7 @@ export type Database = {
           bio?: string | null
           business_name?: string | null
           category?: string | null
+          city_id?: string | null
           colonia?: string | null
           created_at?: string | null
           id?: string
@@ -605,6 +658,7 @@ export type Database = {
           user_id: string
           username?: string | null
           whatsapp_phone?: string | null
+          zone_id?: string | null
         }
         Update: {
           address?: string | null
@@ -612,6 +666,7 @@ export type Database = {
           bio?: string | null
           business_name?: string | null
           category?: string | null
+          city_id?: string | null
           colonia?: string | null
           created_at?: string | null
           id?: string
@@ -636,8 +691,16 @@ export type Database = {
           user_id?: string
           username?: string | null
           whatsapp_phone?: string | null
+          zone_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "providers_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "providers_location_id_fkey"
             columns: ["location_id"]
@@ -664,6 +727,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "providers_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "zones"
             referencedColumns: ["id"]
           },
         ]
@@ -923,6 +993,50 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      zones: {
+        Row: {
+          city_id: string | null
+          created_at: string | null
+          description: string | null
+          display_name: string
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          city_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          city_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zones_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
