@@ -12,18 +12,17 @@ export interface OnboardingData {
   subcategory?: Subcategory;
   bio: string;
   address: string;
-  instagramHandle: string;
   whatsappPhone: string;
   username: string;
-  // Location hierarchy data
-  delegacion: string;
-  delegacionId?: string;
-  colonia: string;
-  postalCode: string;
-  groupLabel?: string;
-  // New three-tier location system
+  // New three-tier location system (required for Step 4)
   city_id?: string;
   zone_id?: string;
+  colonia: string;
+  // Legacy location fields (keep for migration compatibility)
+  delegacion: string;
+  delegacionId?: string;
+  postalCode: string;
+  groupLabel?: string;
   latitude?: number;
   longitude?: number;
   serviceRadiusKm: number;

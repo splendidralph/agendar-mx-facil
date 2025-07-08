@@ -29,12 +29,15 @@ const initialData: OnboardingData = {
   category: '',
   bio: '',
   address: '',
-  instagramHandle: '',
   whatsappPhone: '',
   username: '',
+  // New location system fields
+  city_id: '',
+  zone_id: '',
+  colonia: '',
+  // Legacy location fields (keep for compatibility)
   delegacion: '',
   delegacionId: undefined,
-  colonia: '',
   postalCode: '',
   groupLabel: undefined,
   latitude: undefined,
@@ -77,12 +80,15 @@ export const useOnboardingFlow = () => {
             subcategory: provider.subcategories || undefined,
             bio: provider.bio || '',
             address: provider.address || '',
-            instagramHandle: provider.instagram_handle || '',
             whatsappPhone: provider.whatsapp_phone || '',
             username: provider.username || '',
+            // New location system fields
+            city_id: provider.city_id || '',
+            zone_id: provider.zone_id || '',
+            colonia: provider.colonia || '',
+            // Legacy location fields (keep for compatibility)
             delegacion: '', // TODO: Load from delegaciones table
             delegacionId: undefined,
-            colonia: provider.colonia || '',
             postalCode: provider.postal_code || '',
             groupLabel: undefined,
             latitude: provider.latitude || undefined,

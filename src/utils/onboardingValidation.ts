@@ -62,10 +62,6 @@ export const validateStep = (step: number, data: OnboardingData): boolean => {
           toast.error('El formato del número de WhatsApp no es válido');
           return false;
         }
-        if (data.instagramHandle && data.instagramHandle.trim() && !/^[a-zA-Z0-9_.]{1,30}$/.test(data.instagramHandle.trim())) {
-          toast.error('El formato del Instagram no es válido (solo letras, números, puntos y guiones bajos)');
-          return false;
-        }
         if (data.postalCode && data.postalCode.trim() && !/^\d{5}$/.test(data.postalCode.trim())) {
           toast.error('El código postal debe tener 5 dígitos');
           return false;

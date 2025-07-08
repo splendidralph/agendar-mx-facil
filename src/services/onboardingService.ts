@@ -107,8 +107,10 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       subcategory_id: data.subcategory?.id || null,
       bio: data.bio?.trim() || null,
       address: data.address?.trim() || null,
-      instagram_handle: data.instagramHandle?.trim() || null,
       whatsapp_phone: data.whatsappPhone?.trim() || null,
+      // New location system fields
+      city_id: data.city_id || null,
+      zone_id: data.zone_id || null,
       colonia: data.colonia?.trim() || null,
       postal_code: data.postalCode?.trim() || null,
       latitude: data.latitude || null,
