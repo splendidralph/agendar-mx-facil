@@ -48,53 +48,30 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
   return (
     <>
       <header className="glassmorphism border-b border-white/10 sticky top-0 z-50 touch-manipulation">
-        <div className="flex justify-between items-center p-4">
-          <div className="flex items-center space-x-3">
-            {provider && (
-              <ProfilePictureUpload
-                providerId={provider.id}
-                currentImageUrl={provider.profile_image_url}
-                businessName={businessName}
-                onImageUpdate={onRefreshProvider || (() => {})}
-                size="sm"
-                showUploadButton
-              />
-            )}
-            <div className="gradient-primary text-primary-foreground p-2 rounded-lg animate-glow">
+        <div className="flex justify-between items-center px-4 py-3">
+          <div className="flex items-center space-x-3 flex-1 min-w-0">
+            <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg animate-glow">
               <Calendar className="h-5 w-5" />
             </div>
-            <div>
-              <span className="text-lg font-bold text-foreground font-poppins">Bookeasy</span>
-              <p className="text-xs text-muted-foreground truncate max-w-32">
+            <div className="min-w-0 flex-1">
+              <span className="text-lg font-bold text-foreground font-poppins block">Bookeasy</span>
+              <p className="text-sm text-muted-foreground truncate">
                 {businessName}
               </p>
             </div>
           </div>
           
-           <div className="flex items-center space-x-2">
-             {username && (
-               <Button
-                 variant="ghost"
-                 size="sm"
-                 onClick={onCopyLink}
-                 className="p-2 touch-manipulation"
-               >
-                 <Link className="h-5 w-5" />
-               </Button>
-             )}
-             
-             {onTabChange && (
-               <MobileNavigation
-                 activeTab={activeTab || "overview"}
-                 onTabChange={onTabChange}
-                 businessName={businessName}
-                 onSignOut={onSignOut}
-                 onCopyLink={onCopyLink}
-                 onViewProfile={onViewProfile}
-                 username={username}
-               />
-             )}
-           </div>
+          {onTabChange && (
+            <MobileNavigation
+              activeTab={activeTab || "overview"}
+              onTabChange={onTabChange}
+              businessName={businessName}
+              onSignOut={onSignOut}
+              onCopyLink={onCopyLink}
+              onViewProfile={onViewProfile}
+              username={username}
+            />
+          )}
         </div>
       </header>
 

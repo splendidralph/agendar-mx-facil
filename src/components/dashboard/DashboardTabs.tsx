@@ -9,6 +9,7 @@ import NotificationSettings from "@/components/dashboard/NotificationSettings";
 import AvailabilityManager from "@/components/availability/AvailabilityManager";
 import MobileStats from "@/components/dashboard/MobileStats";
 import MobileBookingsTable from "@/components/dashboard/MobileBookingsTable";
+import MobileProfileCard from "@/components/dashboard/MobileProfileCard";
 import PromotionManager from "@/components/dashboard/PromotionManager";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -46,7 +47,18 @@ const DashboardTabs = ({
           <div className="space-y-6">
             <MobileStats stats={stats} loading={statsLoading} isMobile={isMobile} />
             
-            {/* Booking Link Card - Desktop Only (Mobile has FAB) */}
+            {/* Mobile Profile Card */}
+            {isMobile && (
+              <MobileProfileCard
+                provider={provider}
+                onRefreshProvider={onRefreshProvider}
+                onCopyLink={onCopyLink}
+                onViewProfile={onViewProfile}
+                onSettingsClick={() => setActiveTab("settings")}
+              />
+            )}
+            
+            {/* Desktop Booking Link Card */}
             {!isMobile && (
               <Card className="glassmorphism hover-lift">
                 <CardHeader>
