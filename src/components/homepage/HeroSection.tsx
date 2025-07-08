@@ -60,7 +60,10 @@ const HeroSection = () => {
             {/* Link preview */}
             <div className="solid-card-strong p-8 inline-block max-w-full">
               <span className="text-sm block text-muted-foreground mb-2">Tu link personalizado:</span>
-              <span className="font-mono text-gradient-primary font-semibold text-xl break-all">bookeasy.mx/@tuusuario</span>
+              <div className="font-mono text-xl break-all">
+                <span className="text-gradient-primary font-semibold">bookeasy.mx/</span>
+                <span className="text-gradient-accent font-bold bg-accent/10 px-2 py-1 rounded-md border border-accent/20">tuusuario</span>
+              </div>
             </div>
           </div>
 
