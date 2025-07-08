@@ -76,13 +76,14 @@ export const ContactStep = ({
         setZones(zonesData);
       } catch (error) {
         console.error('Error loading zones:', error);
+        setZones([]);
       } finally {
         setLoadingZones(false);
       }
     };
 
     loadZones();
-  }, [selectedCity, getZonesByCity]);
+  }, [selectedCity?.id, getZonesByCity]);
 
   // Load locations when zone is selected
   useEffect(() => {
@@ -99,13 +100,14 @@ export const ContactStep = ({
         setLocations(locationsData);
       } catch (error) {
         console.error('Error loading locations:', error);
+        setLocations([]);
       } finally {
         setLoadingLocations(false);
       }
     };
 
     loadLocations();
-  }, [selectedZone, getLocationsByZone]);
+  }, [selectedZone?.id, getLocationsByZone]);
 
   // Update postal code and onboarding data when location is selected
   useEffect(() => {

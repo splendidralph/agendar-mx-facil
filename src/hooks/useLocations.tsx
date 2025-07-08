@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { City, Zone, Location } from '@/types/location';
 
@@ -34,7 +34,7 @@ export const useLocations = () => {
     fetchCities();
   }, []);
 
-  const getZonesByCity = async (cityId: string): Promise<Zone[]> => {
+  const getZonesByCity = useCallback(async (cityId: string): Promise<Zone[]> => {
     try {
       const { data: zonesData, error: zonesError } = await supabase
         .from('zones')
@@ -50,9 +50,9 @@ export const useLocations = () => {
       console.error('Error fetching zones:', err);
       return [];
     }
-  };
+  }, []);
 
-  const getLocationsByZone = async (zoneId: string): Promise<Location[]> => {
+  const getLocationsByZone = useCallback(async (zoneId: string): Promise<Location[]> => {
     try {
       const { data: locationsData, error: locationsError } = await supabase
         .from('locations')
@@ -67,11 +67,11 @@ export const useLocations = () => {
       console.error('Error fetching locations:', err);
       return [];
     }
-  };
+  }, []);
 
-  const getCityById = (id: string): City | undefined => {
+  const getCityById = useCallback((id: string): City | undefined => {
     return cities.find(city => city.id === id);
-  };
+  }, [cities]);
 
   return {
     cities,
