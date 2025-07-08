@@ -46,6 +46,8 @@ const ProgressiveBookingFlow = ({
   const [currentStep, setCurrentStep] = useState<BookingStep>('service');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isManualNavigation, setIsManualNavigation] = useState(false);
+  const [completedSteps, setCompletedSteps] = useState<Set<BookingStep>>(new Set());
+  const [highestStepReached, setHighestStepReached] = useState<BookingStep>('service');
   const isMobile = useIsMobile();
 
   const steps = [
@@ -80,14 +82,32 @@ const ProgressiveBookingFlow = ({
     }
   };
 
+  // Track step completion when step conditions are met
+  useEffect(() => {
+    if (isStepComplete()) {
+      setCompletedSteps(prev => new Set([...prev, currentStep]));
+    }
+  }, [currentStep, selectedService, selectedDate, selectedTime, clientData.name, clientData.phone]);
+
+  // Track highest step reached
+  useEffect(() => {
+    const stepOrder: BookingStep[] = ['service', 'datetime', 'details', 'confirmation'];
+    const currentIndex = stepOrder.indexOf(currentStep);
+    const highestIndex = stepOrder.indexOf(highestStepReached);
+    
+    if (currentIndex > highestIndex) {
+      setHighestStepReached(currentStep);
+    }
+  }, [currentStep, highestStepReached]);
+
   // Auto-advance logic with manual navigation protection
   useEffect(() => {
-    // Reset manual navigation flag after delay
+    // Reset manual navigation flag after longer delay
     if (isManualNavigation) {
       const timer = setTimeout(() => {
         console.log('Booking Flow: Resetting manual navigation flag');
         setIsManualNavigation(false);
-      }, 1000);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [isManualNavigation]);
@@ -99,14 +119,27 @@ const ProgressiveBookingFlow = ({
       return;
     }
 
-    if (currentStep === 'service' && selectedService && !selectedDate) {
-      console.log('Booking Flow: Auto-advancing from service to datetime');
+    const stepOrder: BookingStep[] = ['service', 'datetime', 'details', 'confirmation'];
+    const currentIndex = stepOrder.indexOf(currentStep);
+    const highestIndex = stepOrder.indexOf(highestStepReached);
+
+    // Only auto-advance if we're making forward progress (not returning to a completed step)
+    const isForwardProgress = currentIndex >= highestIndex;
+    
+    if (!isForwardProgress) {
+      console.log('Booking Flow: Skipping auto-advance - user returned to previous step');
+      return;
+    }
+
+    // Auto-advance only when progressing forward for the first time
+    if (currentStep === 'service' && selectedService && !selectedDate && !completedSteps.has('datetime')) {
+      console.log('Booking Flow: Auto-advancing from service to datetime (first time)');
       setTimeout(() => setCurrentStep('datetime'), 300);
-    } else if (currentStep === 'datetime' && selectedDate && selectedTime && !clientData.name) {
-      console.log('Booking Flow: Auto-advancing from datetime to details');
+    } else if (currentStep === 'datetime' && selectedDate && selectedTime && !clientData.name && !completedSteps.has('details')) {
+      console.log('Booking Flow: Auto-advancing from datetime to details (first time)');
       setTimeout(() => setCurrentStep('details'), 300);
     }
-  }, [selectedService, selectedDate, selectedTime, clientData.name, currentStep, isManualNavigation, isTransitioning]);
+  }, [selectedService, selectedDate, selectedTime, clientData.name, currentStep, isManualNavigation, isTransitioning, completedSteps, highestStepReached]);
 
   const handleStepTransition = (newStep: BookingStep, isManual = false) => {
     console.log(`Booking Flow: Transitioning to ${newStep}, manual: ${isManual}`);
