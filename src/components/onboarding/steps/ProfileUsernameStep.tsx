@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { StepNavigation } from '../StepNavigation';
 import { generateUsername, checkUsernameAvailability } from '@/utils/usernameUtils';
 import { OnboardingData } from '@/types/onboarding';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ProfileUsernameStepProps {
   data: OnboardingData;
@@ -24,6 +25,7 @@ export const ProfileUsernameStep = ({
   loading = false,
   validationErrors 
 }: ProfileUsernameStepProps) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     businessName: data.businessName || '',
     bio: data.bio || '',
@@ -70,7 +72,7 @@ export const ProfileUsernameStep = ({
 
     setIsChecking(true);
     try {
-      const available = await checkUsernameAvailability(usernameToCheck);
+      const available = await checkUsernameAvailability(usernameToCheck, user?.id);
       setIsAvailable(available);
     } catch (error) {
       console.error('Error checking username:', error);

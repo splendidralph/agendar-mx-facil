@@ -9,15 +9,21 @@ export const generateUsername = (businessName: string): string => {
     .slice(0, 30);
 };
 
-export const checkUsernameAvailability = async (username: string): Promise<boolean> => {
+export const checkUsernameAvailability = async (username: string, excludeUserId?: string): Promise<boolean> => {
   if (!username) return false;
 
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('providers')
-      .select('username')
-      .eq('username', username)
-      .single();
+      .select('username, user_id')
+      .eq('username', username);
+
+    // If excludeUserId is provided, exclude that user's record
+    if (excludeUserId) {
+      query = query.neq('user_id', excludeUserId);
+    }
+
+    const { data, error } = await query.single();
 
     if (error && error.code === 'PGRST116') {
       return true; // Username is available

@@ -47,7 +47,7 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
     try {
       // Check username availability if it changed
       if (formData.username !== provider.username && formData.username) {
-        const isAvailable = await checkUsernameAvailability(formData.username);
+        const isAvailable = await checkUsernameAvailability(formData.username, provider.user_id);
         if (!isAvailable) {
           toast.error('El username ya está en uso');
           setLoading(false);
