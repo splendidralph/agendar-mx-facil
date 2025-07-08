@@ -8,7 +8,7 @@ import { MessageCircle, MapPinIcon, CheckCircle, AlertCircle } from 'lucide-reac
 import { CustomPhoneInput } from '@/components/ui/phone-input';
 import { StepNavigation } from '../StepNavigation';
 import { OnboardingData } from '@/types/onboarding';
-import { validateInstagramHandle, validatePostalCode, sanitizeInput } from '@/utils/securityValidation';
+import { validateInstagramHandle, sanitizeInput } from '@/utils/securityValidation';
 import { toast } from 'sonner';
 import { useLocations } from '@/hooks/useLocations';
 import { City, Zone, Location } from '@/types/location';
@@ -33,8 +33,7 @@ export const ContactStep = ({
   const [formData, setFormData] = useState({
     address: data.address || '',
     instagramHandle: data.instagramHandle || '',
-    whatsappPhone: data.whatsappPhone || '',
-    postalCode: data.postalCode || ''
+    whatsappPhone: data.whatsappPhone || ''
   });
   
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
@@ -56,10 +55,9 @@ export const ContactStep = ({
     setFormData({
       address: data.address || '',
       instagramHandle: data.instagramHandle || '',
-      whatsappPhone: data.whatsappPhone || '',
-      postalCode: data.postalCode || ''
+      whatsappPhone: data.whatsappPhone || ''
     });
-  }, [data.address, data.instagramHandle, data.whatsappPhone, data.postalCode]);
+  }, [data.address, data.instagramHandle, data.whatsappPhone]);
 
   // Load zones when city is selected
   useEffect(() => {
@@ -109,21 +107,18 @@ export const ContactStep = ({
     loadLocations();
   }, [selectedZone?.id, getLocationsByZone]);
 
-  // Update postal code and onboarding data when location is selected
+  // Update onboarding data when location is selected
   useEffect(() => {
-    if (selectedLocation && selectedLocation.postal_code) {
-      const newFormData = { ...formData, postalCode: selectedLocation.postal_code };
-      setFormData(newFormData);
-      
-      // Update onboarding data with all location info
+    if (selectedLocation) {
+      // Update onboarding data with location info
       onUpdate({
-        ...newFormData,
+        ...formData,
         colonia: selectedLocation.colonia || '',
         city_id: selectedCity?.id,
         zone_id: selectedZone?.id
       });
     }
-  }, [selectedLocation]);
+  }, [selectedLocation, formData, selectedCity?.id, selectedZone?.id, onUpdate]);
 
   const validatePhoneNumber = (phoneValue?: string) => {
     if (!phoneValue) {
@@ -170,10 +165,8 @@ export const ContactStep = ({
     setSelectedLocation(null);
     
     // Clear location-related data
-    const newFormData = { ...formData, postalCode: '' };
-    setFormData(newFormData);
     onUpdate({
-      ...newFormData,
+      ...formData,
       colonia: '',
       city_id: city?.id,
       zone_id: undefined
@@ -186,10 +179,8 @@ export const ContactStep = ({
     setSelectedLocation(null);
     
     // Clear location-related data
-    const newFormData = { ...formData, postalCode: '' };
-    setFormData(newFormData);
     onUpdate({
-      ...newFormData,
+      ...formData,
       colonia: '',
       zone_id: zone?.id
     });
@@ -202,11 +193,6 @@ export const ContactStep = ({
 
   const handleNext = async () => {
     // Final validation before proceeding
-    if (formData.postalCode && !validatePostalCode(formData.postalCode)) {
-      toast.error('El código postal debe tener 5 dígitos');
-      return;
-    }
-    
     if (formData.instagramHandle && !validateInstagramHandle(formData.instagramHandle)) {
       toast.error('El formato del Instagram no es válido');
       return;
@@ -333,20 +319,6 @@ export const ContactStep = ({
               </Select>
             </div>
           )}
-          
-          <div>
-            <Label htmlFor="postalCode" className="text-blue-800 font-medium text-sm">
-              Código Postal
-            </Label>
-            <Input
-              id="postalCode"
-              value={formData.postalCode}
-              onChange={(e) => handleChange('postalCode', e.target.value)}
-              placeholder="Ej: 22150"
-              className="mt-2 border-blue-200 focus:border-blue-400"
-              disabled={!!selectedLocation}
-            />
-          </div>
         </CardContent>
       </Card>
 
