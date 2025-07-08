@@ -24,8 +24,7 @@ const Auth = () => {
   // Sign up form state
   const [signUpData, setSignUpData] = useState({
     email: '',
-    password: '',
-    fullName: ''
+    password: ''
   });
 
   // Sign in form state
@@ -145,8 +144,8 @@ const Auth = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!signUpData.email || !signUpData.password || !signUpData.fullName) {
-      console.error('All fields are required');
+    if (!signUpData.email || !signUpData.password) {
+      console.error('Email and password are required');
       return;
     }
 
@@ -156,8 +155,7 @@ const Auth = () => {
     try {
       const { error } = await signUp(
         signUpData.email.trim(), 
-        signUpData.password, 
-        signUpData.fullName.trim()
+        signUpData.password
       );
       
       console.log('Signup completed, error:', error);
@@ -165,8 +163,7 @@ const Auth = () => {
       if (!error) {
         setSignUpData({
           email: '',
-          password: '',
-          fullName: ''
+          password: ''
         });
       }
     } catch (err) {
@@ -441,19 +438,6 @@ const Auth = () => {
                   </div>
                   
                   <form onSubmit={handleSignUp} className="space-y-5">
-                    <div>
-                       <Label htmlFor="signup-name" className="text-white font-medium">Tu Nombre *</Label>
-                       <Input
-                         id="signup-name"
-                         type="text"
-                         value={signUpData.fullName}
-                         onChange={(e) => setSignUpData({ ...signUpData, fullName: e.target.value })}
-                         required
-                         disabled={isSubmitting}
-                           placeholder="¿Cómo te llamas?"
-                          className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
-                      />
-                    </div>
                     <div>
                       <Label htmlFor="signup-email" className="text-white font-medium">Email *</Label>
                       <Input

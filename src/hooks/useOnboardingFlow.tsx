@@ -169,19 +169,23 @@ export const useOnboardingFlow = () => {
           });
           break;
           
-        case 4: // Contact Info - Require phone, validate formats
+        case 4: // Contact & Location - Require phone and location data
           if (!data.whatsappPhone || !data.whatsappPhone.trim()) {
             errors.push({ field: 'whatsappPhone', message: 'El número de teléfono es requerido' });
           } else if (!/^\+?[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
             errors.push({ field: 'whatsappPhone', message: 'El formato del número de WhatsApp no es válido' });
           }
           
-          if (data.instagramHandle && data.instagramHandle.trim() && !/^[a-zA-Z0-9_.]{1,30}$/.test(data.instagramHandle.trim())) {
-            errors.push({ field: 'instagramHandle', message: 'El formato del Instagram no es válido' });
+          if (!data.city_id) {
+            errors.push({ field: 'city_id', message: 'Debes seleccionar una ciudad' });
           }
           
-          if (data.postalCode && data.postalCode.trim() && !/^\d{5}$/.test(data.postalCode.trim())) {
-            errors.push({ field: 'postalCode', message: 'El código postal debe tener 5 dígitos' });
+          if (!data.zone_id) {
+            errors.push({ field: 'zone_id', message: 'Debes seleccionar una zona' });
+          }
+          
+          if (!data.colonia || !data.colonia.trim()) {
+            errors.push({ field: 'colonia', message: 'Debes seleccionar una colonia' });
           }
           break;
       }

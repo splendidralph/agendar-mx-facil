@@ -26,7 +26,6 @@ export const UsernameStep = ({
 }: UsernameStepProps) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
-    bio: data.bio || '',
     username: data.username || ''
   });
 
@@ -37,10 +36,9 @@ export const UsernameStep = ({
 
   useEffect(() => {
     setFormData({
-      bio: data.bio || '',
       username: data.username || ''
     });
-  }, [data.bio, data.username]);
+  }, [data.username]);
 
   // Check username availability
   useEffect(() => {
@@ -69,11 +67,6 @@ export const UsernameStep = ({
     }
   };
 
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    const newData = { ...formData, [field]: value };
-    setFormData(newData);
-    onUpdate(newData);
-  };
 
   const handleUsernameChange = (value: string) => {
     const cleanUsername = value
@@ -130,7 +123,7 @@ export const UsernameStep = ({
     <div className="space-y-6">
       <div>
         <h3 className="text-xl font-bold text-foreground mb-6 font-poppins">
-          Crea tu perfil único
+          Tu Username Único
         </h3>
         
         {/* Username */}
@@ -178,24 +171,6 @@ export const UsernameStep = ({
               <p className="text-sm text-green-500">¡Username disponible!</p>
             )}
           </div>
-        </div>
-
-        {/* Bio */}
-        <div>
-          <Label htmlFor="bio" className="text-base font-medium">
-            Cuéntanos sobre ti (Opcional)
-          </Label>
-          <Textarea
-            id="bio"
-            value={formData.bio}
-            onChange={(e) => handleChange('bio', e.target.value)}
-            placeholder="Ej: Barbero con 5 años de experiencia, especialista en cortes modernos..."
-            className="mt-2"
-            rows={3}
-          />
-          <p className="text-sm text-muted-foreground mt-1">
-            Ayuda a los clientes a conocerte mejor
-          </p>
         </div>
       </div>
 

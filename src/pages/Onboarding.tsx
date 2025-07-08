@@ -7,7 +7,7 @@ import { OnboardingLayout } from '@/components/onboarding/OnboardingLayout';
 import { UsernameStep } from '@/components/onboarding/steps/UsernameStep';
 import { NameCategoryStep } from '@/components/onboarding/steps/NameCategoryStep';
 import { ServicesStep } from '@/components/onboarding/steps/ServicesStep';
-import { SimplifiedContactStep } from '@/components/onboarding/steps/SimplifiedContactStep';
+import { ContactLocationStep } from '@/components/onboarding/steps/ContactLocationStep';
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -43,10 +43,10 @@ const Onboarding = () => {
   if (!user) return null;
 
   const steps = [
-    'Username & Bio',
+    'Username',
     'Tu Nombre & Categoría',
     'Servicios',
-    'Contacto'
+    'Contacto & Ubicación'
   ];
 
   const renderStep = () => {
@@ -85,7 +85,7 @@ const Onboarding = () => {
         );
       case 4:
         return (
-          <SimplifiedContactStep 
+          <ContactLocationStep 
             data={data} 
             onUpdate={updateData} 
             onNext={completeOnboarding}
