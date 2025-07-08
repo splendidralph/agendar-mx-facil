@@ -263,25 +263,7 @@ const ModernFeaturesSection = () => {
             </h2>
             <p className="text-muted-on-dark text-xl md:text-2xl mb-12 leading-relaxed">
               Queremos digitalizar los servicios profesionales en México, colonia por colonia.
-              <span className="block mt-4 text-gradient-primary-light font-semibold">
-                Empezamos en Tijuana, pero vamos por mucho más.
-              </span>
             </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              <div className="card-white p-8 text-center transition-all duration-300">
-                <h3 className="text-xl font-bold text-gradient-accent mb-4">No somos una app más.</h3>
-                <p className="text-muted-foreground">Diseñados específicamente para profesionales locales</p>
-              </div>
-              <div className="card-white p-8 text-center transition-all duration-300">
-                <h3 className="text-xl font-bold text-gradient-accent mb-4">No somos un marketplace saturado.</h3>
-                <p className="text-muted-foreground">Tu propio espacio profesional sin competencia</p>
-              </div>
-              <div className="card-white p-8 text-center transition-all duration-300">
-                <h3 className="text-xl font-bold text-gradient-accent mb-4">Somos una herramienta</h3>
-                <p className="text-muted-foreground">Diseñada para quienes trabajan desde su comunidad</p>
-              </div>
-            </div>
 
             <div className="card-white p-8 md:p-10">
               <h3 className="text-2xl font-bold mb-4">
