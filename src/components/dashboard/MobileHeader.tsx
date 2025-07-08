@@ -57,6 +57,7 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
                 businessName={businessName}
                 onImageUpdate={onRefreshProvider || (() => {})}
                 size="sm"
+                showUploadButton
               />
             )}
             <div className="gradient-primary text-primary-foreground p-2 rounded-lg animate-glow">

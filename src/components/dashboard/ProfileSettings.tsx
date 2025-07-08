@@ -30,7 +30,7 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
     address: provider.address || '',
     instagram_handle: provider.instagram_handle || '',
     username: provider.username || '',
-    phone: provider.phone || ''
+    phone: provider.whatsapp_phone || ''
   });
 
   const categories = [
@@ -64,7 +64,7 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
           address: formData.address,
           instagram_handle: formData.instagram_handle,
           username: formData.username,
-          phone: formData.phone
+          whatsapp_phone: formData.phone
         })
         .eq('id', provider.id);
 
