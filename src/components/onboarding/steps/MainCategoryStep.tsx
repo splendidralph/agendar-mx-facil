@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { StepNavigation } from '../StepNavigation';
 import { OnboardingData } from '@/types/onboarding';
 import { MainCategory } from '@/types/category';
 import { useCategories } from '@/hooks/useCategories';
+import { toast } from 'sonner';
 
 interface MainCategoryStepProps {
   data: OnboardingData;
@@ -26,13 +26,23 @@ export const MainCategoryStep = ({
 }: MainCategoryStepProps) => {
   const { mainCategories, loading: categoriesLoading } = useCategories();
   const [selectedCategory, setSelectedCategory] = useState<MainCategory | undefined>(data.mainCategory);
+  const [isProgressing, setIsProgressing] = useState(false);
 
-  const handleCategorySelect = (category: MainCategory) => {
+  const handleCategorySelect = async (category: MainCategory) => {
     setSelectedCategory(category);
     onUpdate({ 
       mainCategory: category,
       subcategory: undefined // Reset subcategory when main category changes
     });
+
+    // Auto-progress after a brief delay for visual feedback
+    setIsProgressing(true);
+    toast.success(`${category.display_name} seleccionado`);
+    
+    setTimeout(async () => {
+      await onNext({ mainCategory: category });
+      setIsProgressing(false);
+    }, 800);
   };
 
   const handleNext = async () => {
@@ -70,17 +80,19 @@ export const MainCategoryStep = ({
         {mainCategories.map((category) => (
           <Card 
             key={category.id}
-            className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+            className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${
               selectedCategory?.id === category.id 
-                ? 'ring-2 ring-primary border-primary bg-primary/5' 
-                : 'border-border hover:border-primary/50'
-            }`}
-            onClick={() => handleCategorySelect(category)}
+                ? 'ring-2 ring-primary border-primary bg-primary/10 shadow-lg scale-[1.02]' 
+                : 'border-border hover:border-primary/70'
+            } ${isProgressing && selectedCategory?.id === category.id ? 'animate-pulse' : ''}`}
+            onClick={() => !isProgressing && handleCategorySelect(category)}
           >
             <CardContent className="p-6 text-center">
               <div className="mb-4">
                 {category.icon && (
-                  <div className="text-4xl mb-2">{category.icon}</div>
+                  <div className="text-4xl mb-2 transition-transform duration-200">
+                    {category.icon}
+                  </div>
                 )}
                 <h4 className="text-xl font-semibold text-foreground mb-2">
                   {category.display_name}
@@ -92,8 +104,8 @@ export const MainCategoryStep = ({
                 )}
               </div>
               {selectedCategory?.id === category.id && (
-                <Badge className="bg-primary text-primary-foreground">
-                  Seleccionado
+                <Badge className="bg-primary text-primary-foreground transition-all duration-200">
+                  {isProgressing ? 'Continuando...' : 'Seleccionado'}
                 </Badge>
               )}
             </CardContent>
@@ -104,9 +116,9 @@ export const MainCategoryStep = ({
       <StepNavigation
         onPrevious={onPrevious}
         onNext={handleNext}
-        canProceed={!!selectedCategory}
-        loading={loading}
-        nextLabel="Continuar"
+        canProceed={!!selectedCategory && !isProgressing}
+        loading={loading || isProgressing}
+        nextLabel={isProgressing ? "Continuando..." : "Continuar"}
       />
     </div>
   );

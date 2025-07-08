@@ -2,11 +2,9 @@ import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { StepNavigation } from '../StepNavigation';
-import { categories, categoryLabels } from '@/utils/serviceCategories';
 import { generateUsername, checkUsernameAvailability } from '@/utils/usernameUtils';
 import { OnboardingData } from '@/types/onboarding';
 
@@ -18,14 +16,6 @@ interface ProfileUsernameStepProps {
   validationErrors: Array<{ field: string; message: string }>;
 }
 
-const categoryDescriptions = {
-  corte_barberia: 'Cortes de cabello, barba, bigote y servicios de barbería tradicional',
-  unas: 'Manicure, pedicure, esmaltado, decoración y cuidado de uñas',
-  maquillaje_cejas: 'Maquillaje profesional, diseño de cejas, micropigmentación',
-  cuidado_facial: 'Tratamientos faciales, limpiezas, hidratación y cuidado de la piel',
-  masajes_relajacion: 'Masajes terapéuticos, relajantes y tratamientos corporales',
-  color_alisado: 'Coloración, mechas, alisados, tratamientos capilares'
-} as const;
 
 export const ProfileUsernameStep = ({ 
   data, 
@@ -36,7 +26,6 @@ export const ProfileUsernameStep = ({
 }: ProfileUsernameStepProps) => {
   const [formData, setFormData] = useState({
     businessName: data.businessName || '',
-    category: data.category || '',
     bio: data.bio || '',
     username: data.username || ''
   });
@@ -48,11 +37,10 @@ export const ProfileUsernameStep = ({
   useEffect(() => {
     setFormData({
       businessName: data.businessName || '',
-      category: data.category || '',
       bio: data.bio || '',
       username: data.username || ''
     });
-  }, [data.businessName, data.category, data.bio, data.username]);
+  }, [data.businessName, data.bio, data.username]);
 
   // Auto-generate username when business name changes
   useEffect(() => {
@@ -127,10 +115,6 @@ export const ProfileUsernameStep = ({
       toast.error('El nombre del negocio es requerido');
       return;
     }
-    if (!formData.category) {
-      toast.error('La categoría es requerida');
-      return;
-    }
     if (!formData.username || formData.username.length < 3) {
       toast.error('El username debe tener al menos 3 caracteres');
       return;
@@ -153,7 +137,6 @@ export const ProfileUsernameStep = ({
 
   const isValid = Boolean(
     formData.businessName.trim() && 
-    formData.category && 
     formData.username && 
     formData.username.length >= 3 && 
     isAvailable === true
@@ -186,37 +169,6 @@ export const ProfileUsernameStep = ({
           </p>
         </div>
 
-        {/* Category */}
-        <div className="mb-6">
-          <Label htmlFor="category" className="text-base font-medium">
-            Categoría del Servicio *
-          </Label>
-          <Select
-            value={formData.category}
-            onValueChange={(value) => handleChange('category', value)}
-          >
-            <SelectTrigger className={`mt-2 ${getFieldError('category') ? 'border-red-500' : ''}`}>
-              <SelectValue placeholder="Selecciona una categoría" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  <div className="flex flex-col py-1">
-                    <span className="font-medium">
-                      {categoryLabels[category as keyof typeof categoryLabels]}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {categoryDescriptions[category as keyof typeof categoryDescriptions]}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {getFieldError('category') && (
-            <p className="text-sm text-red-500 mt-1">{getFieldError('category')}</p>
-          )}
-        </div>
 
         {/* Username */}
         <div className="mb-6">
@@ -224,7 +176,7 @@ export const ProfileUsernameStep = ({
             Tu Username Único *
           </Label>
           <div className="relative mt-2">
-            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/70 text-sm font-medium">
               bookeasy.mx/@
             </span>
             <Input
