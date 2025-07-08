@@ -1,18 +1,12 @@
-# Welcome to your Lovable project
+# Bookeasy.mx - Professional Booking Platform
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/3e250bc1-17d8-49dc-94e0-f678e021e5a2
+Professional booking platform designed specifically for local service providers in Mexico.
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/3e250bc1-17d8-49dc-94e0-f678e021e5a2) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
@@ -62,12 +56,4 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/3e250bc1-17d8-49dc-94e0-f678e021e5a2) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project can be deployed using any standard Vite deployment method or through your preferred hosting provider.
