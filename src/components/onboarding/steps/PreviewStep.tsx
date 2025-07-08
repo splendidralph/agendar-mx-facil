@@ -43,9 +43,42 @@ export const PreviewStep = ({
           ¡Tu Perfil está Listo!
         </h3>
         <p className="text-muted-foreground mb-4">
-          Revisa cómo se verá tu perfil para los clientes
+          Revisa cómo se verá tu perfil para los clientes y completa la configuración
         </p>
       </div>
+
+      {/* Prominent Completion Section */}
+      <Card className="border-primary bg-primary/5 shadow-lg">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2 text-primary">
+            <Check className="h-5 w-5" />
+            ¡Último Paso!
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-foreground font-medium">
+            Tu perfil está configurado. Haz clic en "Finalizar Configuración" para completar el proceso y acceder a tu dashboard.
+          </p>
+          <Button 
+            onClick={handleComplete}
+            disabled={completing || loading}
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 text-lg"
+            size="lg"
+          >
+            {completing ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+                Finalizando...
+              </>
+            ) : (
+              <>
+                Finalizar Configuración
+                <Check className="h-5 w-5 ml-2" />
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Notification Setup Status */}
       <Card className={`${data.whatsappPhone ? 'border-green-200 bg-green-50' : 'border-amber-200 bg-amber-50'}`}>
@@ -90,27 +123,6 @@ export const PreviewStep = ({
               Puedes agregar WhatsApp después en tu dashboard para recibir notificaciones más rápidas.
             </p>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Link Preview */}
-      <Card className="border-primary/20 bg-primary/5">
-        <CardHeader>
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Link2 className="h-4 w-4" />
-            Tu Link de Reservas
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2 p-3 bg-background rounded-lg border">
-            <span className="font-mono text-sm flex-1 break-all">{bookingUrl}</span>
-            <Button onClick={copyLink} size="sm" variant="outline" className="flex-shrink-0">
-              Copiar
-            </Button>
-          </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            Comparte este link con tus clientes para que puedan hacer reservas
-          </p>
         </CardContent>
       </Card>
 
@@ -180,13 +192,38 @@ export const PreviewStep = ({
         </CardContent>
       </Card>
 
-      <StepNavigation
-        onPrevious={onPrevious}
-        onNext={handleComplete}
-        canProceed={!completing}
-        loading={completing || loading}
-        nextLabel="Finalizar Configuración"
-      />
+      {/* Link Preview - Less prominent, moved to bottom */}
+      <Card className="border-muted bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
+            <Link2 className="h-4 w-4" />
+            Tu Link de Reservas
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2 p-3 bg-background rounded-lg border">
+            <span className="font-mono text-sm flex-1 break-all">{bookingUrl}</span>
+            <Button onClick={copyLink} size="sm" variant="outline" className="flex-shrink-0">
+              Copiar
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Tu link estará activo después de finalizar la configuración
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Simple navigation at bottom */}
+      <div className="flex justify-start">
+        <Button
+          onClick={onPrevious}
+          variant="ghost"
+          className="text-muted-foreground"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Anterior
+        </Button>
+      </div>
     </div>
   );
 };
