@@ -153,7 +153,6 @@ const Index = () => {
             </h2>
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
               Crea tu perfil profesional y empieza a recibir reservas automáticamente
-              <span className="block mt-3 font-semibold text-xl md:text-2xl text-foreground">Totalmente gratis en la Fase 1 Beta</span>
             </p>
             <div className="flex justify-center">
               <Button 
