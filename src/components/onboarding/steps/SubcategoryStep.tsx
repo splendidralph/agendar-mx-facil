@@ -30,9 +30,18 @@ export const SubcategoryStep = ({
     ? getSubcategoriesByMainCategory(data.mainCategory.id)
     : [];
 
-  const handleSubcategorySelect = (subcategory: Subcategory) => {
+  const handleSubcategorySelect = async (subcategory: Subcategory) => {
     setSelectedSubcategory(subcategory);
     onUpdate({ subcategory });
+    
+    // Auto-advance to next step with delay for UX
+    setTimeout(async () => {
+      try {
+        await onNext({ subcategory });
+      } catch (error) {
+        console.error('Error auto-advancing from subcategory step:', error);
+      }
+    }, 800);
   };
 
   const handleNext = async () => {

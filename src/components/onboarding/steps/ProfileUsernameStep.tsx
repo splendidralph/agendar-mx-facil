@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { StepNavigation } from '../StepNavigation';
-import { generateUsername, checkUsernameAvailability } from '@/utils/usernameUtils';
+import { generateUniqueUsername, checkUsernameAvailability } from '@/utils/usernameUtils';
 import { OnboardingData } from '@/types/onboarding';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -35,6 +35,7 @@ export const ProfileUsernameStep = ({
   const [isChecking, setIsChecking] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [checkTimeout, setCheckTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isGeneratingUsername, setIsGeneratingUsername] = useState(false);
 
   useEffect(() => {
     setFormData({
@@ -46,14 +47,28 @@ export const ProfileUsernameStep = ({
 
   // Auto-generate username when business name changes
   useEffect(() => {
-    if (formData.businessName && !formData.username) {
-      const generated = generateUsername(formData.businessName);
-      const newData = { ...formData, username: generated };
-      setFormData(newData);
-      onUpdate(newData);
-      checkAvailability(generated);
+    if (formData.businessName && formData.businessName.length >= 2) {
+      generateUsernameFromBusiness(formData.businessName);
     }
   }, [formData.businessName]);
+
+  const generateUsernameFromBusiness = async (businessName: string) => {
+    if (!businessName.trim()) return;
+    
+    setIsGeneratingUsername(true);
+    try {
+      const uniqueUsername = await generateUniqueUsername(businessName, user?.id);
+      const newData = { ...formData, username: uniqueUsername };
+      setFormData(newData);
+      onUpdate(newData);
+      setIsAvailable(true); // We know it's available since generateUniqueUsername returns an available one
+    } catch (error) {
+      console.error('Error generating unique username:', error);
+      toast.error('Error generando username único');
+    } finally {
+      setIsGeneratingUsername(false);
+    }
+  };
 
   // Check username availability
   useEffect(() => {
@@ -189,9 +204,9 @@ export const ProfileUsernameStep = ({
               className={`pl-32 ${getFieldError('username') ? 'border-red-500' : ''}`}
             />
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              {isChecking && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
-              {!isChecking && isAvailable === true && <Check className="h-4 w-4 text-green-500" />}
-              {!isChecking && isAvailable === false && <X className="h-4 w-4 text-red-500" />}
+              {(isChecking || isGeneratingUsername) && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+              {!isChecking && !isGeneratingUsername && isAvailable === true && <Check className="h-4 w-4 text-green-500" />}
+              {!isChecking && !isGeneratingUsername && isAvailable === false && <X className="h-4 w-4 text-red-500" />}
             </div>
           </div>
           
@@ -240,8 +255,8 @@ export const ProfileUsernameStep = ({
       <StepNavigation
         onNext={handleNext}
         canGoBack={false}
-        canProceed={isValid && !isChecking}
-        loading={loading || isChecking}
+        canProceed={isValid && !isChecking && !isGeneratingUsername}
+        loading={loading || isChecking || isGeneratingUsername}
       />
     </div>
   );
