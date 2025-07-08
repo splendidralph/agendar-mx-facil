@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -36,6 +36,9 @@ export const ProfileUsernameStep = ({
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [checkTimeout, setCheckTimeout] = useState<NodeJS.Timeout | null>(null);
   const [isGeneratingUsername, setIsGeneratingUsername] = useState(false);
+  const [usernameManuallyEdited, setUsernameManuallyEdited] = useState(false);
+  const [generationTimeout, setGenerationTimeout] = useState<NodeJS.Timeout | null>(null);
+  const usernameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setFormData({
@@ -45,23 +48,50 @@ export const ProfileUsernameStep = ({
     });
   }, [data.businessName, data.bio, data.username]);
 
-  // Auto-generate username when business name changes
+  // Auto-generate username when business name changes (with proper debouncing)
   useEffect(() => {
-    if (formData.businessName && formData.businessName.length >= 2) {
-      generateUsernameFromBusiness(formData.businessName);
+    // Clear previous timeout
+    if (generationTimeout) {
+      clearTimeout(generationTimeout);
     }
-  }, [formData.businessName]);
+
+    // Only auto-generate if:
+    // 1. Business name is meaningful (>= 3 chars)
+    // 2. Username hasn't been manually edited
+    // 3. Username input is not currently focused
+    if (formData.businessName && 
+        formData.businessName.length >= 3 && 
+        !usernameManuallyEdited &&
+        document.activeElement !== usernameInputRef.current) {
+      
+      const timeout = setTimeout(() => {
+        generateUsernameFromBusiness(formData.businessName);
+      }, 500); // 500ms debounce
+      
+      setGenerationTimeout(timeout);
+    }
+
+    return () => {
+      if (generationTimeout) {
+        clearTimeout(generationTimeout);
+      }
+    };
+  }, [formData.businessName, usernameManuallyEdited]);
 
   const generateUsernameFromBusiness = async (businessName: string) => {
-    if (!businessName.trim()) return;
+    if (!businessName.trim() || usernameManuallyEdited) return;
     
     setIsGeneratingUsername(true);
     try {
       const uniqueUsername = await generateUniqueUsername(businessName, user?.id);
-      const newData = { ...formData, username: uniqueUsername };
-      setFormData(newData);
-      onUpdate(newData);
-      setIsAvailable(true); // We know it's available since generateUniqueUsername returns an available one
+      
+      // Only update if username hasn't been manually edited in the meantime
+      if (!usernameManuallyEdited) {
+        const newData = { ...formData, username: uniqueUsername };
+        setFormData(newData);
+        onUpdate(newData);
+        setIsAvailable(true); // We know it's available since generateUniqueUsername returns an available one
+      }
     } catch (error) {
       console.error('Error generating unique username:', error);
       toast.error('Error generando username único');
@@ -108,6 +138,11 @@ export const ProfileUsernameStep = ({
       .toLowerCase()
       .replace(/[^a-z0-9-]/g, '')
       .slice(0, 30);
+    
+    // Mark as manually edited if user is actually typing
+    if (cleanUsername !== formData.username) {
+      setUsernameManuallyEdited(true);
+    }
     
     const newData = { ...formData, username: cleanUsername };
     setFormData(newData);
@@ -197,6 +232,7 @@ export const ProfileUsernameStep = ({
               bookeasy.mx/
             </span>
             <Input
+              ref={usernameInputRef}
               id="username"
               value={formData.username}
               onChange={(e) => handleUsernameChange(e.target.value)}
