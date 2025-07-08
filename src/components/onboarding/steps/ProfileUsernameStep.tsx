@@ -195,7 +195,7 @@ export const ProfileUsernameStep = ({
           
           <div className="mt-2 space-y-1">
             <p className="text-sm text-muted-foreground">
-              Este será tu link personalizado: <span className="font-mono">bookeasy.mx/{formData.username || 'tu-username'}</span>
+              Tu link personalizado será: <span className="font-mono">bookeasy.mx/{formData.username || 'tu-username'}</span>
             </p>
             
             {getFieldError('username') && (
