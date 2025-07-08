@@ -222,9 +222,6 @@ export const ContactStep = ({
               Importante
             </Badge>
           </CardTitle>
-          <CardDescription className="text-blue-700 text-sm">
-            Selecciona tu ubicación para que los clientes te encuentren
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
