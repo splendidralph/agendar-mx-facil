@@ -17,7 +17,7 @@ export const validateEmail = (email: string): boolean => {
 };
 
 export const validatePhoneNumber = (phone: string): boolean => {
-  // Require international format with country code (must start with +)
+  // REQUIRE international format with country code (must start with +)
   const phoneRegex = /^\+[1-9]\d{1,14}$/;
   return phoneRegex.test(phone);
 };
@@ -28,12 +28,12 @@ export const validatePhoneNumberWithCountryCode = (phone: string): { isValid: bo
   }
   
   if (!phone.startsWith('+')) {
-    return { isValid: false, error: 'Phone number must include country code (e.g., +52, +1)' };
+    return { isValid: false, error: 'Phone number must include country code (e.g., +52 for Mexico, +1 for US/Canada)' };
   }
   
   const phoneRegex = /^\+[1-9]\d{1,14}$/;
   if (!phoneRegex.test(phone)) {
-    return { isValid: false, error: 'Invalid phone number format' };
+    return { isValid: false, error: 'Invalid international phone number format. Must start with + followed by country code and number' };
   }
   
   return { isValid: true };

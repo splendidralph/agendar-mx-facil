@@ -178,8 +178,8 @@ export const useOnboardingFlow = () => {
         case 4: // Contact & Location - Require phone and location data
           if (!data.whatsappPhone || !data.whatsappPhone.trim()) {
             errors.push({ field: 'whatsappPhone', message: 'El número de teléfono es requerido' });
-          } else if (!/^\+?[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
-            errors.push({ field: 'whatsappPhone', message: 'El formato del número de WhatsApp no es válido' });
+          } else if (!/^\+[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
+            errors.push({ field: 'whatsappPhone', message: 'El número debe incluir código de país (ej. +52 para México, +1 para EE.UU.)' });
           }
           
           if (!data.city_id) {

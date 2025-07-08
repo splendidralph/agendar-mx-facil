@@ -58,8 +58,8 @@ export const validateStep = (step: number, data: OnboardingData): boolean => {
         
       case 3:
         // Step 3: Contact Info - Optional fields with format validation
-        if (data.whatsappPhone && data.whatsappPhone.trim() && !/^\+?[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
-          toast.error('El formato del número de WhatsApp no es válido');
+        if (data.whatsappPhone && data.whatsappPhone.trim() && !/^\+[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
+          toast.error('El número de WhatsApp debe incluir código de país (ej. +52 para México, +1 para EE.UU.)');
           return false;
         }
         if (data.postalCode && data.postalCode.trim() && !/^\d{5}$/.test(data.postalCode.trim())) {

@@ -100,7 +100,7 @@ const ClientDetailsStep = ({
               />
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Incluye el código de país (ej. +52 para México, +1 para EE.UU.)
+              <strong>Requerido:</strong> Incluye el código de país (ej. +52 para México, +1 para EE.UU./Canadá)
             </p>
           </div>
         </div>
