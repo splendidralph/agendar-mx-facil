@@ -305,14 +305,7 @@ export const ContactStep = ({
                 <SelectContent className="z-50 bg-white border border-border shadow-lg">
                   {locations.map((location) => (
                     <SelectItem key={location.id} value={location.colonia || ''}>
-                      <div className="flex justify-between items-center w-full">
-                        <span>{location.colonia}</span>
-                        {location.professional_count && location.professional_count > 0 && (
-                          <Badge variant="secondary" className="ml-2 text-xs">
-                            {location.professional_count} pros
-                          </Badge>
-                        )}
-                      </div>
+                      {location.colonia}
                     </SelectItem>
                   ))}
                 </SelectContent>
