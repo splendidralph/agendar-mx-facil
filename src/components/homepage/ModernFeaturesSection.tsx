@@ -253,43 +253,6 @@ const ModernFeaturesSection = () => {
         </div>
       </section>
 
-      {/* Lanzamiento Beta */}
-      <section className="py-20 md:py-28 px-4 section-light">
-        <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-8 bg-primary text-primary-foreground px-6 py-3 rounded-full text-base font-semibold border-2 border-primary/20">
-              Lanzamiento Beta: Tijuana
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8">
-              <span className="text-gradient-primary">Actualmente estamos activando</span> Bookeasy únicamente en estas colonias:
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              <div className="solid-card-primary p-6">
-                <h3 className="text-xl font-bold text-gradient-primary">Tijuana</h3>
-              </div>
-              <div className="solid-card-primary p-6">
-                <h3 className="text-xl font-bold text-gradient-primary">Rosarito</h3>
-              </div>
-              <div className="solid-card-primary p-6">
-                <h3 className="text-xl font-bold text-gradient-primary">Tecate</h3>
-              </div>
-            </div>
-
-            <p className="text-muted-foreground text-xl leading-relaxed mb-8">
-              Si trabajas o vives en una de estas ciudades, puedes crear tu cuenta y formar parte del grupo 
-              que dará forma al futuro de los servicios locales en México.
-            </p>
-
-            <Button 
-              size="lg" 
-              className="accent-gradient text-white hover:opacity-90 text-lg font-semibold px-10 py-5 h-auto rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              Crear Mi Perfil – Gratis
-            </Button>
-          </div>
-        </div>
-      </section>
 
       {/* Nuestra Visión */}
       <section className="py-20 md:py-28 px-4 section-dark">
