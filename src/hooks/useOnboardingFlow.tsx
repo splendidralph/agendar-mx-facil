@@ -119,33 +119,35 @@ export const useOnboardingFlow = () => {
     loadExistingData();
   }, [user?.id]);
 
-  // Validate step data - aligned with new 6-step order
+  // Validate step data - aligned with new 4-step order
   const validateStep = useCallback((step: number, data: OnboardingData): ValidationError[] => {
     const errors: ValidationError[] = [];
     
     try {
       switch (step) {
-        case 1: // Profile & Business Info - Allow partial data during onboarding
-          if (data.businessName && data.businessName.trim()) {
-            if (data.businessName.length < 2 || data.businessName.length > 100) {
-              errors.push({ field: 'businessName', message: 'El nombre del negocio debe tener entre 2 y 100 caracteres' });
-            }
+        case 1: // Username & Bio - Require username
+          if (!data.username || !data.username.trim()) {
+            errors.push({ field: 'username', message: 'El nombre de usuario es requerido' });
+          } else if (data.username.length < 3 || data.username.length > 30) {
+            errors.push({ field: 'username', message: 'El nombre de usuario debe tener entre 3 y 30 caracteres' });
+          } else if (!/^[a-zA-Z0-9_-]+$/.test(data.username)) {
+            errors.push({ field: 'username', message: 'El nombre de usuario solo puede contener letras, números, guiones y guiones bajos' });
           }
           break;
           
-        case 2: // Main Category Selection - Require main category
+        case 2: // Name & Category - Require both
+          if (!data.businessName || !data.businessName.trim()) {
+            errors.push({ field: 'businessName', message: 'Tu nombre es requerido' });
+          } else if (data.businessName.length < 2 || data.businessName.length > 100) {
+            errors.push({ field: 'businessName', message: 'Tu nombre debe tener entre 2 y 100 caracteres' });
+          }
+          
           if (!data.mainCategory) {
             errors.push({ field: 'mainCategory', message: 'Debes seleccionar una categoría principal' });
           }
           break;
           
-        case 3: // Subcategory Selection - Require subcategory
-          if (!data.subcategory) {
-            errors.push({ field: 'subcategory', message: 'Debes seleccionar una especialidad' });
-          }
-          break;
-          
-        case 4: // Services - Require at least one valid service
+        case 3: // Services - Require at least one valid service
           const validServices = data.services.filter(s => s.name?.trim() && s.price > 0);
           if (validServices.length === 0) {
             errors.push({ field: 'services', message: 'Debes agregar al menos un servicio válido' });
@@ -167,37 +169,19 @@ export const useOnboardingFlow = () => {
           });
           break;
           
-        case 5: // Contact Info - Optional fields with format validation
-          if (data.whatsappPhone && data.whatsappPhone.trim() && !/^\+?[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
+        case 4: // Contact Info - Require phone, validate formats
+          if (!data.whatsappPhone || !data.whatsappPhone.trim()) {
+            errors.push({ field: 'whatsappPhone', message: 'El número de teléfono es requerido' });
+          } else if (!/^\+?[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
             errors.push({ field: 'whatsappPhone', message: 'El formato del número de WhatsApp no es válido' });
           }
+          
           if (data.instagramHandle && data.instagramHandle.trim() && !/^[a-zA-Z0-9_.]{1,30}$/.test(data.instagramHandle.trim())) {
             errors.push({ field: 'instagramHandle', message: 'El formato del Instagram no es válido' });
           }
+          
           if (data.postalCode && data.postalCode.trim() && !/^\d{5}$/.test(data.postalCode.trim())) {
             errors.push({ field: 'postalCode', message: 'El código postal debe tener 5 dígitos' });
-          }
-          break;
-          
-        case 6: // Preview - Final validation before completion
-          if (!data.businessName || !data.businessName.trim()) {
-            errors.push({ field: 'businessName', message: 'El nombre del negocio es requerido para completar el perfil' });
-          }
-          if (!data.mainCategory) {
-            errors.push({ field: 'mainCategory', message: 'La categoría principal es requerida para completar el perfil' });
-          }
-          if (!data.subcategory) {
-            errors.push({ field: 'subcategory', message: 'La especialidad es requerida para completar el perfil' });
-          }
-          if (!data.username || !data.username.trim()) {
-            errors.push({ field: 'username', message: 'El nombre de usuario es requerido para completar el perfil' });
-          } else if (data.username.length < 3 || data.username.length > 30) {
-            errors.push({ field: 'username', message: 'El nombre de usuario debe tener entre 3 y 30 caracteres' });
-          } else if (!/^[a-zA-Z0-9_-]+$/.test(data.username)) {
-            errors.push({ field: 'username', message: 'El nombre de usuario solo puede contener letras, números, guiones y guiones bajos' });
-          }
-          if (!data.services || data.services.length === 0) {
-            errors.push({ field: 'services', message: 'Debes agregar al menos un servicio para completar el perfil' });
           }
           break;
       }
@@ -290,8 +274,8 @@ export const useOnboardingFlow = () => {
         return false;
       }
 
-      // Save services if we're on step 4 or later
-      if (state.currentStep >= 4 && finalData.services.length > 0 && providerId) {
+      // Save services if we're on step 3 or later
+      if (state.currentStep >= 3 && finalData.services.length > 0 && providerId) {
         try {
           await saveServices(providerId, finalData.services);
           console.log('nextStep: Services saved successfully');
@@ -304,7 +288,7 @@ export const useOnboardingFlow = () => {
       }
 
       // Move to next step
-      if (state.currentStep < 6) {
+      if (state.currentStep < 4) {
         const nextStepNumber = state.currentStep + 1;
         setState(prev => ({
           ...prev,

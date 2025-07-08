@@ -442,15 +442,15 @@ const Auth = () => {
                   
                   <form onSubmit={handleSignUp} className="space-y-5">
                     <div>
-                      <Label htmlFor="signup-name" className="text-white font-medium">Nombre Completo *</Label>
-                      <Input
-                        id="signup-name"
-                        type="text"
-                        value={signUpData.fullName}
-                        onChange={(e) => setSignUpData({ ...signUpData, fullName: e.target.value })}
-                        required
-                        disabled={isSubmitting}
-                          placeholder="Tu nombre completo"
+                       <Label htmlFor="signup-name" className="text-white font-medium">Tu Nombre *</Label>
+                       <Input
+                         id="signup-name"
+                         type="text"
+                         value={signUpData.fullName}
+                         onChange={(e) => setSignUpData({ ...signUpData, fullName: e.target.value })}
+                         required
+                         disabled={isSubmitting}
+                           placeholder="¿Cómo te llamas?"
                           className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                       />
                     </div>

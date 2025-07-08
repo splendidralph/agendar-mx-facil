@@ -4,12 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useOnboardingFlow } from '@/hooks/useOnboardingFlow';
 import { OnboardingLayout } from '@/components/onboarding/OnboardingLayout';
-import { ProfileUsernameStep } from '@/components/onboarding/steps/ProfileUsernameStep';
-import { MainCategoryStep } from '@/components/onboarding/steps/MainCategoryStep';
-import { SubcategoryStep } from '@/components/onboarding/steps/SubcategoryStep';
+import { UsernameStep } from '@/components/onboarding/steps/UsernameStep';
+import { NameCategoryStep } from '@/components/onboarding/steps/NameCategoryStep';
 import { ServicesStep } from '@/components/onboarding/steps/ServicesStep';
-import { ContactStep } from '@/components/onboarding/steps/ContactStep';
-import { PreviewStep } from '@/components/onboarding/steps/PreviewStep';
+import { SimplifiedContactStep } from '@/components/onboarding/steps/SimplifiedContactStep';
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -45,19 +43,17 @@ const Onboarding = () => {
   if (!user) return null;
 
   const steps = [
-    'Perfil & Username',
-    'Categoría Principal',
-    'Especialidad',
+    'Username & Bio',
+    'Tu Nombre & Categoría',
     'Servicios',
-    'Contacto',
-    'Vista Previa'
+    'Contacto'
   ];
 
   const renderStep = () => {
     switch (currentStep) {
       case 1:
         return (
-          <ProfileUsernameStep 
+          <UsernameStep 
             data={data} 
             onUpdate={updateData} 
             onNext={nextStep} 
@@ -67,7 +63,7 @@ const Onboarding = () => {
         );
       case 2:
         return (
-          <MainCategoryStep 
+          <NameCategoryStep 
             data={data} 
             onUpdate={updateData} 
             onNext={nextStep} 
@@ -78,7 +74,7 @@ const Onboarding = () => {
         );
       case 3:
         return (
-          <SubcategoryStep 
+          <ServicesStep 
             data={data} 
             onUpdate={updateData} 
             onNext={nextStep} 
@@ -89,37 +85,17 @@ const Onboarding = () => {
         );
       case 4:
         return (
-          <ServicesStep 
+          <SimplifiedContactStep 
             data={data} 
             onUpdate={updateData} 
-            onNext={nextStep} 
+            onNext={completeOnboarding}
             onPrevious={prevStep}
-            loading={loading}
-            validationErrors={validationErrors}
-          />
-        );
-      case 5:
-        return (
-          <ContactStep 
-            data={data} 
-            onUpdate={updateData} 
-            onNext={nextStep} 
-            onPrevious={prevStep}
-            loading={loading}
-          />
-        );
-      case 6:
-        return (
-          <PreviewStep 
-            data={data} 
-            onPrevious={prevStep}
-            onComplete={completeOnboarding}
             loading={loading}
           />
         );
       default:
         return (
-          <ProfileUsernameStep 
+          <UsernameStep 
             data={data} 
             onUpdate={updateData} 
             onNext={nextStep} 
