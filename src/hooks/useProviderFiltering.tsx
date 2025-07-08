@@ -46,7 +46,7 @@ export const useProviderFiltering = (locationFilter?: LocationFilter) => {
         return;
       }
 
-      // Filter and sort providers based on location
+      // Filter and sort providers based on location (optional)
       const processedProviders = providersData
         .filter(provider => provider.services && provider.services.length > 0)
         .map(provider => {
@@ -61,11 +61,17 @@ export const useProviderFiltering = (locationFilter?: LocationFilter) => {
           };
         })
         .sort((a, b) => {
-          // Local providers first
-          if (a.isLocal && !b.isLocal) return -1;
-          if (!a.isLocal && b.isLocal) return 1;
-          // Then by distance
-          return (a.distance || 0) - (b.distance || 0);
+          // If location filter is provided, sort by proximity
+          if (locationFilter) {
+            if (a.isLocal && !b.isLocal) return -1;
+            if (!a.isLocal && b.isLocal) return 1;
+            return (a.distance || 0) - (b.distance || 0);
+          }
+          // Default sort by rating and total reviews
+          if (a.rating !== b.rating) {
+            return (b.rating || 0) - (a.rating || 0);
+          }
+          return (b.total_reviews || 0) - (a.total_reviews || 0);
         });
 
       setProviders(processedProviders);
