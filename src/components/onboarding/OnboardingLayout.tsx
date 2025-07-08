@@ -40,17 +40,17 @@ export const OnboardingLayout = ({
   return (
     <div className="min-h-screen gradient-hero">
       {/* Header */}
-      <header className="bg-white/25 backdrop-blur-xl border-b border-white/40 sticky top-0 z-50 shadow-xl">
+      <header className="bg-white border-b border-border sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <button 
               onClick={() => window.location.href = '/'}
               className="flex items-center space-x-4 hover:opacity-80 transition-opacity cursor-pointer"
             >
-              <div className="bg-white/60 backdrop-blur-md text-white p-3 rounded-2xl shadow-xl border-2 border-white/40">
+              <div className="bg-primary text-white p-3 rounded-2xl shadow-lg border-2 border-primary/20">
                 <Calendar className="h-7 w-7 drop-shadow-sm" />
               </div>
-              <span className="text-3xl font-bold text-white font-poppins tracking-tight drop-shadow-sm">Bookeasy.mx</span>
+              <span className="text-3xl font-bold text-foreground font-poppins tracking-tight">Bookeasy.mx</span>
             </button>
             
             <div className="flex items-center space-x-2">
@@ -60,7 +60,7 @@ export const OnboardingLayout = ({
                   onClick={onGoBack}
                   variant="ghost"
                   size="sm"
-                  className="md:hidden text-white hover:bg-white/20"
+                  className="md:hidden text-foreground hover:bg-secondary"
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
@@ -78,7 +78,7 @@ export const OnboardingLayout = ({
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 font-poppins">
                 {t('onboarding.title')}
               </h1>
-              <p className="text-white/80 text-lg mb-6">
+              <p className="text-white text-lg mb-6">
                 {t('onboarding.step', { current: currentStep.toString(), total: totalSteps.toString(), title: stepTitle })}
               </p>
             </div>
@@ -88,9 +88,8 @@ export const OnboardingLayout = ({
               <div className="relative">
                 <Progress 
                   value={progressPercentage} 
-                  className="h-3 md:h-4 bg-white/20 border-0 shadow-lg" 
+                  className="h-3 md:h-4 bg-white border-0 shadow-lg" 
                 />
-                <div className="absolute top-0 left-0 right-0 h-full gradient-accent rounded-full opacity-20" />
               </div>
               
               {/* Enhanced Step indicators - hidden on mobile, shown on desktop */}
@@ -108,7 +107,7 @@ export const OnboardingLayout = ({
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 smooth-transition ${
                         index + 1 <= currentStep
                           ? 'bg-white text-primary border-white shadow-lg scale-110'
-                          : 'bg-white/20 text-white/80 border-white/40'
+                          : 'bg-secondary text-muted-foreground border-border'
                       }`}
                     >
                       {index + 1}
@@ -127,7 +126,7 @@ export const OnboardingLayout = ({
                       className={`w-3 h-3 rounded-full smooth-transition ${
                         index + 1 <= currentStep
                           ? 'bg-white shadow-lg scale-125'
-                          : 'bg-white/30'
+                          : 'bg-secondary'
                       }`}
                     />
                   ))}

@@ -176,8 +176,8 @@ export const ProfileUsernameStep = ({
             Tu Username Único *
           </Label>
           <div className="relative mt-2">
-            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/70 text-sm font-medium">
-              bookeasy.mx/@
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground text-sm font-medium">
+              bookeasy.mx/
             </span>
             <Input
               id="username"
