@@ -33,7 +33,7 @@ export const ServicesStep = ({
           price: 0, 
           duration: 30, 
           description: '', 
-          category: 'corte_barberia' as ServiceCategory,
+          category: 'other' as ServiceCategory,
           mainCategoryId: data.mainCategory?.id,
           subcategoryId: data.subcategory?.id
         }]
@@ -45,7 +45,7 @@ export const ServicesStep = ({
       price: 0, 
       duration: 30, 
       description: '', 
-      category: 'corte_barberia' as ServiceCategory,
+      category: 'other' as ServiceCategory,
       mainCategoryId: data.mainCategory?.id,
       subcategoryId: data.subcategory?.id
     };

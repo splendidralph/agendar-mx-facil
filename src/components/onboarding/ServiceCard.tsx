@@ -6,8 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trash2 } from 'lucide-react';
-import { Service, ServiceCategory } from '@/types/service';
-import { categories, categoryLabels } from '@/utils/serviceCategories';
+import { Service } from '@/types/service';
 
 interface ServiceCardProps {
   service: Service;
@@ -36,35 +35,15 @@ const ServiceCard = ({ service, index, canRemove, onUpdate, onRemove }: ServiceC
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor={`service-name-${index}`}>Nombre del Servicio *</Label>
-            <Input
-              id={`service-name-${index}`}
-              value={service.name}
-              onChange={(e) => onUpdate(index, 'name', e.target.value)}
-              placeholder="Ej: Corte de cabello clásico"
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label htmlFor={`service-category-${index}`}>Categoría</Label>
-            <Select
-              value={service.category}
-              onValueChange={(value: ServiceCategory) => onUpdate(index, 'category', value)}
-            >
-              <SelectTrigger className="mt-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {categoryLabels[category]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <div>
+          <Label htmlFor={`service-name-${index}`}>Nombre del Servicio *</Label>
+          <Input
+            id={`service-name-${index}`}
+            value={service.name}
+            onChange={(e) => onUpdate(index, 'name', e.target.value)}
+            placeholder="Ej: Corte de cabello clásico"
+            className="mt-1"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

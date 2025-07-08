@@ -312,8 +312,6 @@ export const useOnboardingFlow = () => {
           data: { ...prev.data, step: nextStepNumber, ...additionalData },
           saving: false
         }));
-        
-        toast.success('Datos guardados correctamente');
       } else {
         setState(prev => ({ ...prev, saving: false }));
       }
