@@ -137,7 +137,7 @@ export const OnboardingLayout = ({
           </div>
 
           {/* Enhanced Step Content */}
-          <Card className="glassmorphism shadow-2xl border-white/20 backdrop-blur-lg">
+          <Card className="bg-white shadow-lg border border-border/20">
             <CardHeader className="pb-6">
               <CardTitle className="text-center text-foreground text-xl md:text-2xl font-poppins font-bold">
                 {stepTitle}

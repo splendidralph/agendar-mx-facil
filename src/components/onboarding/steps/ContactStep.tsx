@@ -211,7 +211,7 @@ export const ContactStep = ({
   return (
     <div className="space-y-6">
       {/* Location Selection Card */}
-      <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50">
+      <Card className="border-blue-200 bg-blue-50">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-blue-800 text-base">
             <div className="p-2 bg-blue-500 rounded-lg">
@@ -316,7 +316,7 @@ export const ContactStep = ({
       </Card>
 
       {/* WhatsApp Benefits Card */}
-      <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+      <Card className="border-green-200 bg-green-50">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-green-800 text-base">
             <div className="p-2 bg-green-500 rounded-lg">
