@@ -124,7 +124,7 @@ export const UsernameStep = ({
         
         <div className="mt-2 space-y-1">
           <p className="text-sm text-muted-foreground">
-            Este será tu link personalizado: <span className="font-mono">bookeasy.mx/@{data.username || 'tu-username'}</span>
+            Este será tu link personalizado: <span className="font-mono">bookeasy.mx/{data.username || 'tu-username'}</span>
           </p>
           
           {getFieldError('username') && (

@@ -140,7 +140,7 @@ const UsernameStep = () => {
         
         <div className="mt-2 space-y-1">
           <p className="text-sm text-muted-foreground">
-            Este será tu link personalizado: <span className="font-mono">bookeasy.mx/@{data.username || 'tu-username'}</span>
+            Este será tu link personalizado: <span className="font-mono">bookeasy.mx/{data.username || 'tu-username'}</span>
           </p>
           
           {data.username && data.username.length > 0 && data.username.length < 3 && (

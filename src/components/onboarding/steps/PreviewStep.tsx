@@ -23,7 +23,7 @@ export const PreviewStep = ({
 }: PreviewStepProps) => {
   const [completing, setCompleting] = useState(false);
 
-  const bookingUrl = `https://bookeasy.mx/@${data.username}`;
+  const bookingUrl = `https://bookeasy.mx/${data.username}`;
 
   const copyLink = () => {
     navigator.clipboard.writeText(bookingUrl);
