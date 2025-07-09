@@ -89,11 +89,9 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
     let providerId = existingProvider?.id;
 
     // Prepare provider data - allow null values during onboarding
-    // Populate legacy category field from new category system for backward compatibility
+    // Populate legacy category field from main category only (no subcategory)
     let categoryName = null;
-    if (data.subcategory?.display_name) {
-      categoryName = data.subcategory.display_name;
-    } else if (data.mainCategory?.display_name) {
+    if (data.mainCategory?.display_name) {
       categoryName = data.mainCategory.display_name;
     } else if (data.category?.trim()) {
       categoryName = data.category.trim();
@@ -130,7 +128,7 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
     business_name: data.businessName?.trim() || null, // Allow null during onboarding
     category: categoryName, // Keep for backward compatibility
     main_category_id: sanitizeUUID(data.mainCategory?.id),
-    subcategory_id: sanitizeUUID(data.subcategory?.id),
+    subcategory_id: null, // No subcategory in 4-step flow
     bio: data.bio?.trim() || null,
     address: data.address?.trim() || null,
     whatsapp_phone: sanitizePhone(data.whatsappPhone),
@@ -252,7 +250,7 @@ export const saveServices = async (
       .delete()
       .eq('provider_id', providerId);
 
-    // Insert new services with proper typing and enhanced category linking
+    // Insert new services with main category only (no subcategory)
     const servicesToInsert = services.map(service => ({
       provider_id: providerId,
       name: service.name,
@@ -261,7 +259,7 @@ export const saveServices = async (
       description: service.description,
       category: service.category as ServiceCategory, // Keep for backward compatibility
       main_category_id: service.mainCategoryId || categoryData?.mainCategoryId || null,
-      subcategory_id: service.subcategoryId || categoryData?.subcategoryId || null,
+      subcategory_id: null, // No subcategory in 4-step flow
       is_active: true
     }));
 
@@ -312,8 +310,7 @@ export const completeProviderOnboarding = async (userId: string) => {
         whatsapp_phone,
         city_id,
         zone_id,
-        main_categories:main_category_id(display_name),
-        subcategories:subcategory_id(display_name)
+        main_categories:main_category_id(display_name)
       `)
       .eq('user_id', userId)
       .single();
@@ -330,18 +327,13 @@ export const completeProviderOnboarding = async (userId: string) => {
       whatsapp_phone: provider.whatsapp_phone ? '***HIDDEN***' : 'null',
       city_id: provider.city_id,
       zone_id: provider.zone_id,
-      has_main_category: !!provider.main_categories,
-      has_subcategory: !!provider.subcategories
+      has_main_category: !!provider.main_categories
     });
 
     // Ensure category field is populated for validation
     let categoryToUpdate = provider.category;
-    if (!categoryToUpdate) {
-      if (provider.subcategories?.display_name) {
-        categoryToUpdate = provider.subcategories.display_name;
-      } else if (provider.main_categories?.display_name) {
-        categoryToUpdate = provider.main_categories.display_name;
-      }
+    if (!categoryToUpdate && provider.main_categories?.display_name) {
+      categoryToUpdate = provider.main_categories.display_name;
     }
 
     // Update provider completion status with category if needed

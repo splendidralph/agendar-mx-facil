@@ -47,8 +47,7 @@ export const NameCategoryStep = ({
   const handleCategorySelect = async (category: MainCategory) => {
     const newData = { 
       ...formData,
-      mainCategory: category,
-      subcategory: undefined // Reset subcategory when main category changes
+      mainCategory: category
     };
     
     setFormData(newData);
