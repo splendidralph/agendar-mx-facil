@@ -11,6 +11,7 @@ import ReferralFooter from '@/components/profile/ReferralFooter';
 import { MapPin, Instagram, Clock, DollarSign, Phone, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { categoryLabels } from '@/utils/serviceCategories';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 interface Provider {
   id: string;
@@ -163,125 +164,127 @@ const PublicProfile = () => {
   const themeGradientClass = `gradient-theme-${provider.theme_color || 'blue'}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
-      {/* Header */}
-      <header className="bg-card/80 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-center">
-          <div className="flex items-center space-x-3">
-            <div className={`${themeGradientClass} text-primary-foreground p-2 rounded-xl`}>
-              {provider.business_name.charAt(0).toUpperCase()}
+    <ThemeProvider themeColor={provider.theme_color || 'blue'}>
+      <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
+        {/* Header */}
+        <header className="bg-card/80 backdrop-blur-sm border-b border-border">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className={`${themeGradientClass} text-primary-foreground p-2 rounded-xl`}>
+                {provider.business_name.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-xl font-bold text-foreground">{provider.business_name}</span>
             </div>
-            <span className="text-xl font-bold text-foreground">{provider.business_name}</span>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Profile Header - Similar to BookingDemo */}
-          <Card className="mb-8 animate-fade-in border-border/50 shadow-lg overflow-hidden">
-            <div className={`${themeGradientClass} p-6 text-primary-foreground`}>
-              <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-                <Avatar className="w-24 h-24 shadow-lg border-4 border-white/20">
-                  <AvatarImage src={provider.profile_image_url || undefined} />
-                  <AvatarFallback className="bg-card text-primary text-2xl font-bold">
-                    {provider.business_name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="text-center md:text-left flex-1">
-                  <h1 className="text-2xl font-bold mb-2">{provider.business_name}</h1>
-                  <Badge variant="secondary" className="mb-2 bg-white/20 text-white">
-                    {categoryLabels[provider.category as keyof typeof categoryLabels] || provider.category}
-                  </Badge>
-                  <p className="text-sm opacity-90 mb-2">@{provider.username}</p>
-                  {provider.bio && (
-                    <p className="opacity-90 mb-4 font-inter">{provider.bio}</p>
-                  )}
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                    {provider.phone && (
-                      <div className="flex items-center opacity-90 text-sm">
-                        <Phone className="h-4 w-4 mr-2" />
-                        {provider.phone}
-                      </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            {/* Profile Header - Similar to BookingDemo */}
+            <Card className="mb-8 animate-fade-in border-border/50 shadow-lg overflow-hidden">
+              <div className={`${themeGradientClass} p-6 text-primary-foreground`}>
+                <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+                  <Avatar className="w-24 h-24 shadow-lg border-4 border-white/20">
+                    <AvatarImage src={provider.profile_image_url || undefined} />
+                    <AvatarFallback className="bg-card text-primary text-2xl font-bold">
+                      {provider.business_name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="text-center md:text-left flex-1">
+                    <h1 className="text-2xl font-bold mb-2">{provider.business_name}</h1>
+                    <Badge variant="secondary" className="mb-2 bg-white/20 text-white">
+                      {categoryLabels[provider.category as keyof typeof categoryLabels] || provider.category}
+                    </Badge>
+                    <p className="text-sm opacity-90 mb-2">@{provider.username}</p>
+                    {provider.bio && (
+                      <p className="opacity-90 mb-4 font-inter">{provider.bio}</p>
                     )}
-                    {provider.instagram_handle && (
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                      {provider.phone && (
+                        <div className="flex items-center opacity-90 text-sm">
+                          <Phone className="h-4 w-4 mr-2" />
+                          {provider.phone}
+                        </div>
+                      )}
+                      {provider.instagram_handle && (
+                        <div className="flex items-center opacity-90 text-sm">
+                          <Instagram className="h-4 w-4 mr-2" />
+                          @{provider.instagram_handle}
+                        </div>
+                      )}
+                      {provider.address && (
+                        <div className="flex items-center opacity-90 text-sm">
+                          <MapPin className="h-4 w-4 mr-2" />
+                          {provider.address}
+                        </div>
+                      )}
                       <div className="flex items-center opacity-90 text-sm">
-                        <Instagram className="h-4 w-4 mr-2" />
-                        @{provider.instagram_handle}
+                        <Star className="h-4 w-4 mr-2 fill-current" />
+                        Nuevo en BookEasy
                       </div>
-                    )}
-                    {provider.address && (
-                      <div className="flex items-center opacity-90 text-sm">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        {provider.address}
-                      </div>
-                    )}
-                    <div className="flex items-center opacity-90 text-sm">
-                      <Star className="h-4 w-4 mr-2 fill-current" />
-                      Nuevo en BookEasy
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Card>
+            </Card>
 
-          {/* Services Section */}
-          <Card className="mb-8 border-border/50 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-foreground">Servicios Disponibles</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {services.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No hay servicios disponibles en este momento.</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {services.map((service) => (
-                    <div key={service.id} className="p-4 border rounded-xl hover:border-primary/50 hover:shadow-sm smooth-transition relative">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg">{service.name}</h3>
-                          {service.description && (
-                            <p className="text-muted-foreground mt-1">{service.description}</p>
-                          )}
-                          <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              {service.duration_minutes} min
+            {/* Services Section */}
+            <Card className="mb-8 border-border/50 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-foreground">Servicios Disponibles</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {services.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">No hay servicios disponibles en este momento.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {services.map((service) => (
+                      <div key={service.id} className="p-4 border rounded-xl hover:border-primary/50 hover:shadow-sm smooth-transition relative">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg">{service.name}</h3>
+                            {service.description && (
+                              <p className="text-muted-foreground mt-1">{service.description}</p>
+                            )}
+                            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {service.duration_minutes} min
+                              </div>
+                              <Badge variant="outline" className="text-xs">
+                                {categoryLabels[service.category as keyof typeof categoryLabels] || service.category}
+                              </Badge>
                             </div>
-                            <Badge variant="outline" className="text-xs">
-                              {categoryLabels[service.category as keyof typeof categoryLabels] || service.category}
-                            </Badge>
                           </div>
-                        </div>
-                        <div className="text-right ml-4">
-                          <div className="flex items-center gap-1 font-bold text-xl mb-2">
-                            <DollarSign className="h-5 w-5" />
-                            {service.price}
+                          <div className="text-right ml-4">
+                            <div className="flex items-center gap-1 font-bold text-xl mb-2 text-primary">
+                              <DollarSign className="h-5 w-5" />
+                              {service.price}
+                            </div>
+                            <Button 
+                              onClick={() => handleBookService(service)}
+                              className="btn-primary"
+                            >
+                              Reservar
+                            </Button>
                           </div>
-                          <Button 
-                            onClick={() => handleBookService(service)}
-                            className="btn-primary"
-                          >
-                            Reservar
-                          </Button>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
+          </div>
         </div>
+        
+        {/* Referral Footer */}
+        <ReferralFooter themeColor={provider.theme_color} />
       </div>
-      
-      {/* Referral Footer */}
-      <ReferralFooter />
-    </div>
+    </ThemeProvider>
   );
 };
 

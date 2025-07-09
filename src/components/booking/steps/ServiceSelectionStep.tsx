@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface Service {
   id: string;
@@ -23,6 +24,8 @@ const ServiceSelectionStep = ({
   onServiceSelect,
   isMobile = false 
 }: ServiceSelectionStepProps) => {
+  const { getThemeClasses } = useTheme();
+  const themeClasses = getThemeClasses();
   if (isMobile) {
     return (
       <div className="space-y-3">
@@ -43,8 +46,8 @@ const ServiceSelectionStep = ({
                 className={cn(
                   "p-4 border rounded-xl cursor-pointer smooth-transition touch-manipulation",
                   selectedService?.id === service.id
-                    ? "border-primary bg-primary/5 shadow-md scale-105"
-                    : "border-border hover:border-primary/50 hover:shadow-sm active:scale-95"
+                    ? `border-[${themeClasses.primary}] bg-[${themeClasses.primary}]/5 shadow-md scale-105`
+                    : `border-border hover:border-[${themeClasses.primary}]/50 hover:shadow-sm active:scale-95`
                 )}
                 onClick={() => onServiceSelect(service)}
               >
@@ -60,7 +63,7 @@ const ServiceSelectionStep = ({
                     </div>
                   </div>
                   <div className="text-right ml-4">
-                    <div className="text-2xl font-bold text-primary">
+                    <div className={`text-2xl font-bold text-[${themeClasses.primary}]`}>
                       ${service.price}
                     </div>
                     <div className="text-xs text-muted-foreground">MXN</div>
@@ -95,8 +98,8 @@ const ServiceSelectionStep = ({
                 className={cn(
                   "p-4 border rounded-xl cursor-pointer smooth-transition touch-manipulation",
                   selectedService?.id === service.id
-                    ? "border-primary bg-primary/5 shadow-md"
-                    : "border-border hover:border-primary/50 hover:shadow-sm"
+                    ? `border-[${themeClasses.primary}] bg-[${themeClasses.primary}]/5 shadow-md`
+                    : `border-border hover:border-[${themeClasses.primary}]/50 hover:shadow-sm`
                 )}
                 onClick={() => onServiceSelect(service)}
               >
@@ -112,7 +115,7 @@ const ServiceSelectionStep = ({
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-primary">
+                    <div className={`text-2xl font-bold text-[${themeClasses.primary}]`}>
                       ${service.price}
                     </div>
                     <div className="text-xs text-muted-foreground">MXN</div>

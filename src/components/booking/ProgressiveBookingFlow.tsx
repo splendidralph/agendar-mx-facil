@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface Service {
   id: string;
@@ -49,6 +50,8 @@ const ProgressiveBookingFlow = ({
   const [completedSteps, setCompletedSteps] = useState<Set<BookingStep>>(new Set());
   const [highestStepReached, setHighestStepReached] = useState<BookingStep>('service');
   const isMobile = useIsMobile();
+  const { getThemeClasses } = useTheme();
+  const themeClasses = getThemeClasses();
 
   const steps = [
     { id: 'service', label: 'Servicio', progress: 25 },
@@ -215,7 +218,7 @@ const ProgressiveBookingFlow = ({
             <Button
               onClick={currentStep === 'details' ? onSubmit : handleNext}
               disabled={!isStepComplete()}
-              className="w-full h-12 text-lg font-semibold shadow-lg"
+              className={`w-full h-12 text-lg font-semibold shadow-lg ${themeClasses.gradient} text-primary-foreground hover:opacity-90`}
             >
               {currentStep === 'details' ? 'Confirmar Reserva' : 'Continuar'}
               <ChevronRight className="h-5 w-5 ml-2" />
@@ -245,7 +248,7 @@ const ProgressiveBookingFlow = ({
                     className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all cursor-pointer",
                       index <= currentStepIndex
-                        ? "bg-primary text-primary-foreground"
+                        ? `${themeClasses.gradient} text-primary-foreground`
                         : "bg-muted text-muted-foreground"
                     )}
                     onClick={() => {
@@ -287,7 +290,7 @@ const ProgressiveBookingFlow = ({
               <Button
                 onClick={currentStep === 'details' ? onSubmit : handleNext}
                 disabled={!isStepComplete()}
-                className="px-6"
+                className={`px-6 ${themeClasses.gradient} text-primary-foreground hover:opacity-90`}
               >
                 {currentStep === 'details' ? 'Confirmar Reserva' : 'Continuar'}
                 <ChevronRight className="h-4 w-4 ml-2" />

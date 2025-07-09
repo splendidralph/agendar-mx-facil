@@ -2,10 +2,16 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ExternalLink } from 'lucide-react';
 
-const ReferralFooter = () => {
+interface ReferralFooterProps {
+  themeColor?: string;
+}
+
+const ReferralFooter = ({ themeColor = 'blue' }: ReferralFooterProps) => {
+  const themeGradientClass = `gradient-theme-${themeColor}`;
+
   return (
     <Card className="mt-12 mx-4 mb-8 overflow-hidden border-border/50 shadow-lg">
-      <div className="gradient-primary p-8 text-center text-primary-foreground">
+      <div className={`${themeGradientClass} p-8 text-center text-primary-foreground`}>
         <h3 className="text-xl font-bold mb-2">
           ¿Quieres crear una página como esta?
         </h3>

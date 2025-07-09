@@ -8,6 +8,7 @@ import { format, addDays, startOfDay, isSameDay, isAfter, isBefore, isToday, isT
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface TimeSlot {
   time: string;
@@ -48,6 +49,8 @@ const ModernBookingCalendar = ({
   const [providerAvailability, setProviderAvailability] = useState<any[]>([]);
   const [showingMoreDays, setShowingMoreDays] = useState(false);
   const isMobile = useIsMobile();
+  const { getThemeClasses } = useTheme();
+  const themeClasses = getThemeClasses();
 
   useEffect(() => {
     fetchProviderAvailability();
@@ -395,7 +398,7 @@ const ModernBookingCalendar = ({
                         onClick={() => handleTimeSelect(slot.time)}
                         className={cn(
                           "h-12 touch-manipulation font-medium smooth-transition justify-start",
-                          selectedTime === slot.time && "shadow-lg scale-105",
+                          selectedTime === slot.time && `${themeClasses.gradient} text-primary-foreground shadow-lg scale-105`,
                           isMobile && "text-base"
                         )}
                       >
@@ -427,7 +430,7 @@ const ModernBookingCalendar = ({
                         onClick={() => handleTimeSelect(slot.time)}
                         className={cn(
                           "h-12 touch-manipulation font-medium smooth-transition justify-start",
-                          selectedTime === slot.time && "shadow-lg scale-105",
+                          selectedTime === slot.time && `${themeClasses.gradient} text-primary-foreground shadow-lg scale-105`,
                           isMobile && "text-base"
                         )}
                       >
@@ -459,7 +462,7 @@ const ModernBookingCalendar = ({
                         onClick={() => handleTimeSelect(slot.time)}
                         className={cn(
                           "h-12 touch-manipulation font-medium smooth-transition justify-start",
-                          selectedTime === slot.time && "shadow-lg scale-105",
+                          selectedTime === slot.time && `${themeClasses.gradient} text-primary-foreground shadow-lg scale-105`,
                           isMobile && "text-base"
                         )}
                       >

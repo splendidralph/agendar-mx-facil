@@ -14,6 +14,7 @@ import ClientDetailsStep from "@/components/booking/steps/ClientDetailsStep";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 interface Provider {
   id: string;
@@ -26,6 +27,7 @@ interface Provider {
   phone: string;
   colonia?: string;
   postal_code?: string;
+  theme_color?: string;
 }
 
 interface Service {
@@ -82,7 +84,7 @@ const Booking = () => {
       
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
-        .select('*')
+        .select('*, theme_color')
         .eq('username', cleanUsername)
         .eq('profile_completed', true)
         .eq('is_active', true)
@@ -272,123 +274,128 @@ const Booking = () => {
     );
   }
 
-  return (
-    <div>
-      {/* Header - Only show on desktop */}
-      {!isMobile && (
-        <header className="bg-card/80 backdrop-blur-sm border-b border-border">
-          <div className="container mx-auto px-4 py-4 flex items-center">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate(`/${provider.username}`)}
-              className="mr-4 text-foreground hover:bg-secondary"
-            >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
-            <div className="flex items-center space-x-3">
-              <div className="gradient-primary text-primary-foreground p-2 rounded-xl">
-                <Calendar className="h-5 w-5" />
-              </div>
-              <span className="text-xl font-bold text-foreground">Reservar - {provider.business_name}</span>
-            </div>
-          </div>
-        </header>
-      )}
+  // Get the theme gradient class
+  const themeGradientClass = `gradient-theme-${provider.theme_color || 'blue'}`;
 
-      {/* Profile Header - Only show on desktop */}
-      {!isMobile && (
-        <div className="bg-gradient-to-br from-secondary to-background py-8">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <Card className="animate-fade-in border-border/50 shadow-lg overflow-hidden">
-                <div className="gradient-primary p-6 text-primary-foreground">
-                  <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-                    <div className="w-24 h-24 bg-card rounded-full flex items-center justify-center text-primary text-2xl font-bold shadow-lg">
-                      {provider.business_name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
-                    </div>
-                    <div className="text-center md:text-left flex-1">
-                      <h1 className="text-2xl font-bold mb-2">{provider.business_name}</h1>
-                      <p className="opacity-90 mb-4 font-inter">{provider.bio || `${categoryLabels[provider.category as keyof typeof categoryLabels] || provider.category}`}</p>
-                      <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        {provider.phone && (
+  return (
+    <ThemeProvider themeColor={provider.theme_color || 'blue'}>
+      <div>
+        {/* Header - Only show on desktop */}
+        {!isMobile && (
+          <header className="bg-card/80 backdrop-blur-sm border-b border-border">
+            <div className="container mx-auto px-4 py-4 flex items-center">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate(`/${provider.username}`)}
+                className="mr-4 text-foreground hover:bg-secondary"
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                Volver
+              </Button>
+              <div className="flex items-center space-x-3">
+                <div className={`${themeGradientClass} text-primary-foreground p-2 rounded-xl`}>
+                  <Calendar className="h-5 w-5" />
+                </div>
+                <span className="text-xl font-bold text-foreground">Reservar - {provider.business_name}</span>
+              </div>
+            </div>
+          </header>
+        )}
+
+        {/* Profile Header - Only show on desktop */}
+        {!isMobile && (
+          <div className="bg-gradient-to-br from-secondary to-background py-8">
+            <div className="container mx-auto px-4">
+              <div className="max-w-4xl mx-auto">
+                <Card className="animate-fade-in border-border/50 shadow-lg overflow-hidden">
+                  <div className={`${themeGradientClass} p-6 text-primary-foreground`}>
+                    <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+                      <div className="w-24 h-24 bg-card rounded-full flex items-center justify-center text-primary text-2xl font-bold shadow-lg">
+                        {provider.business_name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2).toUpperCase()}
+                      </div>
+                      <div className="text-center md:text-left flex-1">
+                        <h1 className="text-2xl font-bold mb-2">{provider.business_name}</h1>
+                        <p className="opacity-90 mb-4 font-inter">{provider.bio || `${categoryLabels[provider.category as keyof typeof categoryLabels] || provider.category}`}</p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                          {provider.phone && (
+                            <div className="flex items-center opacity-90 text-sm">
+                              <Phone className="h-4 w-4 mr-2" />
+                              {provider.phone}
+                            </div>
+                          )}
+                          {provider.instagram_handle && (
+                            <div className="flex items-center opacity-90 text-sm">
+                              <Instagram className="h-4 w-4 mr-2" />
+                              @{provider.instagram_handle}
+                            </div>
+                          )}
+                           {(provider.colonia || provider.address) && (
+                            <div className="flex items-center opacity-90 text-sm">
+                              <MapPin className="h-4 w-4 mr-2" />
+                              {provider.colonia || provider.address}
+                            </div>
+                          )}
                           <div className="flex items-center opacity-90 text-sm">
-                            <Phone className="h-4 w-4 mr-2" />
-                            {provider.phone}
+                            <Star className="h-4 w-4 mr-2 fill-current" />
+                            {provider.colonia ? `Profesional en ${provider.colonia}` : 'Nuevo en BookEasy'}
                           </div>
-                        )}
-                        {provider.instagram_handle && (
-                          <div className="flex items-center opacity-90 text-sm">
-                            <Instagram className="h-4 w-4 mr-2" />
-                            @{provider.instagram_handle}
-                          </div>
-                        )}
-                         {(provider.colonia || provider.address) && (
-                          <div className="flex items-center opacity-90 text-sm">
-                            <MapPin className="h-4 w-4 mr-2" />
-                            {provider.colonia || provider.address}
-                          </div>
-                        )}
-                        <div className="flex items-center opacity-90 text-sm">
-                          <Star className="h-4 w-4 mr-2 fill-current" />
-                          {provider.colonia ? `Profesional en ${provider.colonia}` : 'Nuevo en BookEasy'}
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Progressive Booking Flow */}
-      <ProgressiveBookingFlow
-        services={services}
-        providerId={provider.id}
-        selectedService={selectedService}
-        selectedDate={selectedDate}
-        selectedTime={selectedTime}
-        clientData={clientData}
-        onServiceSelect={(service) => setSelectedService(service)}
-        onDateTimeSelect={(date, time) => {
-          setSelectedDate(date);
-          setSelectedTime(time);
-        }}
-        onClientDataChange={setClientData}
-        onSubmit={() => handleBooking({ preventDefault: () => {} } as React.FormEvent)}
-      >
-        <ServiceSelectionStep
+        {/* Progressive Booking Flow */}
+        <ProgressiveBookingFlow
           services={services}
-          selectedService={selectedService}
-          onServiceSelect={(service) => setSelectedService(service)}
-          isMobile={isMobile}
-        />
-        
-        <DateTimeStep
           providerId={provider.id}
-          serviceId={selectedService?.id}
-          serviceDuration={selectedService?.duration_minutes}
+          selectedService={selectedService}
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
+          clientData={clientData}
+          onServiceSelect={(service) => setSelectedService(service)}
           onDateTimeSelect={(date, time) => {
             setSelectedDate(date);
             setSelectedTime(time);
           }}
-          selectedDate={selectedDate}
-          selectedTime={selectedTime}
-        />
-        
-        <ClientDetailsStep
-          clientData={clientData}
           onClientDataChange={setClientData}
-          selectedService={selectedService}
-          selectedDate={selectedDate}
-          selectedTime={selectedTime}
-          error={error}
-          isMobile={isMobile}
-        />
-      </ProgressiveBookingFlow>
-    </div>
+          onSubmit={() => handleBooking({ preventDefault: () => {} } as React.FormEvent)}
+        >
+          <ServiceSelectionStep
+            services={services}
+            selectedService={selectedService}
+            onServiceSelect={(service) => setSelectedService(service)}
+            isMobile={isMobile}
+          />
+          
+          <DateTimeStep
+            providerId={provider.id}
+            serviceId={selectedService?.id}
+            serviceDuration={selectedService?.duration_minutes}
+            onDateTimeSelect={(date, time) => {
+              setSelectedDate(date);
+              setSelectedTime(time);
+            }}
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+          />
+          
+          <ClientDetailsStep
+            clientData={clientData}
+            onClientDataChange={setClientData}
+            selectedService={selectedService}
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+            error={error}
+            isMobile={isMobile}
+          />
+        </ProgressiveBookingFlow>
+      </div>
+    </ThemeProvider>
   );
 };
 
