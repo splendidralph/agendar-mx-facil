@@ -99,27 +99,27 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       categoryName = data.category.trim();
     }
 
-    const providerData: any = {
-      user_id: userId,
-      business_name: data.businessName?.trim() || null, // Allow null during onboarding
-      category: categoryName, // Keep for backward compatibility
-      main_category_id: data.mainCategory?.id || null,
-      subcategory_id: data.subcategory?.id || null,
-      bio: data.bio?.trim() || null,
-      address: data.address?.trim() || null,
-      whatsapp_phone: data.whatsappPhone?.trim() || null,
-      // New location system fields
-      city_id: data.city_id || null,
-      zone_id: data.zone_id || null,
-      colonia: data.colonia?.trim() || null,
-      postal_code: data.postalCode?.trim() || null,
-      latitude: data.latitude || null,
-      longitude: data.longitude || null,
-      service_radius_km: data.serviceRadiusKm || 5,
-      prefers_local_clients: data.prefersLocalClients !== false,
-      onboarding_step: currentStep,
-      profile_completed: false // Keep false during onboarding
-    };
+  const providerData: any = {
+    user_id: userId,
+    business_name: data.businessName?.trim() || null, // Allow null during onboarding
+    category: categoryName, // Keep for backward compatibility
+    main_category_id: data.mainCategory?.id || null,
+    subcategory_id: data.subcategory?.id || null,
+    bio: data.bio?.trim() || null,
+    address: data.address?.trim() || null,
+    whatsapp_phone: data.whatsappPhone?.trim() || null,
+    // New location system fields - convert empty strings to null for UUID fields
+    city_id: data.city_id && data.city_id.trim() ? data.city_id.trim() : null,
+    zone_id: data.zone_id && data.zone_id.trim() ? data.zone_id.trim() : null,
+    colonia: data.colonia?.trim() || null,
+    postal_code: data.postalCode?.trim() || null,
+    latitude: data.latitude || null,
+    longitude: data.longitude || null,
+    service_radius_km: data.serviceRadiusKm || 5,
+    prefers_local_clients: data.prefersLocalClients !== false,
+    onboarding_step: currentStep,
+    profile_completed: false // Keep false during onboarding
+  };
 
     // Only include username if it's provided and not empty
     if (data.username && data.username.trim()) {
@@ -267,19 +267,39 @@ export const updateProviderStep = async (userId: string, step: number) => {
 
 export const completeProviderOnboarding = async (userId: string) => {
   try {
+    console.log('completeProviderOnboarding: Starting for user:', userId);
+    
     // First get the provider data to check if category is populated
     const { data: provider, error: providerError } = await supabase
       .from('providers')
       .select(`
         id, 
         category, 
+        business_name,
+        whatsapp_phone,
+        city_id,
+        zone_id,
         main_categories:main_category_id(display_name),
         subcategories:subcategory_id(display_name)
       `)
       .eq('user_id', userId)
       .single();
 
-    if (providerError) throw providerError;
+    if (providerError) {
+      console.error('completeProviderOnboarding: Error fetching provider:', providerError);
+      throw providerError;
+    }
+
+    console.log('completeProviderOnboarding: Provider data:', {
+      id: provider.id,
+      business_name: provider.business_name,
+      category: provider.category,
+      whatsapp_phone: provider.whatsapp_phone ? '***HIDDEN***' : 'null',
+      city_id: provider.city_id,
+      zone_id: provider.zone_id,
+      has_main_category: !!provider.main_categories,
+      has_subcategory: !!provider.subcategories
+    });
 
     // Ensure category field is populated for validation
     let categoryToUpdate = provider.category;
@@ -301,12 +321,19 @@ export const completeProviderOnboarding = async (userId: string) => {
       updateData.category = categoryToUpdate;
     }
 
+    console.log('completeProviderOnboarding: Updating provider with:', updateData);
+
     const { error } = await supabase
       .from('providers')
       .update(updateData)
       .eq('user_id', userId);
 
-    if (error) throw error;
+    if (error) {
+      console.error('completeProviderOnboarding: Error updating provider:', error);
+      throw error;
+    }
+
+    console.log('completeProviderOnboarding: Provider updated successfully');
 
     // Create default availability (Monday to Saturday, 9 AM to 7 PM)
     const defaultAvailability = [
@@ -335,6 +362,7 @@ export const completeProviderOnboarding = async (userId: string) => {
       // Don't throw here - we don't want to block onboarding completion
     }
 
+    console.log('completeProviderOnboarding: Onboarding completed successfully');
     return true;
   } catch (error) {
     console.error('Error completing onboarding:', error);

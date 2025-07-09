@@ -182,11 +182,11 @@ export const useOnboardingFlow = () => {
             errors.push({ field: 'whatsappPhone', message: 'El número debe incluir código de país (ej. +52 para México, +1 para EE.UU.)' });
           }
           
-          if (!data.city_id) {
+          if (!data.city_id || !data.city_id.trim()) {
             errors.push({ field: 'city_id', message: 'Debes seleccionar una ciudad' });
           }
           
-          if (!data.zone_id) {
+          if (!data.zone_id || !data.zone_id.trim()) {
             errors.push({ field: 'zone_id', message: 'Debes seleccionar una zona' });
           }
           
