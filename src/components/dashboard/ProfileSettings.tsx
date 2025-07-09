@@ -98,6 +98,13 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
         return;
       }
 
+      // Validate Instagram handle format if provided
+      if (formData.instagram_handle.trim() && !/^[a-zA-Z0-9._]{1,30}$/.test(formData.instagram_handle.trim())) {
+        toast.error('El Instagram debe contener solo letras, números, puntos y guiones bajos');
+        setLoading(false);
+        return;
+      }
+
       // Check username availability if it changed
       if (formData.username !== provider.username && formData.username) {
         if (isUsernameAvailable === false) {
@@ -123,21 +130,36 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
           main_category_id: formData.main_category_id || null,
           subcategory_id: formData.subcategory_id || null,
           address: formData.address,
-          instagram_handle: formData.instagram_handle,
+          instagram_handle: formData.instagram_handle.trim() || null, // Convert empty string to null
           username: formData.username,
           whatsapp_phone: formData.whatsapp_phone,
           theme_color: formData.theme_color
         })
         .eq('id', provider.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        
+        // Handle specific database errors
+        if (error.message.includes('Instagram handle format')) {
+          toast.error('Formato de Instagram inválido. Solo letras, números, puntos y guiones bajos.');
+        } else if (error.message.includes('username')) {
+          toast.error('Error con el nombre de usuario. Verifica el formato.');
+        } else if (error.message.includes('Colonia is required')) {
+          toast.error('Error de validación. Por favor contacta soporte.');
+        } else {
+          toast.error('Error actualizando el perfil. Inténtalo de nuevo.');
+        }
+        setLoading(false);
+        return;
+      }
 
       toast.success('Perfil actualizado exitosamente');
       setOpen(false);
       onUpdate();
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Error actualizando el perfil');
+      toast.error('Error inesperado actualizando el perfil');
     } finally {
       setLoading(false);
     }
