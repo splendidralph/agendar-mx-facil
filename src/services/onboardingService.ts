@@ -339,7 +339,7 @@ export const completeProviderOnboarding = async (userId: string) => {
     // Update provider completion status with category if needed
     const updateData: any = {
       profile_completed: true,
-      onboarding_step: 6
+      onboarding_step: 4
     };
     
     if (categoryToUpdate && categoryToUpdate !== provider.category) {
