@@ -620,6 +620,7 @@ export type Database = {
           review_count: number | null
           service_radius_km: number | null
           subcategory_id: string | null
+          theme_color: string | null
           total_reviews: number | null
           updated_at: string | null
           user_id: string
@@ -653,6 +654,7 @@ export type Database = {
           review_count?: number | null
           service_radius_km?: number | null
           subcategory_id?: string | null
+          theme_color?: string | null
           total_reviews?: number | null
           updated_at?: string | null
           user_id: string
@@ -686,6 +688,7 @@ export type Database = {
           review_count?: number | null
           service_radius_km?: number | null
           subcategory_id?: string | null
+          theme_color?: string | null
           total_reviews?: number | null
           updated_at?: string | null
           user_id?: string
