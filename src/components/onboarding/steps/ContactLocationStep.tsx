@@ -78,18 +78,35 @@ export const ContactLocationStep = ({
       return;
     }
 
+    // Enhanced validation to match backend exactly
     const e164Regex = /^\+[1-9]\d{1,14}$/;
-    if (e164Regex.test(phoneValue) && phoneValue.length >= 12) {
-      setPhoneValidation({ isValid: true, message: '¡Perfecto! Número válido' });
-    } else if (phoneValue.length < 12) {
+    
+    if (!phoneValue.startsWith('+')) {
       setPhoneValidation({ 
         isValid: false, 
-        message: 'Número incompleto' 
+        message: 'Debe incluir código de país (ej: +52 para México)' 
       });
+      return;
+    }
+
+    if (e164Regex.test(phoneValue)) {
+      // Additional length checks for common countries
+      if (phoneValue.startsWith('+52') && phoneValue.length >= 13) { // Mexico
+        setPhoneValidation({ isValid: true, message: '✅ Número mexicano válido' });
+      } else if (phoneValue.startsWith('+1') && phoneValue.length >= 12) { // US/Canada
+        setPhoneValidation({ isValid: true, message: '✅ Número válido' });
+      } else if (phoneValue.length >= 10) { // Other countries
+        setPhoneValidation({ isValid: true, message: '✅ Número internacional válido' });
+      } else {
+        setPhoneValidation({ 
+          isValid: false, 
+          message: 'Número incompleto' 
+        });
+      }
     } else {
       setPhoneValidation({ 
         isValid: false, 
-        message: 'Formato de número inválido' 
+        message: 'Formato inválido. Debe incluir código de país (ej: +52)' 
       });
     }
   };

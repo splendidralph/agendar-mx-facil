@@ -175,22 +175,32 @@ export const useOnboardingFlow = () => {
           });
           break;
           
-        case 4: // Contact & Location - Require phone and location data (simplified)
+        case 4: // Contact & Location - Enhanced validation
+          // Enhanced phone validation to match backend exactly
           if (!data.whatsappPhone || !data.whatsappPhone.trim()) {
             errors.push({ field: 'whatsappPhone', message: 'El número de teléfono es requerido' });
-          } else if (!/^\+[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
-            errors.push({ field: 'whatsappPhone', message: 'El número debe incluir código de país (ej. +52 para México, +1 para EE.UU.)' });
+          } else {
+            const phone = data.whatsappPhone.trim();
+            if (!phone.startsWith('+')) {
+              errors.push({ field: 'whatsappPhone', message: 'El número debe incluir código de país (ej. +52 para México)' });
+            } else if (!/^\+[1-9]\d{1,14}$/.test(phone)) {
+              errors.push({ field: 'whatsappPhone', message: 'Formato de número inválido' });
+            } else if (phone.startsWith('+52') && phone.length < 13) {
+              errors.push({ field: 'whatsappPhone', message: 'Número mexicano incompleto' });
+            } else if (phone.startsWith('+1') && phone.length < 12) {
+              errors.push({ field: 'whatsappPhone', message: 'Número incompleto' });
+            }
           }
           
-          if (!data.city_id || !data.city_id.trim()) {
+          // Enhanced UUID validation for location fields
+          if (!data.city_id || data.city_id.trim() === '' || data.city_id === 'undefined') {
             errors.push({ field: 'city_id', message: 'Debes seleccionar una ciudad' });
           }
           
-          if (!data.zone_id || !data.zone_id.trim()) {
+          if (!data.zone_id || data.zone_id.trim() === '' || data.zone_id === 'undefined') {
             errors.push({ field: 'zone_id', message: 'Debes seleccionar una zona' });
           }
           
-          // Note: colonia requirement removed - city and zone are sufficient
           break;
       }
     } catch (validationError) {

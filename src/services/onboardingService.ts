@@ -99,18 +99,44 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       categoryName = data.category.trim();
     }
 
+  // Enhanced UUID sanitization function
+  const sanitizeUUID = (value: any): string | null => {
+    if (!value || value === '' || value === 'undefined' || value === 'null') {
+      return null;
+    }
+    if (typeof value === 'string' && value.trim() === '') {
+      return null;
+    }
+    return typeof value === 'string' ? value.trim() : value;
+  };
+
+  // Enhanced phone sanitization to ensure proper format
+  const sanitizePhone = (phone: any): string | null => {
+    if (!phone || typeof phone !== 'string') return null;
+    const trimmed = phone.trim();
+    if (trimmed === '') return null;
+    
+    // Ensure phone starts with + for international format
+    if (trimmed && !trimmed.startsWith('+')) {
+      console.warn('Phone number missing country code, this should not happen with new phone input');
+      return `+52${trimmed}`; // Default to Mexico if somehow missing
+    }
+    
+    return trimmed;
+  };
+
   const providerData: any = {
     user_id: userId,
     business_name: data.businessName?.trim() || null, // Allow null during onboarding
     category: categoryName, // Keep for backward compatibility
-    main_category_id: data.mainCategory?.id || null,
-    subcategory_id: data.subcategory?.id || null,
+    main_category_id: sanitizeUUID(data.mainCategory?.id),
+    subcategory_id: sanitizeUUID(data.subcategory?.id),
     bio: data.bio?.trim() || null,
     address: data.address?.trim() || null,
-    whatsapp_phone: data.whatsappPhone?.trim() || null,
-    // New location system fields - convert empty strings to null for UUID fields
-    city_id: data.city_id && data.city_id.trim() ? data.city_id.trim() : null,
-    zone_id: data.zone_id && data.zone_id.trim() ? data.zone_id.trim() : null,
+    whatsapp_phone: sanitizePhone(data.whatsappPhone),
+    // Enhanced UUID sanitization for location fields
+    city_id: sanitizeUUID(data.city_id),
+    zone_id: sanitizeUUID(data.zone_id),
     colonia: data.colonia?.trim() || null,
     postal_code: data.postalCode?.trim() || null,
     latitude: data.latitude || null,
