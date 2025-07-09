@@ -9,8 +9,8 @@ type Provider = Database['public']['Tables']['providers']['Row'] & {
 };
 
 interface LocationFilter {
-  colonia: string;
-  postalCode: string;
+  zone_id: string;
+  city_id: string;
 }
 
 export const useProviderFiltering = (locationFilter?: LocationFilter) => {
@@ -51,8 +51,8 @@ export const useProviderFiltering = (locationFilter?: LocationFilter) => {
         .filter(provider => provider.services && provider.services.length > 0)
         .map(provider => {
           const isLocal = locationFilter ? 
-            (provider.colonia?.toLowerCase() === locationFilter.colonia.toLowerCase() ||
-             provider.postal_code === locationFilter.postalCode) : false;
+            (provider.zone_id === locationFilter.zone_id ||
+             provider.city_id === locationFilter.city_id) : false;
 
           return {
             ...provider,
@@ -102,7 +102,7 @@ export const useProviderFiltering = (locationFilter?: LocationFilter) => {
       return providers.filter(provider =>
         provider.business_name?.toLowerCase().includes(term) ||
         provider.bio?.toLowerCase().includes(term) ||
-        provider.colonia?.toLowerCase().includes(term) ||
+        provider.address?.toLowerCase().includes(term) ||
         provider.services.some(service => 
           service.name.toLowerCase().includes(term) ||
           service.description?.toLowerCase().includes(term)

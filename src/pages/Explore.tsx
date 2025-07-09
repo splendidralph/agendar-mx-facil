@@ -10,7 +10,7 @@ import { useProviderFiltering } from "@/hooks/useProviderFiltering";
 
 const Explore = () => {
   const navigate = useNavigate();
-  const [locationFilter, setLocationFilter] = useState<{ colonia: string; postalCode: string } | undefined>();
+  const [locationFilter, setLocationFilter] = useState<{ zone_id: string; city_id: string } | undefined>();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
@@ -35,7 +35,7 @@ const Explore = () => {
     // Apply city filter
     if (selectedCity !== 'all') {
       filtered = filtered.filter(provider => 
-        provider.colonia?.toLowerCase().includes(selectedCity.toLowerCase()) ||
+        provider.city_id === selectedCity ||
         provider.address?.toLowerCase().includes(selectedCity.toLowerCase())
       );
     }

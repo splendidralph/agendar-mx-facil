@@ -34,7 +34,6 @@ export const ContactLocationStep = ({
     whatsappPhone: data.whatsappPhone || '',
     city_id: data.city_id || '',
     zone_id: data.zone_id || '',
-    colonia: data.colonia || '',
     address: data.address || ''
   });
   
@@ -51,10 +50,9 @@ export const ContactLocationStep = ({
       whatsappPhone: data.whatsappPhone || '',
       city_id: data.city_id || '',
       zone_id: data.zone_id || '',
-      colonia: data.colonia || '',
       address: data.address || ''
     });
-  }, [data.whatsappPhone, data.city_id, data.zone_id, data.colonia, data.address]);
+  }, [data.whatsappPhone, data.city_id, data.zone_id, data.address]);
 
   // Load zones when city changes
   useEffect(() => {
@@ -63,37 +61,16 @@ export const ContactLocationStep = ({
         const zoneData = await getZonesByCity(formData.city_id);
         setZones(zoneData);
         
-        // Reset zone and colonia if city changed
+        // Reset zone if city changed
         if (formData.zone_id && !zoneData.find(z => z.id === formData.zone_id)) {
           handleChange('zone_id', '');
-          handleChange('colonia', '');
-          setLocations([]);
         }
       };
       loadZones();
     } else {
       setZones([]);
-      setLocations([]);
     }
   }, [formData.city_id]);
-
-  // Load locations when zone changes
-  useEffect(() => {
-    if (formData.zone_id) {
-      const loadLocations = async () => {
-        const locationData = await getLocationsByZone(formData.zone_id);
-        setLocations(locationData);
-        
-        // Reset colonia if zone changed
-        if (formData.colonia && !locationData.find(l => l.colonia === formData.colonia)) {
-          handleChange('colonia', '');
-        }
-      };
-      loadLocations();
-    } else {
-      setLocations([]);
-    }
-  }, [formData.zone_id]);
 
   const validatePhoneNumber = (phoneValue?: string) => {
     if (!phoneValue) {
@@ -121,7 +98,7 @@ export const ContactLocationStep = ({
     let sanitizedValue = value;
     
     // Sanitize text inputs
-    if (field === 'address' || field === 'colonia') {
+    if (field === 'address') {
       sanitizedValue = sanitizeInput(value, 255);
     }
     
@@ -151,11 +128,6 @@ export const ContactLocationStep = ({
       return;
     }
     
-    if (!formData.colonia) {
-      toast.error('Debes seleccionar una colonia');
-      return;
-    }
-    
     await onNext(formData);
   };
 
@@ -163,8 +135,7 @@ export const ContactLocationStep = ({
     formData.whatsappPhone && 
     phoneValidation.isValid &&
     formData.city_id &&
-    formData.zone_id &&
-    formData.colonia
+    formData.zone_id
   );
 
   const selectedCity = cities.find(city => city.id === formData.city_id);
@@ -301,31 +272,6 @@ export const ContactLocationStep = ({
             </div>
           )}
 
-          {/* Colonia Selection */}
-          {selectedZone && (
-            <div>
-              <Label htmlFor="colonia" className="text-blue-800 font-medium text-sm">
-                Colonia *
-              </Label>
-              <Select
-                value={formData.colonia}
-                onValueChange={(value) => handleChange('colonia', value)}
-                disabled={locations.length === 0}
-              >
-                <SelectTrigger className="mt-2 border-blue-200 focus:border-blue-400">
-                  <SelectValue placeholder="Selecciona tu colonia" />
-                </SelectTrigger>
-                <SelectContent>
-                  {locations.map((location) => (
-                    <SelectItem key={location.id} value={location.colonia || location.name}>
-                      {location.colonia || location.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-          
           {/* Optional Address */}
           <div>
             <Label htmlFor="address" className="text-blue-800 font-medium text-sm">
