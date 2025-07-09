@@ -47,6 +47,7 @@ const CustomPhoneInput = React.forwardRef<any, CustomPhoneInputProps>(
           value={value}
           onChange={handleChange}
           disabled={disabled}
+          displayInitialValueAsLocalNumber={false} // Always show international format
           className={cn(
             "w-full h-10 px-3 py-2 border border-input rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             error && "border-destructive focus:border-destructive focus:ring-destructive",

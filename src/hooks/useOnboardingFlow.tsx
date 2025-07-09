@@ -125,9 +125,20 @@ export const useOnboardingFlow = () => {
     loadExistingData();
   }, [user?.id]);
 
-  // Validate step data - aligned with new 4-step order
+  // Validate step data - aligned with new 5-step order
   const validateStep = useCallback((step: number, data: OnboardingData): ValidationError[] => {
     const errors: ValidationError[] = [];
+    
+    console.log(`[ONBOARDING] Validating step ${step} with data:`, {
+      username: data.username,
+      businessName: data.businessName,
+      mainCategory: data.mainCategory?.display_name,
+      subcategory: data.subcategory?.display_name,
+      servicesCount: data.services?.length || 0,
+      whatsappPhone: data.whatsappPhone,
+      city_id: data.city_id,
+      zone_id: data.zone_id
+    });
     
     try {
       switch (step) {
@@ -153,7 +164,11 @@ export const useOnboardingFlow = () => {
           }
           break;
           
-        case 3: // Services - Require at least one valid service
+        case 3: // Subcategory - Optional but if main category has subcategories, encourage selection
+          // Note: Subcategory selection is optional, auto-advance if no subcategories available
+          break;
+          
+        case 4: // Services - Require at least one valid service
           const validServices = data.services.filter(s => s.name?.trim() && s.price > 0);
           if (validServices.length === 0) {
             errors.push({ field: 'services', message: 'Debes agregar al menos un servicio válido' });
@@ -175,7 +190,7 @@ export const useOnboardingFlow = () => {
           });
           break;
           
-        case 4: // Contact & Location - Enhanced validation
+        case 5: // Contact & Location - Enhanced validation
           // Enhanced phone validation to match backend exactly
           if (!data.whatsappPhone || !data.whatsappPhone.trim()) {
             errors.push({ field: 'whatsappPhone', message: 'El número de teléfono es requerido' });
@@ -292,11 +307,15 @@ export const useOnboardingFlow = () => {
         return false;
       }
 
-      // Save services if we're on step 3 or later
-      if (state.currentStep >= 3 && finalData.services.length > 0 && providerId) {
+      // Save services if we're on step 4 or later (services step is now step 4)
+      if (state.currentStep >= 4 && finalData.services.length > 0 && providerId) {
         try {
-          await saveServices(providerId, finalData.services);
-          console.log('nextStep: Services saved successfully');
+          const categoryData = {
+            mainCategoryId: finalData.mainCategory?.id,
+            subcategoryId: finalData.subcategory?.id
+          };
+          await saveServices(providerId, finalData.services, categoryData);
+          console.log('nextStep: Services saved successfully with category data:', categoryData);
         } catch (servicesError) {
           console.error('nextStep: Error saving services:', servicesError);
           toast.error('Error guardando los servicios. Verifica los datos e inténtalo de nuevo.');
@@ -306,7 +325,7 @@ export const useOnboardingFlow = () => {
       }
 
       // Move to next step
-      if (state.currentStep < 4) {
+      if (state.currentStep < 5) {
         const nextStepNumber = state.currentStep + 1;
         setState(prev => ({
           ...prev,

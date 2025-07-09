@@ -235,9 +235,16 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
   }
 };
 
-export const saveServices = async (providerId: string, services: any[]) => {
+export const saveServices = async (
+  providerId: string, 
+  services: any[], 
+  categoryData?: { mainCategoryId?: string; subcategoryId?: string }
+) => {
   try {
-    console.log('onboardingService: Saving services for provider:', providerId);
+    console.log('onboardingService: Saving services for provider:', providerId, {
+      servicesCount: services.length,
+      categoryData
+    });
     
     // Delete existing services
     await supabase
@@ -245,7 +252,7 @@ export const saveServices = async (providerId: string, services: any[]) => {
       .delete()
       .eq('provider_id', providerId);
 
-    // Insert new services with proper typing
+    // Insert new services with proper typing and enhanced category linking
     const servicesToInsert = services.map(service => ({
       provider_id: providerId,
       name: service.name,
@@ -253,8 +260,8 @@ export const saveServices = async (providerId: string, services: any[]) => {
       duration_minutes: service.duration,
       description: service.description,
       category: service.category as ServiceCategory, // Keep for backward compatibility
-      main_category_id: service.mainCategoryId || null,
-      subcategory_id: service.subcategoryId || null,
+      main_category_id: service.mainCategoryId || categoryData?.mainCategoryId || null,
+      subcategory_id: service.subcategoryId || categoryData?.subcategoryId || null,
       is_active: true
     }));
 

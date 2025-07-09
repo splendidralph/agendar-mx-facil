@@ -129,22 +129,38 @@ export const ContactLocationStep = ({
   };
 
   const handleNext = async () => {
+    console.log('[CONTACT-LOCATION] Validating final step data:', {
+      whatsappPhone: formData.whatsappPhone,
+      phoneValid: phoneValidation.isValid,
+      phoneMessage: phoneValidation.message,
+      city_id: formData.city_id,
+      zone_id: formData.zone_id,
+      address: formData.address
+    });
+
     // Validate required fields
     if (!formData.whatsappPhone || !phoneValidation.isValid) {
       toast.error('Necesitas un número de teléfono válido');
+      console.error('[CONTACT-LOCATION] Phone validation failed:', {
+        phone: formData.whatsappPhone,
+        validation: phoneValidation
+      });
       return;
     }
     
     if (!formData.city_id) {
       toast.error('Debes seleccionar una ciudad');
+      console.error('[CONTACT-LOCATION] City validation failed');
       return;
     }
     
     if (!formData.zone_id) {
       toast.error('Debes seleccionar una zona');
+      console.error('[CONTACT-LOCATION] Zone validation failed');
       return;
     }
     
+    console.log('[CONTACT-LOCATION] All validations passed, proceeding to complete onboarding');
     await onNext(formData);
   };
 

@@ -6,6 +6,7 @@ import { useOnboardingFlow } from '@/hooks/useOnboardingFlow';
 import { OnboardingLayout } from '@/components/onboarding/OnboardingLayout';
 import { UsernameStep } from '@/components/onboarding/steps/UsernameStep';
 import { NameCategoryStep } from '@/components/onboarding/steps/NameCategoryStep';
+import { SubcategoryStep } from '@/components/onboarding/steps/SubcategoryStep';
 import { ServicesStep } from '@/components/onboarding/steps/ServicesStep';
 import { ContactLocationStep } from '@/components/onboarding/steps/ContactLocationStep';
 
@@ -45,7 +46,8 @@ const Onboarding = () => {
   const steps = [
     'Username',
     'Tu Nombre & Categoría',
-    'Servicios',
+    'Especialidad',
+    'Servicios', 
     'Contacto & Ubicación'
   ];
 
@@ -74,7 +76,7 @@ const Onboarding = () => {
         );
       case 3:
         return (
-          <ServicesStep 
+          <SubcategoryStep 
             data={data} 
             onUpdate={updateData} 
             onNext={nextStep} 
@@ -84,6 +86,17 @@ const Onboarding = () => {
           />
         );
       case 4:
+        return (
+          <ServicesStep 
+            data={data} 
+            onUpdate={updateData} 
+            onNext={nextStep} 
+            onPrevious={prevStep}
+            loading={loading}
+            validationErrors={validationErrors}
+          />
+        );
+      case 5:
         return (
           <ContactLocationStep 
             data={data} 
