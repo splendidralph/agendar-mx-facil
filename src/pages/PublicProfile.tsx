@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import ReferralFooter from '@/components/profile/ReferralFooter';
 
-import { MapPin, Instagram, Clock, DollarSign, ArrowLeft, Phone, Star } from 'lucide-react';
+import { MapPin, Instagram, Clock, DollarSign, Phone, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { categoryLabels } from '@/utils/serviceCategories';
 
@@ -149,10 +150,9 @@ const PublicProfile = () => {
           <p className="text-muted-foreground">
             El perfil @{username} no existe o no está disponible.
           </p>
-          <Button onClick={() => navigate('/')} variant="outline">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver al inicio
-          </Button>
+          <p className="text-sm text-muted-foreground">
+            Verifica que hayas escrito correctamente el nombre de usuario.
+          </p>
         </div>
       </div>
     );
@@ -162,15 +162,7 @@ const PublicProfile = () => {
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/')}
-            className="mr-4 text-foreground hover:bg-secondary"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver
-          </Button>
+        <div className="container mx-auto px-4 py-4 flex items-center justify-center">
           <div className="flex items-center space-x-3">
             <div className="gradient-primary text-primary-foreground p-2 rounded-xl">
               {provider.business_name.charAt(0).toUpperCase()}
@@ -282,6 +274,9 @@ const PublicProfile = () => {
 
         </div>
       </div>
+      
+      {/* Referral Footer */}
+      <ReferralFooter />
     </div>
   );
 };
