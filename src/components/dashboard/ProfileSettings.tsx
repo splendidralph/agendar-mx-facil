@@ -16,6 +16,7 @@ import ProfilePictureUpload from './ProfilePictureUpload';
 import { CustomPhoneInput } from '@/components/ui/phone-input';
 import { useCategories } from '@/hooks/useCategories';
 import { Loader2, Check, X } from 'lucide-react';
+import ThemeColorSelector from './ThemeColorSelector';
 
 interface ProfileSettingsProps {
   provider: any;
@@ -38,7 +39,8 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
     address: provider.address || '',
     instagram_handle: provider.instagram_handle || '',
     username: provider.username || '',
-    whatsapp_phone: provider.whatsapp_phone || ''
+    whatsapp_phone: provider.whatsapp_phone || '',
+    theme_color: provider.theme_color || 'blue'
   });
 
   const checkUsernameAvailabilityDebounced = async (username: string) => {
@@ -123,7 +125,8 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
           address: formData.address,
           instagram_handle: formData.instagram_handle,
           username: formData.username,
-          whatsapp_phone: formData.whatsapp_phone
+          whatsapp_phone: formData.whatsapp_phone,
+          theme_color: formData.theme_color
         })
         .eq('id', provider.id);
 
@@ -319,6 +322,12 @@ const ProfileSettings = ({ provider, onUpdate }: ProfileSettingsProps) => {
                   placeholder="mi_negocio_oficial"
                 />
               </div>
+
+              <ThemeColorSelector
+                currentTheme={formData.theme_color}
+                onThemeChange={(theme) => setFormData(prev => ({ ...prev, theme_color: theme }))}
+                disabled={loading}
+              />
 
               <div className="flex gap-2 pt-4">
                 <Button onClick={handleSave} disabled={loading} className="flex-1">

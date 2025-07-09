@@ -106,6 +106,39 @@
   background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 75% 35%) 100%);
 }
 
+/* Theme Color Gradients */
+.gradient-theme-blue {
+  background: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(221 83% 53%) 100%);
+}
+
+.gradient-theme-green {
+  background: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(158 64% 52%) 100%);
+}
+
+.gradient-theme-purple {
+  background: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(263 70% 50%) 100%);
+}
+
+.gradient-theme-orange {
+  background: linear-gradient(135deg, hsl(32 95% 44%) 0%, hsl(25 95% 53%) 100%);
+}
+
+.gradient-theme-pink {
+  background: linear-gradient(135deg, hsl(330 81% 60%) 0%, hsl(340 82% 52%) 100%);
+}
+
+.gradient-theme-teal {
+  background: linear-gradient(135deg, hsl(173 58% 39%) 0%, hsl(175 60% 50%) 100%);
+}
+
+.gradient-theme-red {
+  background: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(0 72% 51%) 100%);
+}
+
+.gradient-theme-indigo {
+  background: linear-gradient(135deg, hsl(231 48% 48%) 0%, hsl(243 75% 59%) 100%);
+}
+
 .gradient-accent {
   background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(174 75% 31%) 100%);
 }

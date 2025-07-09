@@ -24,6 +24,7 @@ interface Provider {
   profile_image_url: string | null;
   avg_rating: number;
   review_count: number;
+  theme_color: string;
 }
 
 
@@ -78,7 +79,7 @@ const PublicProfile = () => {
       // Fetch provider data
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
-        .select('id, business_name, bio, category, address, instagram_handle, username, phone, profile_image_url, avg_rating, review_count')
+        .select('id, business_name, bio, category, address, instagram_handle, username, phone, profile_image_url, avg_rating, review_count, theme_color')
         .eq('username', cleanUsername)
         .eq('profile_completed', true)
         .eq('is_active', true)
@@ -158,13 +159,16 @@ const PublicProfile = () => {
     );
   }
 
+  // Get the theme gradient class
+  const themeGradientClass = `gradient-theme-${provider.theme_color || 'blue'}`;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-center">
           <div className="flex items-center space-x-3">
-            <div className="gradient-primary text-primary-foreground p-2 rounded-xl">
+            <div className={`${themeGradientClass} text-primary-foreground p-2 rounded-xl`}>
               {provider.business_name.charAt(0).toUpperCase()}
             </div>
             <span className="text-xl font-bold text-foreground">{provider.business_name}</span>
@@ -176,7 +180,7 @@ const PublicProfile = () => {
         <div className="max-w-4xl mx-auto">
           {/* Profile Header - Similar to BookingDemo */}
           <Card className="mb-8 animate-fade-in border-border/50 shadow-lg overflow-hidden">
-            <div className="gradient-primary p-6 text-primary-foreground">
+            <div className={`${themeGradientClass} p-6 text-primary-foreground`}>
               <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
                 <Avatar className="w-24 h-24 shadow-lg border-4 border-white/20">
                   <AvatarImage src={provider.profile_image_url || undefined} />
