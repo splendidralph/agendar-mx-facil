@@ -17,7 +17,7 @@ export interface OnboardingData {
   // New three-tier location system (required for Step 4)
   city_id?: string;
   zone_id?: string;
-  colonia: string;
+  colonia?: string; // Made optional since we simplified location system
   // Legacy location fields (keep for migration compatibility)
   delegacion: string;
   delegacionId?: string;

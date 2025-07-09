@@ -29,7 +29,7 @@ export const useSimpleOnboarding = () => {
     username: '',
     city_id: '',
     zone_id: '',
-    colonia: '',
+    colonia: '', // Optional field now
     delegacion: '',
     delegacionId: undefined,
     postalCode: '',

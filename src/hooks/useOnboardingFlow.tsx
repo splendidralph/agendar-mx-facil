@@ -34,7 +34,7 @@ const initialData: OnboardingData = {
   // New location system fields
   city_id: '',
   zone_id: '',
-  colonia: '',
+  colonia: '', // Optional field now
   // Legacy location fields (keep for compatibility)
   delegacion: '',
   delegacionId: undefined,
@@ -85,7 +85,7 @@ export const useOnboardingFlow = () => {
             // New location system fields
             city_id: provider.city_id || '',
             zone_id: provider.zone_id || '',
-            colonia: provider.colonia || '',
+            colonia: provider.colonia || '', // Optional field now
             // Legacy location fields (keep for compatibility)
             delegacion: '', // TODO: Load from delegaciones table
             delegacionId: undefined,
@@ -175,7 +175,7 @@ export const useOnboardingFlow = () => {
           });
           break;
           
-        case 4: // Contact & Location - Require phone and location data
+        case 4: // Contact & Location - Require phone and location data (simplified)
           if (!data.whatsappPhone || !data.whatsappPhone.trim()) {
             errors.push({ field: 'whatsappPhone', message: 'El número de teléfono es requerido' });
           } else if (!/^\+[1-9]\d{1,14}$/.test(data.whatsappPhone.trim())) {
@@ -190,9 +190,7 @@ export const useOnboardingFlow = () => {
             errors.push({ field: 'zone_id', message: 'Debes seleccionar una zona' });
           }
           
-          if (!data.colonia || !data.colonia.trim()) {
-            errors.push({ field: 'colonia', message: 'Debes seleccionar una colonia' });
-          }
+          // Note: colonia requirement removed - city and zone are sufficient
           break;
       }
     } catch (validationError) {
