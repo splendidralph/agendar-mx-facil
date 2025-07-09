@@ -10,7 +10,7 @@ const ReferralFooter = () => {
           ¿Quieres crear una página como esta?
         </h3>
         <p className="text-sm opacity-90 mb-6">
-          Únete a miles de profesionales que ya promocionan sus servicios
+          Reclama tu usuario ahora en BookEasy.mx
         </p>
         <Button 
           variant="secondary"
