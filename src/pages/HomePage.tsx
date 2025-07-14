@@ -149,10 +149,10 @@ const Index = () => {
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-              ¿Listo para comenzar?
+              {t('finalCta.title')}
             </h2>
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-              Crea tu perfil profesional y empieza a recibir reservas automáticamente
+              {t('finalCta.description')}
             </p>
             <div className="flex justify-center">
               <Button 
@@ -160,7 +160,7 @@ const Index = () => {
                 className="accent-gradient text-white hover:opacity-90 text-lg font-semibold px-10 py-5 h-auto rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg"
                 onClick={handleGetStarted}
               >
-                Crear mi perfil ahora
+                {t('finalCta.button')}
               </Button>
             </div>
           </div>
@@ -181,13 +181,13 @@ const Index = () => {
                 <span className="text-2xl font-bold">Bookeasy.mx</span>
               </div>
               <p className="text-background/70 max-w-sm mx-auto md:mx-0 leading-relaxed">
-                Una nueva forma de reservar servicios locales
+                {t('footer.description')}
               </p>
             </div>
             
             {/* Social Media Section */}
             <div className="text-center">
-              <h3 className="text-lg font-semibold mb-4">Síguenos</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.follow')}</h3>
               <div className="flex justify-center space-x-4">
                 <a 
                   href="https://instagram.com" 
@@ -210,7 +210,7 @@ const Index = () => {
             
             {/* Contact/Info Section */}
             <div className="text-center md:text-right">
-              <h3 className="text-lg font-semibold mb-4">Contacto</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.contact')}</h3>
               <p className="text-background/70 mb-2">
                 hello@bookeasy.mx
               </p>
@@ -219,7 +219,7 @@ const Index = () => {
           
           <div className="border-t border-background/20 pt-6 text-center">
             <div className="text-background/60 text-sm">
-              © 2025 Bookeasy.mx - Digitalizando servicios profesionales en México
+              {t('footer.copyright')}
             </div>
           </div>
         </div>

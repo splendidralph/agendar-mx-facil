@@ -9,11 +9,14 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, ArrowLeft, AlertCircle, Users, Star } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { LanguageToggle } from '@/components/ui/language-toggle';
 
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { signUp, signIn, resetPassword, loading, user } = useAuth();
+  const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
@@ -232,7 +235,7 @@ const Auth = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Cargando...</p>
+          <p>{t('auth.loading')}</p>
         </div>
       </div>
     );
@@ -244,7 +247,7 @@ const Auth = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Redirigiendo...</p>
+          <p>{t('auth.redirecting')}</p>
         </div>
       </div>
     );
@@ -256,12 +259,12 @@ const Auth = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center max-w-md mx-auto p-6">
           <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Error de Navegación</h2>
+          <h2 className="text-xl font-semibold mb-2">{t('auth.navigationError')}</h2>
           <p className="text-muted-foreground mb-4">
-            Hubo un problema al redirigirte. Puedes continuar manualmente.
+            {t('auth.navigationErrorMsg')}
           </p>
           <Button onClick={handleManualNavigation} className="btn-primary">
-            Continuar al Dashboard
+            {t('auth.continueToDashboard')}
           </Button>
         </div>
       </div>
@@ -274,7 +277,7 @@ const Auth = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Verificando...</p>
+          <p>{t('auth.verifying')}</p>
         </div>
       </div>
     );
@@ -288,7 +291,7 @@ const Auth = () => {
       
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-lg">
-          {/* Header with back button */}
+          {/* Header with back button and language toggle */}
           <div className="text-center mb-8 relative">
             <Button
               variant="ghost"
@@ -296,8 +299,14 @@ const Auth = () => {
               className="absolute -top-2 left-0 text-white/80 hover:text-white hover:bg-white/10 border-0"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
+              {t('auth.back')}
             </Button>
+            
+            <div className="absolute -top-2 right-0">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-1">
+                <LanguageToggle />
+              </div>
+            </div>
             
             {/* Brand logo */}
             <div 
@@ -320,13 +329,13 @@ const Auth = () => {
                   value="signin" 
                   className="text-white data-[state=active]:bg-white data-[state=active]:text-primary rounded-xl smooth-transition"
                 >
-                  Iniciar Sesión
+                  {t('auth.signin')}
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup"
                   className="text-white data-[state=active]:bg-white data-[state=active]:text-primary rounded-xl smooth-transition"
                 >
-                  Crear Cuenta
+                  {t('auth.signup')}
                 </TabsTrigger>
               </TabsList>
 
@@ -334,13 +343,13 @@ const Auth = () => {
                 {showForgotPassword ? (
                   <div className="space-y-6">
                     <div className="text-center">
-                      <h2 className="text-xl font-semibold text-white mb-2">Recuperar Contraseña</h2>
-                      <p className="text-white/70">Ingresa tu email para recibir instrucciones</p>
+                      <h2 className="text-xl font-semibold text-white mb-2">{t('auth.resetPassword')}</h2>
+                      <p className="text-white/70">{t('auth.resetDescription')}</p>
                     </div>
                     
                     <form onSubmit={handleForgotPassword} className="space-y-6">
                       <div>
-                        <Label htmlFor="reset-email" className="text-white font-medium">Email</Label>
+                        <Label htmlFor="reset-email" className="text-white font-medium">{t('auth.email')}</Label>
                         <Input
                           id="reset-email"
                           type="email"
@@ -348,7 +357,7 @@ const Auth = () => {
                           onChange={(e) => setResetEmail(e.target.value)}
                           required
                           disabled={isSubmitting}
-                          placeholder="tu@email.com"
+                          placeholder={t('auth.emailPlaceholder')}
                           className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                         />
                       </div>
@@ -358,7 +367,7 @@ const Auth = () => {
                           className="w-full gradient-accent text-white hover:opacity-90 shadow-xl font-semibold py-3 h-auto rounded-2xl smooth-transition hover:scale-[1.02]"
                           disabled={isSubmitting}
                         >
-                          {isSubmitting ? 'Enviando...' : 'Enviar Instrucciones'}
+                          {isSubmitting ? t('auth.sending') : t('auth.sendInstructions')}
                         </Button>
                         <Button
                           type="button"
@@ -367,7 +376,7 @@ const Auth = () => {
                           onClick={() => setShowForgotPassword(false)}
                           disabled={isSubmitting}
                         >
-                          Volver al inicio de sesión
+                          {t('auth.backToSignIn')}
                         </Button>
                       </div>
                     </form>
@@ -375,13 +384,13 @@ const Auth = () => {
                 ) : (
                   <div className="space-y-6">
                     <div className="text-center">
-                      <h2 className="text-xl font-semibold text-white mb-2">Bienvenido de vuelta</h2>
-                      <p className="text-white/70">Ingresa con tu cuenta existente</p>
+                      <h2 className="text-xl font-semibold text-white mb-2">{t('auth.welcomeBack')}</h2>
+                      <p className="text-white/70">{t('auth.signInDescription')}</p>
                     </div>
                     
                     <form onSubmit={handleSignIn} className="space-y-6">
                       <div>
-                        <Label htmlFor="signin-email" className="text-white font-medium">Email</Label>
+                        <Label htmlFor="signin-email" className="text-white font-medium">{t('auth.email')}</Label>
                         <Input
                           id="signin-email"
                           type="email"
@@ -389,12 +398,12 @@ const Auth = () => {
                           onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
                           required
                           disabled={isSubmitting}
-                          placeholder="tu@email.com"
+                          placeholder={t('auth.emailPlaceholder')}
                           className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="signin-password" className="text-white font-medium">Contraseña</Label>
+                        <Label htmlFor="signin-password" className="text-white font-medium">{t('auth.password')}</Label>
                         <Input
                           id="signin-password"
                           type="password"
@@ -403,7 +412,7 @@ const Auth = () => {
                           required
                           disabled={isSubmitting}
                           minLength={6}
-                          placeholder="Tu contraseña"
+                          placeholder={t('auth.passwordPlaceholder')}
                           className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                         />
                       </div>
@@ -413,7 +422,7 @@ const Auth = () => {
                           className="w-full gradient-accent text-white hover:opacity-90 shadow-xl font-semibold py-3 h-auto rounded-2xl smooth-transition hover:scale-[1.02]"
                           disabled={isSubmitting}
                         >
-                          {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                          {isSubmitting ? t('auth.signingIn') : t('auth.signInButton')}
                         </Button>
                         <Button
                           type="button"
@@ -422,7 +431,7 @@ const Auth = () => {
                           onClick={() => setShowForgotPassword(true)}
                           disabled={isSubmitting}
                         >
-                          ¿Olvidaste tu contraseña?
+                          {t('auth.forgotPassword')}
                         </Button>
                       </div>
                     </form>
@@ -433,13 +442,13 @@ const Auth = () => {
               <TabsContent value="signup" className="mt-8">
                 <div className="space-y-6">
                   <div className="text-center">
-                    <h2 className="text-xl font-semibold text-white mb-2">Crear tu cuenta profesional</h2>
-                    <p className="text-white/70">Comienza a gestionar tus citas profesionalmente</p>
+                    <h2 className="text-xl font-semibold text-white mb-2">{t('auth.createAccount')}</h2>
+                    <p className="text-white/70">{t('auth.signUpDescription')}</p>
                   </div>
                   
                   <form onSubmit={handleSignUp} className="space-y-5">
                     <div>
-                      <Label htmlFor="signup-email" className="text-white font-medium">Email *</Label>
+                      <Label htmlFor="signup-email" className="text-white font-medium">{t('auth.emailRequired')}</Label>
                       <Input
                         id="signup-email"
                         type="email"
@@ -447,12 +456,12 @@ const Auth = () => {
                         onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
                         required
                         disabled={isSubmitting}
-                          placeholder="tu@email.com"
+                          placeholder={t('auth.emailPlaceholder')}
                           className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="signup-password" className="text-white font-medium">Contraseña *</Label>
+                      <Label htmlFor="signup-password" className="text-white font-medium">{t('auth.passwordRequired')}</Label>
                       <Input
                         id="signup-password"
                         type="password"
@@ -461,7 +470,7 @@ const Auth = () => {
                         required
                         disabled={isSubmitting}
                         minLength={6}
-                          placeholder="Mínimo 6 caracteres"
+                          placeholder={t('auth.passwordMinLength')}
                           className="mt-2 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary"
                       />
                     </div>
@@ -470,7 +479,7 @@ const Auth = () => {
                       className="w-full gradient-accent text-white hover:opacity-90 shadow-xl font-semibold py-3 h-auto rounded-2xl smooth-transition hover:scale-[1.02] mt-6"
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta Profesional'}
+                      {isSubmitting ? t('auth.creatingAccount') : t('auth.createAccountButton')}
                     </Button>
                   </form>
                 </div>
@@ -482,7 +491,7 @@ const Auth = () => {
           {/* Additional info */}
           <div className="text-center mt-6">
             <p className="text-white/60 text-sm">
-              Al crear una cuenta, aceptas nuestros términos de servicio y política de privacidad
+              {t('auth.termsOfService')}
             </p>
           </div>
         </div>

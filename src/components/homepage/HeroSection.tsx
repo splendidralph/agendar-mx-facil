@@ -32,17 +32,17 @@ const HeroSection = () => {
           {/* Beta Badge */}
           <div className="solid-card-primary inline-flex items-center gap-2 px-6 py-3 rounded-full mb-10 font-medium">
             <TrendingUp className="h-5 w-5 text-primary" />
-            <span className="text-foreground">Bookeasy.mx – Fase 1 Beta Ya Disponible</span>
+            <span className="text-foreground">{t('hero.badge')}</span>
           </div>
 
           {/* Main headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-foreground mb-8 leading-[1.1] tracking-tight">
-            Recibe reservas profesionales con tu propio
+            {t('hero.title')}
             <span className="block mt-3 text-gradient-primary">
-              link personalizado
+              {t('hero.subtitle')}
             </span>
             <span className="block mt-2 text-gradient-accent text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
-              Gratis.
+              {t('hero.subtitle2')}
             </span>
           </h1>
 
@@ -51,15 +51,15 @@ const HeroSection = () => {
             
             {/* Location Badge */}
             <div className="solid-card-accent p-6 mb-10">
-              <p className="text-lg font-semibold text-foreground mb-2">Activando solo en:</p>
+              <p className="text-lg font-semibold text-foreground mb-2">{t('hero.locationBadge')}</p>
               <p className="text-muted-foreground text-lg">
-                Tijuana, Rosarito, and Tecate
+                {t('hero.location')}
               </p>
             </div>
             
             {/* Link preview */}
             <div className="solid-card-strong p-8 inline-block max-w-full">
-              <span className="text-sm block text-muted-foreground mb-2">Tu link personalizado:</span>
+              <span className="text-sm block text-muted-foreground mb-2">{t('hero.linkPreview')}</span>
               <div className="font-mono text-xl break-all">
                 <span className="text-gradient-primary font-semibold">bookeasy.mx/</span>
                 <span className="text-gradient-accent font-bold bg-accent/10 px-2 py-1 rounded-md border border-accent/20">tuusuario</span>
@@ -74,11 +74,11 @@ const HeroSection = () => {
               className="accent-gradient text-white hover:opacity-90 text-xl font-semibold group border-0 px-12 py-6 h-auto rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
               onClick={handleGetStarted}
             >
-              Crear Mi Perfil – Totalmente Gratis
+              {t('hero.cta.create')}
               <ArrowRight className="h-6 w-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
             <p className="text-sm text-muted-foreground font-medium">
-              Cupos limitados en esta primera etapa
+              {t('hero.limitedSpots')}
             </p>
           </div>
         </div>
