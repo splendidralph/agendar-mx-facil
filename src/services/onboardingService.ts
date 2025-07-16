@@ -97,15 +97,22 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       categoryName = data.category.trim();
     }
 
-  // Enhanced UUID sanitization function
+  // Enhanced UUID sanitization function - more aggressive
   const sanitizeUUID = (value: any): string | null => {
-    if (!value || value === '' || value === 'undefined' || value === 'null') {
+    // Handle all falsy values and common string representations of empty
+    if (!value || 
+        value === '' || 
+        value === 'undefined' || 
+        value === 'null' ||
+        value === 'NULL' ||
+        (typeof value === 'string' && value.trim() === '')) {
+      console.log('[UUID_SANITIZE] Converting to null:', value);
       return null;
     }
-    if (typeof value === 'string' && value.trim() === '') {
-      return null;
-    }
-    return typeof value === 'string' ? value.trim() : value;
+    
+    const result = typeof value === 'string' ? value.trim() : value;
+    console.log('[UUID_SANITIZE] Sanitized UUID:', value, '->', result);
+    return result;
   };
 
   // Enhanced phone sanitization to ensure proper format
@@ -132,7 +139,7 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
     bio: data.bio?.trim() || null,
     address: data.address?.trim() || null,
     whatsapp_phone: sanitizePhone(data.whatsappPhone),
-    // Enhanced UUID sanitization for location fields
+    // Enhanced UUID sanitization for location fields with additional logging
     city_id: sanitizeUUID(data.city_id),
     zone_id: sanitizeUUID(data.zone_id),
     colonia: data.colonia?.trim() || null,
@@ -300,6 +307,23 @@ export const completeProviderOnboarding = async (userId: string) => {
   try {
     console.log('completeProviderOnboarding: Starting for user:', userId);
     
+    // Enhanced UUID sanitization function for defensive programming
+    const sanitizeUUIDDefensive = (value: any): string | null => {
+      if (!value || 
+          value === '' || 
+          value === 'undefined' || 
+          value === 'null' ||
+          value === 'NULL' ||
+          (typeof value === 'string' && value.trim() === '')) {
+        console.log('[DEFENSIVE_UUID] Converting to null:', value);
+        return null;
+      }
+      
+      const result = typeof value === 'string' ? value.trim() : value;
+      console.log('[DEFENSIVE_UUID] Sanitized UUID:', value, '->', result);
+      return result;
+    };
+    
     // Get the provider data with all required fields for validation
     const { data: provider, error: providerError } = await supabase
       .from('providers')
@@ -355,10 +379,14 @@ export const completeProviderOnboarding = async (userId: string) => {
     }
 
     // 4. UUID field validation (must NOT be empty strings)
-    if (!provider.city_id || provider.city_id.trim() === '' || provider.city_id === 'undefined') {
+    // Sanitize UUIDs defensively before validation
+    const sanitizedCityId = sanitizeUUIDDefensive(provider.city_id);
+    const sanitizedZoneId = sanitizeUUIDDefensive(provider.zone_id);
+    
+    if (!sanitizedCityId) {
       validationErrors.push('Ciudad es requerida');
     }
-    if (!provider.zone_id || provider.zone_id.trim() === '' || provider.zone_id === 'undefined') {
+    if (!sanitizedZoneId) {
       validationErrors.push('Zona es requerida');
     }
 
@@ -381,15 +409,15 @@ export const completeProviderOnboarding = async (userId: string) => {
 
     console.log('completeProviderOnboarding: All validations passed');
 
-    // Prepare update data with sanitized values
+    // Prepare update data with aggressively sanitized values
     const updateData: any = {
       profile_completed: true,
       onboarding_step: 4,
       // Ensure category is populated
       category: categoryToUpdate,
-      // Sanitize UUID fields (convert empty strings to null)
-      city_id: provider.city_id?.trim() === '' ? null : provider.city_id,
-      zone_id: provider.zone_id?.trim() === '' ? null : provider.zone_id
+      // Aggressively sanitize UUID fields to prevent empty strings
+      city_id: sanitizeUUIDDefensive(provider.city_id),
+      zone_id: sanitizeUUIDDefensive(provider.zone_id)
     };
 
     console.log('completeProviderOnboarding: Final update payload:', {
