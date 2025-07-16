@@ -353,22 +353,64 @@ export const useOnboardingFlow = () => {
   }, [state.currentStep]);
 
   // Complete onboarding
-  const completeOnboarding = useCallback(async () => {
+  const completeOnboarding = useCallback(async (finalData?: Partial<OnboardingData>) => {
     if (!user?.id) return false;
 
-    setState(prev => ({ ...prev, saving: true }));
+    console.log('[ONBOARDING] Starting completion with final data:', finalData);
+
+    // Merge any final data (like contact/location info)
+    const dataToComplete = { ...state.data, ...finalData };
+    
+    // Validate step 4 (contact/location) before completion
+    const errors = validateStep(4, dataToComplete);
+    if (errors.length > 0) {
+      setState(prev => ({ ...prev, validationErrors: errors }));
+      toast.error(errors[0].message);
+      return false;
+    }
+
+    setState(prev => ({ ...prev, saving: true, validationErrors: [] }));
     try {
+      // Update data if provided
+      if (finalData) {
+        setState(prev => ({ ...prev, data: { ...prev.data, ...finalData } }));
+      }
+
+      // Save the final step data first
+      await saveProviderData(user.id, dataToComplete, 4);
+      console.log('[ONBOARDING] Final step data saved successfully');
+
+      // Now complete the onboarding (this sets profile_completed = true)
       await completeProviderOnboarding(user.id);
+      console.log('[ONBOARDING] Profile completion successful');
+      
       toast.success('¡Perfil completado exitosamente!');
       navigate('/dashboard');
       return true;
     } catch (error) {
-      console.error('Error completing onboarding:', error);
-      toast.error('Error completando el perfil');
+      console.error('[ONBOARDING] Error completing onboarding:', error);
+      
+      // Handle specific validation errors from the database trigger
+      if (error.message?.includes('Business name is required')) {
+        toast.error('El nombre del negocio es requerido para completar el perfil');
+      } else if (error.message?.includes('Category is required')) {
+        toast.error('La categoría es requerida para completar el perfil');
+      } else if (error.message?.includes('Username is required')) {
+        toast.error('El nombre de usuario es requerido para completar el perfil');
+      } else if (error.message?.includes('City is required')) {
+        toast.error('La ciudad es requerida para completar el perfil');
+      } else if (error.message?.includes('Zone is required')) {
+        toast.error('La zona es requerida para completar el perfil');
+      } else if (error.message?.includes('Invalid WhatsApp phone number')) {
+        toast.error('El número de WhatsApp no es válido');
+      } else {
+        toast.error('Error completando el perfil. Por favor, verifica que todos los campos estén completos.');
+      }
+      
       setState(prev => ({ ...prev, saving: false }));
       return false;
     }
-  }, [user?.id, navigate]);
+  }, [user?.id, navigate, state.data, validateStep]);
 
   return {
     currentStep: state.currentStep,
