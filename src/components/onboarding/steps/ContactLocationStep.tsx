@@ -138,30 +138,47 @@ export const ContactLocationStep = ({
       address: formData.address
     });
 
-    // Validate required fields
+    // Enhanced validation before proceeding to completion
+    const validationErrors: string[] = [];
+
+    // 1. Phone validation - Enhanced to match backend exactly
     if (!formData.whatsappPhone || !phoneValidation.isValid) {
-      toast.error('Necesitas un número de teléfono válido');
-      console.error('[CONTACT-LOCATION] Phone validation failed:', {
-        phone: formData.whatsappPhone,
-        validation: phoneValidation
-      });
-      return;
+      validationErrors.push('Número de teléfono válido es requerido');
+    } else {
+      const phoneRegex = /^\+[1-9]\d{1,14}$/;
+      if (!phoneRegex.test(formData.whatsappPhone)) {
+        validationErrors.push('El formato del número de teléfono debe incluir código de país (ej: +52)');
+      }
     }
     
-    if (!formData.city_id) {
-      toast.error('Debes seleccionar una ciudad');
-      console.error('[CONTACT-LOCATION] City validation failed');
-      return;
+    // 2. Location validation - Ensure UUIDs are valid
+    if (!formData.city_id || formData.city_id.trim() === '' || formData.city_id === 'undefined') {
+      validationErrors.push('Debes seleccionar una ciudad');
     }
     
-    if (!formData.zone_id) {
-      toast.error('Debes seleccionar una zona');
-      console.error('[CONTACT-LOCATION] Zone validation failed');
+    if (!formData.zone_id || formData.zone_id.trim() === '' || formData.zone_id === 'undefined') {
+      validationErrors.push('Debes seleccionar una zona');
+    }
+
+    // Show validation errors if any
+    if (validationErrors.length > 0) {
+      toast.error(validationErrors[0]); // Show first error
+      console.error('[CONTACT-LOCATION] Validation failed:', validationErrors);
       return;
     }
     
     console.log('[CONTACT-LOCATION] All validations passed, proceeding to complete onboarding');
-    await onNext(formData);
+    
+    // Sanitize data before sending (ensure empty strings become null for UUIDs)
+    const sanitizedData = {
+      ...formData,
+      city_id: formData.city_id?.trim() === '' ? null : formData.city_id,
+      zone_id: formData.zone_id?.trim() === '' ? null : formData.zone_id,
+      address: formData.address?.trim() || null
+    };
+    
+    console.log('[CONTACT-LOCATION] Sending sanitized data:', sanitizedData);
+    await onNext(sanitizedData);
   };
 
   const canProceed = Boolean(

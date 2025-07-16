@@ -300,13 +300,14 @@ export const completeProviderOnboarding = async (userId: string) => {
   try {
     console.log('completeProviderOnboarding: Starting for user:', userId);
     
-    // First get the provider data to check if category is populated
+    // Get the provider data with all required fields for validation
     const { data: provider, error: providerError } = await supabase
       .from('providers')
       .select(`
         id, 
         category, 
         business_name,
+        username,
         whatsapp_phone,
         city_id,
         zone_id,
@@ -320,33 +321,81 @@ export const completeProviderOnboarding = async (userId: string) => {
       throw providerError;
     }
 
-    console.log('completeProviderOnboarding: Provider data:', {
+    console.log('completeProviderOnboarding: Provider data before validation:', {
       id: provider.id,
       business_name: provider.business_name,
+      username: provider.username,
       category: provider.category,
-      whatsapp_phone: provider.whatsapp_phone ? '***HIDDEN***' : 'null',
+      whatsapp_phone: provider.whatsapp_phone ? `${provider.whatsapp_phone.substring(0, 3)}***` : 'null',
       city_id: provider.city_id,
       zone_id: provider.zone_id,
       has_main_category: !!provider.main_categories
     });
 
-    // Ensure category field is populated for validation
+    // CRITICAL: Pre-validation before attempting to mark profile as completed
+    const validationErrors: string[] = [];
+
+    // 1. Business name validation (must be ≥ 2 characters)
+    if (!provider.business_name || provider.business_name.trim().length < 2) {
+      validationErrors.push('Nombre del negocio debe tener al menos 2 caracteres');
+    }
+
+    // 2. Username validation (must be ≥ 3 characters)
+    if (!provider.username || provider.username.trim().length < 3) {
+      validationErrors.push('Nombre de usuario debe tener al menos 3 caracteres');
+    }
+
+    // 3. Category validation (must be populated)
     let categoryToUpdate = provider.category;
     if (!categoryToUpdate && provider.main_categories?.display_name) {
       categoryToUpdate = provider.main_categories.display_name;
     }
-
-    // Update provider completion status with category if needed
-    const updateData: any = {
-      profile_completed: true,
-      onboarding_step: 4
-    };
-    
-    if (categoryToUpdate && categoryToUpdate !== provider.category) {
-      updateData.category = categoryToUpdate;
+    if (!categoryToUpdate || categoryToUpdate.trim() === '') {
+      validationErrors.push('Categoría principal es requerida');
     }
 
-    console.log('completeProviderOnboarding: Updating provider with:', updateData);
+    // 4. UUID field validation (must NOT be empty strings)
+    if (!provider.city_id || provider.city_id.trim() === '' || provider.city_id === 'undefined') {
+      validationErrors.push('Ciudad es requerida');
+    }
+    if (!provider.zone_id || provider.zone_id.trim() === '' || provider.zone_id === 'undefined') {
+      validationErrors.push('Zona es requerida');
+    }
+
+    // 5. WhatsApp phone validation (must match E.164 format)
+    if (!provider.whatsapp_phone) {
+      validationErrors.push('Número de teléfono es requerido');
+    } else {
+      const phoneRegex = /^\+[1-9]\d{1,14}$/;
+      if (!phoneRegex.test(provider.whatsapp_phone)) {
+        validationErrors.push('Formato de número de teléfono inválido (debe incluir código de país)');
+      }
+    }
+
+    // If there are validation errors, don't proceed
+    if (validationErrors.length > 0) {
+      const errorMessage = `Faltan campos requeridos: ${validationErrors.join(', ')}`;
+      console.error('completeProviderOnboarding: Validation failed:', validationErrors);
+      throw new Error(errorMessage);
+    }
+
+    console.log('completeProviderOnboarding: All validations passed');
+
+    // Prepare update data with sanitized values
+    const updateData: any = {
+      profile_completed: true,
+      onboarding_step: 4,
+      // Ensure category is populated
+      category: categoryToUpdate,
+      // Sanitize UUID fields (convert empty strings to null)
+      city_id: provider.city_id?.trim() === '' ? null : provider.city_id,
+      zone_id: provider.zone_id?.trim() === '' ? null : provider.zone_id
+    };
+
+    console.log('completeProviderOnboarding: Final update payload:', {
+      ...updateData,
+      whatsapp_phone: provider.whatsapp_phone ? `${provider.whatsapp_phone.substring(0, 3)}***` : 'null'
+    });
 
     const { error } = await supabase
       .from('providers')
@@ -354,8 +403,24 @@ export const completeProviderOnboarding = async (userId: string) => {
       .eq('user_id', userId);
 
     if (error) {
-      console.error('completeProviderOnboarding: Error updating provider:', error);
-      throw error;
+      console.error('completeProviderOnboarding: Database error:', error);
+      
+      // Provide specific error messages based on trigger validation
+      if (error.message.includes('Business name is required')) {
+        throw new Error('El nombre del negocio es requerido y debe tener al menos 2 caracteres');
+      } else if (error.message.includes('Username is required')) {
+        throw new Error('El nombre de usuario es requerido y debe tener al menos 3 caracteres');
+      } else if (error.message.includes('Category is required')) {
+        throw new Error('La categoría principal es requerida');
+      } else if (error.message.includes('City is required')) {
+        throw new Error('La ciudad es requerida');
+      } else if (error.message.includes('Zone is required')) {
+        throw new Error('La zona es requerida');
+      } else if (error.message.includes('Invalid WhatsApp phone')) {
+        throw new Error('El formato del número de WhatsApp no es válido');
+      } else {
+        throw new Error(`Error al completar el perfil: ${error.message}`);
+      }
     }
 
     console.log('completeProviderOnboarding: Provider updated successfully');
