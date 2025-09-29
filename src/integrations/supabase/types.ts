@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -1129,16 +1129,16 @@ export type Database = {
         Returns: Json
       }
       calculate_distance_km: {
-        Args: { lat1: number; lng1: number; lat2: number; lng2: number }
+        Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
       }
       check_booking_conflicts: {
         Args: {
-          provider_id_param: string
-          service_id_param: string
           booking_date_param: string
           booking_time_param: string
           duration_minutes_param: number
+          provider_id_param: string
+          service_id_param: string
         }
         Returns: boolean
       }
@@ -1147,7 +1147,7 @@ export type Database = {
         Returns: boolean
       }
       log_security_event: {
-        Args: { event_type: string; event_data?: Json; target_user_id?: string }
+        Args: { event_data?: Json; event_type: string; target_user_id?: string }
         Returns: undefined
       }
       refresh_analytics_views: {
