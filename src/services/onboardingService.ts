@@ -532,6 +532,10 @@ export const completeProviderOnboarding = async (userId: string) => {
     return true;
   } catch (error) {
     console.error('Error completing onboarding:', error);
+    // Explicitly re-throw the detailed validation error if it contains the flag
+    if (error instanceof Error && error.message.includes('VALIDATION_FAILED:')) {
+      throw error;
+    }
     throw error;
   }
 };
