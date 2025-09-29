@@ -3,6 +3,39 @@ import { supabase } from '@/integrations/supabase/client';
 import { OnboardingData, ServiceCategory } from '@/types/onboarding';
 import { sanitizeInput } from '@/utils/securityValidation';
 
+// Enhanced UUID sanitization function - more aggressive
+const sanitizeUUID = (value: any): string | null => {
+  // Handle all falsy values and common string representations of empty
+  if (!value || 
+      value === '' || 
+      value === 'undefined' || 
+      value === 'null' ||
+      value === 'NULL' ||
+      (typeof value === 'string' && value.trim() === '')) {
+    console.log('[UUID_SANITIZE] Converting to null:', value);
+    return null;
+  }
+  
+  const result = typeof value === 'string' ? value.trim() : value;
+  console.log('[UUID_SANITIZE] Sanitized UUID:', value, '->', result);
+  return result;
+};
+
+// Enhanced phone sanitization to ensure proper format
+const sanitizePhone = (phone: any): string | null => {
+  if (!phone || typeof phone !== 'string') return null;
+  const trimmed = phone.trim();
+  if (trimmed === '') return null;
+  
+  // Ensure phone starts with + for international format
+  if (trimmed && !trimmed.startsWith('+')) {
+    console.warn('Phone number missing country code, this should not happen with new phone input');
+    return `+52${trimmed}`; // Default to Mexico if somehow missing
+  }
+  
+  return trimmed;
+};
+
 export const loadProviderData = async (userId: string) => {
   try {
     console.log('onboardingService: Fetching provider data for user:', userId);
@@ -98,63 +131,28 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       categoryName = data.category.trim();
     }
 
-  // Enhanced UUID sanitization function - more aggressive
-  const sanitizeUUID = (value: any): string | null => {
-    // Handle all falsy values and common string representations of empty
-    if (!value || 
-        value === '' || 
-        value === 'undefined' || 
-        value === 'null' ||
-        value === 'NULL' ||
-        (typeof value === 'string' && value.trim() === '')) {
-      console.log('[UUID_SANITIZE] Converting to null:', value);
-      return null;
-    }
-    
-    const result = typeof value === 'string' ? value.trim() : value;
-    console.log('[UUID_SANITIZE] Sanitized UUID:', value, '->', result);
-    return result;
-  };
-
-  // Enhanced phone sanitization to ensure proper format
-  const sanitizePhone = (phone: any): string | null => {
-    if (!phone || typeof phone !== 'string') return null;
-    const trimmed = phone.trim();
-    if (trimmed === '') return null;
-    
-    // Ensure phone starts with + for international format
-    if (trimmed && !trimmed.startsWith('+')) {
-      console.warn('Phone number missing country code, this should not happen with new phone input');
-      return `+52${trimmed}`; // Default to Mexico if somehow missing
-    }
-    
-    return trimmed;
-  };
-
-  const providerData: any = {
-    user_id: userId,
-    business_name: data.businessName ? sanitizeInput(data.businessName).trim() || null : null,
-    category: categoryName, // Keep for backward compatibility
-    main_category_id: sanitizeUUID(data.mainCategory?.id),
-    subcategory_id: null, // No subcategory in 4-step flow
-    bio: data.bio ? sanitizeInput(data.bio).trim() || null : null,
-    address: data.address ? sanitizeInput(data.address).trim() || null : null,
-    whatsapp_phone: sanitizePhone(data.whatsappPhone),
-    // Enhanced UUID sanitization for location fields with additional logging
-    city_id: sanitizeUUID(data.city_id),
-    zone_id: sanitizeUUID(data.zone_id),
-    colonia: data.colonia?.trim() || null,
-    postal_code: data.postalCode?.trim() || null,
-    // Fix: Explicitly nullify old/unused location fields for clean migration
-    delegacion: null, 
-    delegacionId: null,
-    latitude: data.latitude || null,
-    longitude: data.longitude || null,
-    service_radius_km: data.serviceRadiusKm || 5,
-    prefers_local_clients: data.prefersLocalClients !== false,
-    onboarding_step: currentStep,
-    profile_completed: false // Keep false during onboarding
-  };
+const providerData: any = {
+  user_id: userId,
+  business_name: data.businessName ? sanitizeInput(data.businessName).trim() || null : null,
+  category: categoryName, // Keep for backward compatibility
+  main_category_id: sanitizeUUID(data.mainCategory?.id),
+  subcategory_id: null, // No subcategory in 4-step flow
+  bio: data.bio ? sanitizeInput(data.bio).trim() || null : null,
+  address: data.address ? sanitizeInput(data.address).trim() || null : null,
+  whatsapp_phone: sanitizePhone(data.whatsappPhone),
+  // Enhanced UUID sanitization for location fields with additional logging
+  city_id: sanitizeUUID(data.city_id),
+  zone_id: sanitizeUUID(data.zone_id),
+  colonia: data.colonia?.trim() || null,
+  postal_code: data.postalCode?.trim() || null,
+  // CRITICAL FIX: REMOVED non-existent columns (delegacion, delegacionId)
+  latitude: data.latitude || null,
+  longitude: data.longitude || null,
+  service_radius_km: data.serviceRadiusKm || 5,
+  prefers_local_clients: data.prefersLocalClients !== false,
+  onboarding_step: currentStep,
+  profile_completed: false // Keep false during onboarding
+};
 
     // Only include username if it's provided and not empty
     if (data.username && data.username.trim()) {
@@ -184,26 +182,42 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
           throw new Error('Ya existe un proveedor con estos datos. Verifica la información.');
         } 
         
-        // CRITICAL FIX: Explicitly handle NOT NULL violation (23502) for Step 1 failure
+        // CRITICAL FIX: Explicitly handle NOT NULL violation (23502) - Now correctly diagnosable
         else if (createError.code === '23502') { 
           const columnNameMatch = createError.message.match(/column "(.*?)"/);
-          const columnName = columnNameMatch ? columnNameMatch[1] : 'un campo requerido';
+          const columnName = columnNameMatch ? columnNameMatch[1] : 'a required field';
           console.error(`Postgres NOT NULL violation on column: ${columnName}`);
           
-          let userMessage = 'Error: Falta un campo obligatorio en el primer paso.';
+          let userMessage = 'Error: A mandatory field is missing in the first step.';
           if (columnName === 'business_name') {
-             userMessage = 'El nombre de tu negocio es obligatorio.';
+             userMessage = 'Your business name is mandatory.';
           } else if (columnName === 'main_category_id' || columnName === 'category') {
-             userMessage = 'La categoría principal es obligatoria.';
+             userMessage = 'The main category is mandatory.';
+          } else if (columnName === 'user_id') {
+             userMessage = 'Session Error: Please log out and try again.';
+          } else if (columnName === 'username') {
+             userMessage = 'The username is mandatory.';
           }
 
-          throw new Error(userMessage);
+          // Throw specific user message prefixed with diagnostic code
+          throw new Error(`DB_MISSING_FIELD: ${userMessage}`);
+        }
+        
+        // CRITICAL FIX: Explicitly handle FOREIGN KEY violation (23503)
+        else if (createError.code === '23503') { 
+          console.error('Postgres FOREIGN KEY violation:', createError.message);
+          
+          if (createError.message.includes('main_category_id')) {
+            throw new Error('DB_INVALID_CATEGORY: The selected category is invalid. Please select one from the list.');
+          }
+          
+          throw new Error(`DB_FOREIGN_KEY_ERROR: Data error relating information. SQL Code: ${createError.code}`);
         }
         
         else {
-          // Fallback, but unmask the error for debugging
-          console.error('[GENERIC_DB_ERROR]', createError.message);
-          throw new Error(`Error DB (Creación): ${createError.message}`);
+          // FINAL FALLBACK: If error is not handled, throw the specific SQL code for full diagnosis
+          console.error(`[UNHANDLED_DB_ERROR] CODE: ${createError.code} MESSAGE: ${createError.message}`);
+          throw new Error(`DB_GENERIC_ERROR (Creation - ${createError.code}): ${createError.message}`);
         }
       }
       
@@ -240,17 +254,15 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
         // CRITICAL FIX: Explicitly handle NOT NULL violation (23502) for UPDATE
         else if (updateError.code === '23502') {
           const columnNameMatch = updateError.message.match(/column "(.*?)"/);
-          const columnName = columnNameMatch ? columnNameMatch[1] : 'un campo requerido';
+          const columnName = columnNameMatch ? columnNameMatch[1] : 'a required field';
           console.error(`Postgres NOT NULL violation on column: ${columnName}`);
           
-          // Use a generic update failure message, as mandatory fields should already be filled
-          throw new Error('Error de datos: Falta un campo obligatorio al actualizar el perfil.');
+          throw new Error(`DB_UPDATE_MISSING_FIELD: The mandatory field is missing: ${columnName}.`);
         }
         
         else {
-          // Fallback, but unmask the error for debugging
-          console.error('[GENERIC_DB_ERROR]', updateError.message);
-          throw new Error(`Error DB (Actualización): ${updateError.message}`);
+          console.error(`[UNHANDLED_DB_ERROR] CODE: ${updateError.code} MESSAGE: ${updateError.message}`);
+          throw new Error(`DB_GENERIC_ERROR (Update - ${updateError.code}): ${updateError.message}`);
         }
       }
     }
@@ -265,16 +277,13 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
       throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
     }
     
-    // Re-throw the error as-is if it already has a user-friendly message
-    if (error instanceof Error && error.message.includes('usuario') || 
-        error.message.includes('nombre') || 
-        error.message.includes('formato') ||
-        error.message.includes('existe')) {
-      throw error;
+    // Re-throw specific diagnostic errors or user-friendly messages
+    if (error instanceof Error && error.message.includes('DB_')) {
+      throw new Error(error.message);
     }
     
     // Otherwise, provide a generic error message
-    throw new Error(`Error guardando los datos del proveedor: ${error.message || 'Error desconocido'}`);
+    throw new Error(`Error saving provider data: ${error.message || 'Unknown Error'}`);
   }
 };
 
