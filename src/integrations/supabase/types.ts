@@ -1123,50 +1123,59 @@ export type Database = {
       }
       providers_with_location: {
         Row: {
-          address: string | null
+          avg_rating: number | null
           bio: string | null
           business_name: string | null
           category: string | null
           city: string | null
+          city_id: string | null
           colonia: string | null
           created_at: string | null
           id: string | null
           instagram_handle: string | null
           is_active: boolean | null
-          latitude: number | null
           location_colonia: string | null
-          location_id: string | null
           location_name: string | null
-          location_postal_code: string | null
-          longitude: number | null
-          onboarding_step: number | null
-          phone: string | null
-          postal_code: string | null
+          main_category_id: string | null
           prefers_local_clients: boolean | null
           profile_completed: boolean | null
           profile_image_url: string | null
-          rating: number | null
+          review_count: number | null
           service_radius_km: number | null
           state: string | null
-          total_reviews: number | null
+          subcategory_id: string | null
+          theme_color: string | null
           updated_at: string | null
-          user_id: string | null
           username: string | null
-          whatsapp_phone: string | null
+          zone_id: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "providers_location_id_fkey"
-            columns: ["location_id"]
+            foreignKeyName: "providers_city_id_fkey"
+            columns: ["city_id"]
             isOneToOne: false
-            referencedRelation: "locations"
+            referencedRelation: "cities"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "providers_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
+            foreignKeyName: "providers_main_category_id_fkey"
+            columns: ["main_category_id"]
+            isOneToOne: false
+            referencedRelation: "main_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "providers_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "subcategories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "providers_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "zones"
             referencedColumns: ["id"]
           },
         ]
