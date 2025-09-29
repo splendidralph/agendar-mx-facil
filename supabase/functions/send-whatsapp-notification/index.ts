@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -96,48 +95,13 @@ serve(async (req) => {
     const clientName = guestInfo ? guestInfo.guest_name : 'Cliente registrado'
     const clientPhone = guestInfo ? guestInfo.guest_phone : 'No disponible'
 
-    // Get Message Template SIDs from environment
+    // Get Message Template SID from environment
     const newBookingTemplateSid = Deno.env.get('WHATSAPP_NEW_BOOKING_TEMPLATE_SID')
-    const bookingConfirmationTemplateSid = Deno.env.get('WHATSAPP_BOOKING_CONFIRMATION_TEMPLATE_SID')
-
-    // Prepare message data for template or fallback
-    const templateVariables = [
-      provider.business_name,
-      service.name,
-      bookingDate,
-      bookingTime,
-      service.duration_minutes.toString(),
-      service.price.toString(),
-      clientName,
-      clientPhone,
-      booking.client_notes || 'Sin notas adicionales'
-    ]
-
-    // Fallback message for when templates aren't available
-    const fallbackMessage = `🗓️ *Nueva reserva para ${provider.business_name}*
-
-📋 *Detalles:*
-• Servicio: ${service.name}
-• Fecha: ${bookingDate}
-• Hora: ${bookingTime}
-• Duración: ${service.duration_minutes} min
-• Precio: $${service.price}
-
-👤 *Cliente:*
-• Nombre: ${clientName}
-• Teléfono: ${clientPhone}
-${booking.client_notes ? `• Notas: ${booking.client_notes}` : ''}
-
-⏳ Estado: Pendiente de confirmación
-
-Para confirmar la reserva, contacta al ${clientPhone}.
-
-_Mensaje automático de BookEasy.mx_`
 
     // Send WhatsApp message using Twilio
     const twilioAccountSid = Deno.env.get('twilio_account_sid')
     const twilioAuthToken = Deno.env.get('twilio_auth_token')
-    const twilioWhatsAppNumber = 'whatsapp:+18777036062' // New approved number
+    const twilioWhatsAppNumber = 'whatsapp:+18777036062'
 
     if (!twilioAccountSid || !twilioAuthToken) {
       console.error('Twilio credentials missing:', {
@@ -153,7 +117,6 @@ _Mensaje automático de BookEasy.mx_`
     // Ensure phone number has proper WhatsApp format
     let toWhatsAppNumber = notificationPrefs.whatsapp_phone
     if (!toWhatsAppNumber.startsWith('whatsapp:')) {
-      // Require full international format (no default country code)
       if (!toWhatsAppNumber.startsWith('+')) {
         console.error('WhatsApp phone number must include country code:', toWhatsAppNumber)
         throw new Error('Provider WhatsApp phone number must include country code (e.g., +1, +52)')
@@ -183,10 +146,8 @@ _Mensaje automático de BookEasy.mx_`
       }
       useTemplate = true
     } else {
-      // START FIX: Throw error if template SID is missing (Prevents Error 63016)
       console.error('CRITICAL: WHATSAPP_NEW_BOOKING_TEMPLATE_SID environment variable is missing. Cannot send notification.')
       throw new Error('Notification Template not configured for provider alert.')
-      // END FIX
     }
 
     console.log('Preparing to send WhatsApp message:', {
@@ -241,7 +202,7 @@ _Mensaje automático de BookEasy.mx_`
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
