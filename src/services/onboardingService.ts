@@ -425,17 +425,10 @@ export const completeProviderOnboarding = async (userId: string) => {
       validationErrors.push('Categoría principal es requerida');
     }
 
-    // 4. UUID field validation (must NOT be empty strings)
-    // Sanitize UUIDs defensively before validation
-    const sanitizedCityId = sanitizeUUIDDefensive(provider.city_id);
-    const sanitizedZoneId = sanitizeUUIDDefensive(provider.zone_id);
-    
-    if (!sanitizedCityId) {
-      validationErrors.push('Ciudad es requerida');
-    }
-    if (!sanitizedZoneId) {
-      validationErrors.push('Zona es requerida');
-    }
+    // 4. UUID field validation: REMOVED
+    // The previous validation logic was incorrectly using the sanitized NULL value to create a VALIDATION_FAILED error,
+    // which blocked the clean data from reaching the DB. We now rely on the database trigger (validate_provider_profile)
+    // for this final check.
 
     // 5. WhatsApp phone validation (must match E.164 format)
     if (!provider.whatsapp_phone) {
