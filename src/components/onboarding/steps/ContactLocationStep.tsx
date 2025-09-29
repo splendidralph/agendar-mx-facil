@@ -112,19 +112,14 @@ export const ContactLocationStep = ({
   };
 
   const handleChange = (field: keyof typeof formData, value: string) => {
-    let sanitizedValue = value;
-    
-    // Sanitize text inputs
-    if (field === 'address') {
-      sanitizedValue = sanitizeInput(value, 255);
-    }
-    
-    const newData = { ...formData, [field]: sanitizedValue };
+    // Allow raw input to enable normal typing with spaces and punctuation
+    // XSS sanitization is now handled in the service layer
+    const newData = { ...formData, [field]: value };
     setFormData(newData);
     onUpdate(newData);
     
     if (field === 'whatsappPhone') {
-      validatePhoneNumber(sanitizedValue);
+      validatePhoneNumber(value);
     }
   };
 
@@ -169,11 +164,11 @@ export const ContactLocationStep = ({
     
     console.log('[CONTACT-LOCATION] All validations passed, proceeding to complete onboarding');
     
-    // Sanitize data before sending (ensure empty strings become null for UUIDs)
+    // Pass raw data - the service layer handles all sanitization and UUID conversion
     const sanitizedData = {
       ...formData,
-      city_id: formData.city_id?.trim() === '' ? null : formData.city_id,
-      zone_id: formData.zone_id?.trim() === '' ? null : formData.zone_id,
+      city_id: formData.city_id,
+      zone_id: formData.zone_id,
       address: formData.address?.trim() || null
     };
     

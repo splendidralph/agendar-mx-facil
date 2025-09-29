@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { OnboardingData, ServiceCategory } from '@/types/onboarding';
+import { sanitizeInput } from '@/utils/securityValidation';
 
 export const loadProviderData = async (userId: string) => {
   try {
@@ -132,12 +133,12 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
 
   const providerData: any = {
     user_id: userId,
-    business_name: data.businessName?.trim() || null, // Allow null during onboarding
+    business_name: data.businessName ? sanitizeInput(data.businessName).trim() || null : null,
     category: categoryName, // Keep for backward compatibility
     main_category_id: sanitizeUUID(data.mainCategory?.id),
     subcategory_id: null, // No subcategory in 4-step flow
-    bio: data.bio?.trim() || null,
-    address: data.address?.trim() || null,
+    bio: data.bio ? sanitizeInput(data.bio).trim() || null : null,
+    address: data.address ? sanitizeInput(data.address).trim() || null : null,
     whatsapp_phone: sanitizePhone(data.whatsappPhone),
     // Enhanced UUID sanitization for location fields with additional logging
     city_id: sanitizeUUID(data.city_id),
