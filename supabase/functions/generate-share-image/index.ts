@@ -80,7 +80,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error generating share image:', error)
     return new Response(
-      JSON.stringify({ error: 'Failed to generate image', details: error.message }),
+      JSON.stringify({ 
+        error: 'Failed to generate image', 
+        details: error instanceof Error ? error.message : 'Unknown error occurred'
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     )
   }

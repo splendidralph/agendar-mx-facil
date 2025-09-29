@@ -386,13 +386,13 @@ serve(async (req) => {
         
         results.forEach((result, index) => {
           if (result.status === 'fulfilled') {
-            const { type, result: notificationResult, error } = result.value
-            if (error) {
-              console.error(`Error sending ${type} notification:`, error)
-            } else if (notificationResult?.error) {
-              console.error(`Error sending ${type} notification:`, notificationResult.error)
+            const notificationResult = result.value
+            if ('error' in notificationResult && notificationResult.error) {
+              console.error(`Error sending ${notificationResult.type} notification:`, notificationResult.error)
+            } else if ('result' in notificationResult && notificationResult.result?.error) {
+              console.error(`Error sending ${notificationResult.type} notification:`, notificationResult.result.error)
             } else {
-              console.log(`${type} notification sent successfully`)
+              console.log(`${notificationResult.type} notification sent successfully`)
             }
           } else {
             console.error('Notification promise rejected:', result.reason)
