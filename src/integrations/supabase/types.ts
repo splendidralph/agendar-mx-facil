@@ -124,6 +124,13 @@ export type Database = {
             referencedRelation: "providers_with_location"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "analytics_events_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_provider_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       availability: {
@@ -177,6 +184,13 @@ export type Database = {
             columns: ["provider_id"]
             isOneToOne: false
             referencedRelation: "providers_with_location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "availability_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_provider_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -267,6 +281,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bookings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_provider_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "bookings_service_id_fkey"
             columns: ["service_id"]
             isOneToOne: false
@@ -347,6 +368,13 @@ export type Database = {
             columns: ["provider_id"]
             isOneToOne: false
             referencedRelation: "providers_with_location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_provider_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -591,6 +619,13 @@ export type Database = {
             referencedRelation: "providers_with_location"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "notification_preferences_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_provider_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       providers: {
@@ -807,6 +842,13 @@ export type Database = {
             referencedRelation: "providers_with_location"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "reviews_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_provider_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       security_events: {
@@ -909,6 +951,13 @@ export type Database = {
             columns: ["provider_id"]
             isOneToOne: false
             referencedRelation: "providers_with_location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "services_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_provider_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1118,6 +1167,101 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      public_provider_profiles: {
+        Row: {
+          avg_rating: number | null
+          bio: string | null
+          business_name: string | null
+          category: string | null
+          city_id: string | null
+          colonia: string | null
+          created_at: string | null
+          id: string | null
+          instagram_handle: string | null
+          main_category_id: string | null
+          prefers_local_clients: boolean | null
+          profile_image_url: string | null
+          review_count: number | null
+          service_radius_km: number | null
+          subcategory_id: string | null
+          theme_color: string | null
+          updated_at: string | null
+          username: string | null
+          zone_id: string | null
+        }
+        Insert: {
+          avg_rating?: number | null
+          bio?: string | null
+          business_name?: string | null
+          category?: string | null
+          city_id?: string | null
+          colonia?: string | null
+          created_at?: string | null
+          id?: string | null
+          instagram_handle?: string | null
+          main_category_id?: string | null
+          prefers_local_clients?: boolean | null
+          profile_image_url?: string | null
+          review_count?: number | null
+          service_radius_km?: number | null
+          subcategory_id?: string | null
+          theme_color?: string | null
+          updated_at?: string | null
+          username?: string | null
+          zone_id?: string | null
+        }
+        Update: {
+          avg_rating?: number | null
+          bio?: string | null
+          business_name?: string | null
+          category?: string | null
+          city_id?: string | null
+          colonia?: string | null
+          created_at?: string | null
+          id?: string | null
+          instagram_handle?: string | null
+          main_category_id?: string | null
+          prefers_local_clients?: boolean | null
+          profile_image_url?: string | null
+          review_count?: number | null
+          service_radius_km?: number | null
+          subcategory_id?: string | null
+          theme_color?: string | null
+          updated_at?: string | null
+          username?: string | null
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "providers_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "providers_main_category_id_fkey"
+            columns: ["main_category_id"]
+            isOneToOne: false
+            referencedRelation: "main_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "providers_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "subcategories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "providers_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "zones"
             referencedColumns: ["id"]
           },
         ]
