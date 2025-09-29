@@ -182,8 +182,28 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
           throw new Error('El formato del número de WhatsApp no es válido.');
         } else if (createError.code === '23505') { // Unique constraint violation
           throw new Error('Ya existe un proveedor con estos datos. Verifica la información.');
-        } else {
-          throw new Error(`Error creando perfil: ${createError.message}`);
+        } 
+        
+        // CRITICAL FIX: Explicitly handle NOT NULL violation (23502) for Step 1 failure
+        else if (createError.code === '23502') { 
+          const columnNameMatch = createError.message.match(/column "(.*?)"/);
+          const columnName = columnNameMatch ? columnNameMatch[1] : 'un campo requerido';
+          console.error(`Postgres NOT NULL violation on column: ${columnName}`);
+          
+          let userMessage = 'Error: Falta un campo obligatorio en el primer paso.';
+          if (columnName === 'business_name') {
+             userMessage = 'El nombre de tu negocio es obligatorio.';
+          } else if (columnName === 'main_category_id' || columnName === 'category') {
+             userMessage = 'La categoría principal es obligatoria.';
+          }
+
+          throw new Error(userMessage);
+        }
+        
+        else {
+          // Fallback, but unmask the error for debugging
+          console.error('[GENERIC_DB_ERROR]', createError.message);
+          throw new Error(`Error DB (Creación): ${createError.message}`);
         }
       }
       
@@ -215,8 +235,22 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
           throw new Error('El formato del nombre de usuario no es válido. Solo letras, números, guiones y guiones bajos.');
         } else if (updateError.message.includes('Invalid WhatsApp')) {
           throw new Error('El formato del número de WhatsApp no es válido.');
-        } else {
-          throw new Error(`Error actualizando datos: ${updateError.message}`);
+        } 
+        
+        // CRITICAL FIX: Explicitly handle NOT NULL violation (23502) for UPDATE
+        else if (updateError.code === '23502') {
+          const columnNameMatch = updateError.message.match(/column "(.*?)"/);
+          const columnName = columnNameMatch ? columnNameMatch[1] : 'un campo requerido';
+          console.error(`Postgres NOT NULL violation on column: ${columnName}`);
+          
+          // Use a generic update failure message, as mandatory fields should already be filled
+          throw new Error('Error de datos: Falta un campo obligatorio al actualizar el perfil.');
+        }
+        
+        else {
+          // Fallback, but unmask the error for debugging
+          console.error('[GENERIC_DB_ERROR]', updateError.message);
+          throw new Error(`Error DB (Actualización): ${updateError.message}`);
         }
       }
     }
