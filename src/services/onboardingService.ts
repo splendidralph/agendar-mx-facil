@@ -145,6 +145,9 @@ export const saveProviderData = async (userId: string, data: OnboardingData, cur
     zone_id: sanitizeUUID(data.zone_id),
     colonia: data.colonia?.trim() || null,
     postal_code: data.postalCode?.trim() || null,
+    // Fix: Explicitly nullify old/unused location fields for clean migration
+    delegacion: null, 
+    delegacionId: null,
     latitude: data.latitude || null,
     longitude: data.longitude || null,
     service_radius_km: data.serviceRadiusKm || 5,
@@ -403,9 +406,10 @@ export const completeProviderOnboarding = async (userId: string) => {
 
     // If there are validation errors, don't proceed
     if (validationErrors.length > 0) {
-      const errorMessage = `Faltan campos requeridos: ${validationErrors.join(', ')}`;
+      // CRITICAL FIX: Add unique flag to expose detailed error in the client app/logs
+      const errorMessage = `Faltan campos requeridos: ${validationErrors.join(', ')}.`;
       console.error('completeProviderOnboarding: Validation failed:', validationErrors);
-      throw new Error(errorMessage);
+      throw new Error(`VALIDATION_FAILED: ${errorMessage}`);
     }
 
     console.log('completeProviderOnboarding: All validations passed');
