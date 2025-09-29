@@ -91,33 +91,58 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
   const handleSave = async () => {
     setLoading(true);
     try {
-      // Use phone from provider profile
-      const hasWhatsApp = provider.whatsapp_phone && provider.whatsapp_phone.trim() !== '';
+      const phoneToSave = formData.whatsapp_phone.trim() || null;
+      
+      // 1. Validate the phone number format
+      if (phoneToSave && !/^\+[1-9]\d{1,14}$/.test(phoneToSave)) {
+        toast.error('El formato del número de WhatsApp no es válido. Debe incluir código de país (ej: +52).');
+        setLoading(false);
+        return;
+      }
+
+      // 2. Update the main PROVIDERS profile table with the new phone number
+      const { error: providerUpdateError } = await supabase
+        .from('providers')
+        .update({
+          whatsapp_phone: phoneToSave, // Use the number the user typed in the dialog
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', provider.user_id); // Use user_id for RLS/security
+
+      if (providerUpdateError) throw providerUpdateError;
+
+      // 3. Update notification preferences to sync with the new state
+      const hasWhatsApp = !!phoneToSave;
       const whatsappEnabled = hasWhatsApp;
       const preferredMethod = hasWhatsApp ? 'both' : 'email_only';
 
-      // Update notification preferences using provider's phone
       const { error: preferencesError } = await supabase
         .from('notification_preferences')
         .update({
-          email_enabled: true, // Always enable email
+          email_enabled: true,
           whatsapp_enabled: whatsappEnabled,
           preferred_method: preferredMethod,
-          whatsapp_phone: provider.whatsapp_phone,
+          whatsapp_phone: phoneToSave, // Use the new phone number for preferences
           updated_at: new Date().toISOString()
         })
         .eq('provider_id', provider.id);
 
       if (preferencesError) throw preferencesError;
-
-      toast.success('Preferencias de notificación actualizadas');
+      
+      toast.success('Preferencias y número de WhatsApp actualizados');
       setOpen(false);
-      onUpdate();
-      // Refresh preferences to update UI
-      loadNotificationPreferences();
+      
+      // CRITICAL: Call parent update to refresh the dashboard component's provider prop
+      onUpdate(); 
+      loadNotificationPreferences(); // Reload preferences for dialog state
     } catch (error) {
       console.error('Error updating notification preferences:', error);
-      toast.error('Error actualizando las preferencias');
+      // Display a specific error if it's a known DB error
+      const userError = error.message?.includes('providers_whatsapp_phone_key') 
+        ? 'El número de WhatsApp ya está en uso.' 
+        : 'Error actualizando las preferencias. Inténtalo de nuevo.';
+        
+      toast.error(userError);
     } finally {
       setLoading(false);
     }
@@ -195,28 +220,19 @@ const NotificationSettings = ({ provider, onUpdate }: NotificationSettingsProps)
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="space-y-2">
                   <h4 className="text-sm font-medium text-blue-900">Configuración de Notificaciones</h4>
-                  {provider.whatsapp_phone ? (
-                    <div>
-                      <p className="text-sm text-blue-800">
-                        <strong>Teléfono:</strong> {provider.whatsapp_phone}
-                      </p>
-                      <p className="text-sm text-blue-800">
-                        ✓ Recibes notificaciones por email y WhatsApp
-                      </p>
-                      <p className="text-xs text-blue-700 mt-2">
-                        Para cambiar tu número, actualiza tu perfil durante el onboarding.
-                      </p>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-sm text-blue-800">
-                        • Solo recibes notificaciones por email
-                      </p>
-                      <p className="text-xs text-blue-700 mt-1">
-                        Para recibir notificaciones por WhatsApp, agrega tu teléfono en el perfil.
-                      </p>
-                    </div>
-                  )}
+                   <div className="space-y-3">
+                    <Label htmlFor="whatsapp_phone">Número de WhatsApp</Label>
+                    <CustomPhoneInput
+                      value={formData.whatsapp_phone}
+                      onChange={handleWhatsAppChange}
+                      placeholder="+52 123 456 7890"
+                      required={false}
+                      defaultCountry="MX"
+                    />
+                    <p className="text-xs text-blue-700">
+                      Ingresa tu número con código de país (ej: +52 para México, +1 para EUA/Canadá)
+                    </p>
+                  </div>
                 </div>
               </div>
 

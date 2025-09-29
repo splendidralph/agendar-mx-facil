@@ -183,12 +183,10 @@ _Mensaje automático de BookEasy.mx_`
       }
       useTemplate = true
     } else {
-      console.log('Using fallback freeform message (templates not configured)')
-      messageBody = {
-        From: twilioWhatsAppNumber,
-        To: toWhatsAppNumber,
-        Body: fallbackMessage
-      }
+      // START FIX: Throw error if template SID is missing (Prevents Error 63016)
+      console.error('CRITICAL: WHATSAPP_NEW_BOOKING_TEMPLATE_SID environment variable is missing. Cannot send notification.')
+      throw new Error('Notification Template not configured for provider alert.')
+      // END FIX
     }
 
     console.log('Preparing to send WhatsApp message:', {
