@@ -324,6 +324,8 @@ export const ContactLocationStep = ({
             </Label>
             <Input
               id="address"
+              name="address"
+              autoComplete="address-line1"
               value={formData.address}
               onChange={(e) => handleChange('address', e.target.value)}
               placeholder="Ej: Av. Principal 123, Local 5"

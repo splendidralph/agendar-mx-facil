@@ -390,8 +390,19 @@ export const useOnboardingFlow = () => {
     } catch (error) {
       console.error('[ONBOARDING] Error completing onboarding:', error);
       
+      // CRITICAL FIX: Unmask the detailed error thrown by the service layer
+      if (error.message?.includes('VALIDATION_FAILED:')) {
+        // Extract the specific message after the diagnostic prefix
+        const detailedMessage = error.message.replace('VALIDATION_FAILED: ', '');
+        
+        // Log the detailed error clearly in the console
+        console.error('[FINAL_VALIDATION_ERROR]', detailedMessage); 
+        
+        // Show the detailed error to the user
+        toast.error(`Fallo de Validación: ${detailedMessage}`);
+      }
       // Handle specific validation errors from the database trigger
-      if (error.message?.includes('Business name is required')) {
+      else if (error.message?.includes('Business name is required')) {
         toast.error('El nombre del negocio es requerido para completar el perfil');
       } else if (error.message?.includes('Category is required')) {
         toast.error('La categoría es requerida para completar el perfil');
