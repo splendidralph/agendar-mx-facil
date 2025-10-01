@@ -364,6 +364,10 @@ const Booking = () => {
           }}
           onClientDataChange={setClientData}
           onSubmit={() => handleBooking({ preventDefault: () => {} } as React.FormEvent)}
+          onStepChange={(step) => {
+            // Log step changes for debugging
+            console.log('Step changed to:', step);
+          }}
         >
           <ServiceSelectionStep
             services={services}
@@ -382,6 +386,10 @@ const Booking = () => {
             }}
             selectedDate={selectedDate}
             selectedTime={selectedTime}
+            selectedService={selectedService}
+            onEditService={() => {
+              // Handled by ProgressiveBookingFlow
+            }}
           />
           
           <ClientDetailsStep

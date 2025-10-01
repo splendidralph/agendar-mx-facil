@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CustomPhoneInput } from '@/components/ui/phone-input';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Edit2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -29,6 +29,8 @@ interface ClientDetailsStepProps {
   selectedTime: string;
   error?: string | null;
   isMobile?: boolean;
+  onEditService?: () => void;
+  onEditDateTime?: () => void;
 }
 
 const ClientDetailsStep = ({
@@ -38,7 +40,9 @@ const ClientDetailsStep = ({
   selectedDate,
   selectedTime,
   error,
-  isMobile = false
+  isMobile = false,
+  onEditService,
+  onEditDateTime
 }: ClientDetailsStepProps) => {
   const handleChange = (field: string, value: string) => {
     onClientDataChange(prev => ({ ...prev, [field]: value }));
@@ -140,30 +144,56 @@ const ClientDetailsStep = ({
           />
         </div>
 
-        {/* Booking Summary */}
+        {/* Booking Summary with Edit Buttons */}
         {selectedService && selectedDate && selectedTime && (
-          <div className="bg-secondary/30 p-4 rounded-lg border border-border/50 space-y-2">
-            <h4 className="font-medium text-foreground">Resumen de tu cita:</h4>
-            <div className="text-sm space-y-1">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Servicio:</span>
-                <span className="font-medium">{selectedService.name}</span>
+          <div className="bg-primary/5 p-4 rounded-lg border border-primary/20 space-y-3">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="font-semibold text-foreground">Resumen de tu cita</h4>
+            </div>
+            
+            <div className="text-sm space-y-2.5">
+              <div className="flex justify-between items-start py-2 border-b border-border/50">
+                <div className="flex-1">
+                  <span className="text-muted-foreground text-xs block mb-1">Servicio</span>
+                  <div>
+                    <span className="font-medium text-foreground">{selectedService.name}</span>
+                    <span className="text-muted-foreground ml-2">(${selectedService.price})</span>
+                  </div>
+                </div>
+                {onEditService && (
+                  <button
+                    onClick={onEditService}
+                    className="text-primary hover:text-primary/80 transition-colors ml-2 flex items-center gap-1 text-xs"
+                  >
+                    <Edit2 className="h-3 w-3" />
+                    Cambiar
+                  </button>
+                )}
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Fecha:</span>
-                <span className="font-medium">{format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })}</span>
+              
+              <div className="flex justify-between items-start py-2">
+                <div className="flex-1">
+                  <span className="text-muted-foreground text-xs block mb-1">Fecha y hora</span>
+                  <div className="font-medium text-foreground">
+                    <div>{format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })}</div>
+                    <div className="text-primary">{selectedTime}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">Duración: {selectedService.duration_minutes} min</div>
+                  </div>
+                </div>
+                {onEditDateTime && (
+                  <button
+                    onClick={onEditDateTime}
+                    className="text-primary hover:text-primary/80 transition-colors ml-2 flex items-center gap-1 text-xs"
+                  >
+                    <Edit2 className="h-3 w-3" />
+                    Cambiar
+                  </button>
+                )}
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Hora:</span>
-                <span className="font-medium">{selectedTime}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Duración:</span>
-                <span className="font-medium">{selectedService.duration_minutes} min</span>
-              </div>
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total:</span>
-                <span className="text-primary">${selectedService.price} MXN</span>
+              
+              <div className="flex justify-between items-center pt-2 border-t-2 border-primary/20">
+                <span className="font-semibold text-foreground">Total a pagar:</span>
+                <span className="text-xl font-bold text-primary">${selectedService.price}</span>
               </div>
             </div>
           </div>

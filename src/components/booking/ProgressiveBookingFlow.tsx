@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Children, cloneElement, isValidElement } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
+import { toast } from 'sonner';
 
 interface Service {
   id: string;
@@ -26,6 +27,7 @@ interface ProgressiveBookingFlowProps {
   onDateTimeSelect: (date: Date, time: string) => void;
   onClientDataChange: (data: any) => void;
   onSubmit: () => void;
+  onStepChange?: (step: BookingStep) => void;
   children: React.ReactNode[];
 }
 
@@ -42,6 +44,7 @@ const ProgressiveBookingFlow = ({
   onDateTimeSelect,
   onClientDataChange,
   onSubmit,
+  onStepChange,
   children
 }: ProgressiveBookingFlowProps) => {
   const [currentStep, setCurrentStep] = useState<BookingStep>('service');
@@ -103,7 +106,7 @@ const ProgressiveBookingFlow = ({
     }
   }, [currentStep, highestStepReached]);
 
-  // Auto-advance logic with manual navigation protection
+  // Auto-advance logic with manual navigation protection and toast feedback
   useEffect(() => {
     // Reset manual navigation flag after longer delay
     if (isManualNavigation) {
@@ -134,13 +137,15 @@ const ProgressiveBookingFlow = ({
       return;
     }
 
-    // Auto-advance only when progressing forward for the first time
+    // Auto-advance with feedback toast and delay
     if (currentStep === 'service' && selectedService && !selectedDate && !completedSteps.has('datetime')) {
       console.log('Booking Flow: Auto-advancing from service to datetime (first time)');
-      setTimeout(() => setCurrentStep('datetime'), 300);
+      toast.success('✓ Servicio seleccionado');
+      setTimeout(() => setCurrentStep('datetime'), 800);
     } else if (currentStep === 'datetime' && selectedDate && selectedTime && !clientData.name && !completedSteps.has('details')) {
       console.log('Booking Flow: Auto-advancing from datetime to details (first time)');
-      setTimeout(() => setCurrentStep('details'), 300);
+      toast.success('✓ Fecha y hora seleccionadas');
+      setTimeout(() => setCurrentStep('details'), 800);
     }
   }, [selectedService, selectedDate, selectedTime, clientData.name, currentStep, isManualNavigation, isTransitioning, completedSteps, highestStepReached]);
 
@@ -152,8 +157,19 @@ const ProgressiveBookingFlow = ({
     setIsTransitioning(true);
     setTimeout(() => {
       setCurrentStep(newStep);
+      onStepChange?.(newStep);
       setIsTransitioning(false);
     }, 150);
+  };
+
+  const canNavigateToStep = (stepId: BookingStep) => {
+    const stepOrder: BookingStep[] = ['service', 'datetime', 'details', 'confirmation'];
+    const targetIndex = stepOrder.indexOf(stepId);
+    const currentIndex = stepOrder.indexOf(currentStep);
+    const highestIndex = stepOrder.indexOf(highestStepReached);
+    
+    // Can navigate to current step or any completed step (up to highest reached)
+    return targetIndex <= highestIndex || targetIndex === currentIndex;
   };
 
   const canGoNext = () => {
@@ -193,9 +209,30 @@ const ProgressiveBookingFlow = ({
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <div className="text-center">
+            <div className="text-center flex-1">
               <h3 className="font-semibold text-sm">{currentStepData.label}</h3>
-              <p className="text-xs text-muted-foreground">Paso {currentStepIndex + 1} de {steps.length}</p>
+              <div className="flex items-center justify-center gap-1.5 mt-1">
+                {steps.map((step, index) => {
+                  const isCompleted = completedSteps.has(step.id as BookingStep);
+                  const isCurrent = step.id === currentStep;
+                  const canNavigate = canNavigateToStep(step.id as BookingStep);
+                  
+                  return (
+                    <button
+                      key={step.id}
+                      onClick={() => canNavigate && handleStepTransition(step.id as BookingStep, true)}
+                      disabled={!canNavigate}
+                      className={cn(
+                        "w-2 h-2 rounded-full transition-all",
+                        isCurrent && "w-6",
+                        isCompleted ? "bg-primary" : "bg-muted",
+                        canNavigate && !isCurrent && "hover:scale-125 cursor-pointer",
+                        !canNavigate && "opacity-40"
+                      )}
+                    />
+                  );
+                })}
+              </div>
             </div>
             <div className="w-8" />
           </div>
@@ -208,7 +245,16 @@ const ProgressiveBookingFlow = ({
             "transition-all duration-300 ease-in-out",
             isTransitioning && "opacity-50 scale-95"
           )}>
-            {children[currentStepIndex]}
+            {Children.map(children, (child, index) => {
+              if (index === currentStepIndex && isValidElement(child)) {
+                return cloneElement(child, {
+                  ...child.props,
+                  onEditService: () => handleStepTransition('service' as BookingStep, true),
+                  onEditDateTime: () => handleStepTransition('datetime' as BookingStep, true)
+                } as any);
+              }
+              return null;
+            })}
           </div>
         </div>
 
@@ -241,25 +287,46 @@ const ProgressiveBookingFlow = ({
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-foreground">Reservar Cita</h2>
-              <div className="flex items-center space-x-2">
-                {steps.map((step, index) => (
-                  <div
-                    key={step.id}
-                    className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all cursor-pointer",
-                      index <= currentStepIndex
-                        ? `${themeClasses.gradient} text-primary-foreground`
-                        : "bg-muted text-muted-foreground"
-                    )}
-                    onClick={() => {
-                      if (index < currentStepIndex) {
-                        handleStepTransition(step.id as BookingStep);
-                      }
-                    }}
-                  >
-                    {index + 1}
-                  </div>
-                ))}
+              <div className="flex items-center space-x-3">
+                {steps.map((step, index) => {
+                  const isCompleted = completedSteps.has(step.id as BookingStep);
+                  const isCurrent = step.id === currentStep;
+                  const canNavigate = canNavigateToStep(step.id as BookingStep);
+                  
+                  return (
+                    <div key={step.id} className="flex items-center">
+                      <button
+                        onClick={() => canNavigate && handleStepTransition(step.id as BookingStep, true)}
+                        disabled={!canNavigate}
+                        className={cn(
+                          "w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all relative group",
+                          isCurrent && `${themeClasses.gradient} text-primary-foreground shadow-lg scale-110`,
+                          !isCurrent && isCompleted && "bg-primary text-primary-foreground",
+                          !isCurrent && !isCompleted && "bg-muted text-muted-foreground",
+                          canNavigate && !isCurrent && "hover:scale-105 hover:shadow-md cursor-pointer",
+                          !canNavigate && "opacity-40 cursor-not-allowed"
+                        )}
+                      >
+                        {isCompleted && !isCurrent ? (
+                          <Check className="h-5 w-5" />
+                        ) : (
+                          index + 1
+                        )}
+                        {canNavigate && !isCurrent && (
+                          <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-card px-2 py-1 rounded shadow-lg">
+                            {step.label}
+                          </span>
+                        )}
+                      </button>
+                      {index < steps.length - 1 && (
+                        <div className={cn(
+                          "w-12 h-0.5 mx-1 transition-colors",
+                          isCompleted ? "bg-primary" : "bg-muted"
+                        )} />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
             <Progress value={currentStepData.progress} className="h-2" />
@@ -271,7 +338,16 @@ const ProgressiveBookingFlow = ({
             isTransitioning && "scale-95 opacity-80"
           )}>
             <CardContent className="p-0">
-              {children[currentStepIndex]}
+              {Children.map(children, (child, index) => {
+                if (index === currentStepIndex && isValidElement(child)) {
+                  return cloneElement(child, {
+                    ...child.props,
+                    onEditService: () => handleStepTransition('service' as BookingStep, true),
+                    onEditDateTime: () => handleStepTransition('datetime' as BookingStep, true)
+                  } as any);
+                }
+                return null;
+              })}
             </CardContent>
           </Card>
 

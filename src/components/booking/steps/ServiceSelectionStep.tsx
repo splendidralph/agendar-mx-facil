@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock } from 'lucide-react';
+import { Clock, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
 
@@ -29,10 +29,20 @@ const ServiceSelectionStep = ({
   if (isMobile) {
     return (
       <div className="space-y-3">
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold text-foreground mb-2">Selecciona un servicio</h3>
-          <p className="text-sm text-muted-foreground">Elige el servicio que deseas reservar</p>
-        </div>
+        {selectedService ? (
+          <div className="mb-4 p-3 bg-primary/10 border border-primary/20 rounded-lg flex items-start gap-2">
+            <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Servicio seleccionado</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Puedes cambiar tu selección abajo</p>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-foreground mb-2">Selecciona un servicio</h3>
+            <p className="text-sm text-muted-foreground">Elige el servicio que deseas reservar</p>
+          </div>
+        )}
         
         {services.length === 0 ? (
           <div className="text-center py-12">
@@ -82,7 +92,14 @@ const ServiceSelectionStep = ({
       <CardHeader className="pb-4">
         <CardTitle className="text-foreground">Selecciona un servicio</CardTitle>
         <CardDescription>
-          Elige el servicio que deseas reservar
+          {selectedService ? (
+            <span className="flex items-center gap-2 text-primary">
+              <CheckCircle className="h-4 w-4" />
+              Servicio seleccionado - puedes cambiar tu selección
+            </span>
+          ) : (
+            'Elige el servicio que deseas reservar'
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
