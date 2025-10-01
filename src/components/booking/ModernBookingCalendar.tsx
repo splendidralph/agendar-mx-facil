@@ -106,9 +106,19 @@ const ModernBookingCalendar = ({
       if (isDateAvailable(checkDate)) {
         const slotsCount = await getAvailableSlotsCount(checkDate);
         
-        // Full date format: "miércoles, 1 de octubre"
-        const label = format(checkDate, "EEEE, d 'de' MMMM", { locale: es });
-        const subLabel = '';
+        // Capitalize day name and format date: "Miércoles, 1 de oct"
+        const dayName = format(checkDate, "EEEE", { locale: es });
+        const dayCapitalized = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+        const dateNum = format(checkDate, "d 'de' MMM", { locale: es });
+        const label = `${dayCapitalized}, ${dateNum}`;
+        
+        // Add special badges for today/tomorrow
+        let subLabel = '';
+        if (isToday(checkDate)) {
+          subLabel = 'Hoy';
+        } else if (isTomorrow(checkDate)) {
+          subLabel = 'Mañana';
+        }
         
         days.push({
           date: checkDate,
@@ -515,27 +525,29 @@ const ModernBookingCalendar = ({
                 variant="outline"
                 onClick={() => handleDaySelect(day)}
                 className={cn(
-                  "w-full h-auto p-4 justify-between hover:scale-[1.02] smooth-transition animate-fade-in touch-manipulation",
+                  "w-full h-auto p-4 justify-between items-center hover:scale-[1.02] smooth-transition animate-fade-in touch-manipulation group",
                   isMobile && "p-5"
                 )}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                <div className="flex items-center gap-3">
-                  <div className="text-left">
-                    <div className="font-semibold text-foreground text-lg">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="text-left min-w-0 flex-1">
+                    <div className="font-semibold text-foreground text-base sm:text-lg truncate">
                       {day.label}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {day.subLabel}
-                    </div>
+                    {day.subLabel && (
+                      <Badge variant="secondary" className="text-xs mt-1">
+                        {day.subLabel}
+                      </Badge>
+                    )}
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3">
-                  <Badge variant="secondary" className="text-xs">
+                <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                  <Badge variant="secondary" className="text-xs whitespace-nowrap">
                     {getAvailabilityText(day.availableSlots)}
                   </Badge>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                 </div>
               </Button>
             ))}

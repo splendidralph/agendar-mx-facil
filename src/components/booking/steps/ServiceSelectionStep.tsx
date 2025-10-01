@@ -50,37 +50,49 @@ const ServiceSelectionStep = ({
           </div>
         ) : (
           <div className="space-y-3">
-            {services.map((service) => (
-              <div
-                key={service.id}
-                className={cn(
-                  "p-4 border rounded-xl cursor-pointer smooth-transition touch-manipulation",
-                  selectedService?.id === service.id
-                    ? `border-[${themeClasses.primary}] bg-[${themeClasses.primary}]/5 shadow-md scale-105`
-                    : `border-border hover:border-[${themeClasses.primary}]/50 hover:shadow-sm active:scale-95`
-                )}
-                onClick={() => onServiceSelect(service)}
-              >
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground text-lg">{service.name}</h3>
-                    {service.description && (
-                      <p className="text-sm text-muted-foreground mt-1 mb-2">{service.description}</p>
-                    )}
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {service.duration_minutes} minutos
+            {services.map((service) => {
+              const isSelected = selectedService?.id === service.id;
+              return (
+                <div
+                  key={service.id}
+                  className={cn(
+                    "relative p-4 rounded-xl cursor-pointer smooth-transition touch-manipulation border-2",
+                    isSelected
+                      ? "shadow-lg scale-[1.02] bg-primary/5"
+                      : "border-border hover:border-primary/30 hover:shadow-sm active:scale-95"
+                  )}
+                  style={isSelected ? { 
+                    borderColor: themeClasses.primary,
+                  } : undefined}
+                  onClick={() => onServiceSelect(service)}
+                >
+                  {isSelected && (
+                    <CheckCircle 
+                      className="absolute top-3 right-3 h-5 w-5" 
+                      style={{ color: themeClasses.primary }}
+                    />
+                  )}
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 pr-2">
+                      <h3 className="font-semibold text-foreground text-lg">{service.name}</h3>
+                      {service.description && (
+                        <p className="text-sm text-muted-foreground mt-1 mb-2">{service.description}</p>
+                      )}
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Clock className="h-4 w-4 mr-1" />
+                        {service.duration_minutes} minutos
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right ml-4">
-                    <div className={`text-2xl font-bold text-[${themeClasses.primary}]`}>
-                      ${service.price}
+                    <div className="text-right ml-4">
+                      <div className="text-2xl font-bold" style={{ color: themeClasses.primary }}>
+                        ${service.price}
+                      </div>
+                      <div className="text-xs text-muted-foreground">MXN</div>
                     </div>
-                    <div className="text-xs text-muted-foreground">MXN</div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -109,37 +121,49 @@ const ServiceSelectionStep = ({
           </div>
         ) : (
           <div className="grid gap-3">
-            {services.map((service) => (
-              <div
-                key={service.id}
-                className={cn(
-                  "p-4 border rounded-xl cursor-pointer smooth-transition touch-manipulation",
-                  selectedService?.id === service.id
-                    ? `border-[${themeClasses.primary}] bg-[${themeClasses.primary}]/5 shadow-md`
-                    : `border-border hover:border-[${themeClasses.primary}]/50 hover:shadow-sm`
-                )}
-                onClick={() => onServiceSelect(service)}
-              >
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground text-lg">{service.name}</h3>
-                    {service.description && (
-                      <p className="text-sm text-muted-foreground mt-1 mb-2">{service.description}</p>
-                    )}
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {service.duration_minutes} minutos
+            {services.map((service) => {
+              const isSelected = selectedService?.id === service.id;
+              return (
+                <div
+                  key={service.id}
+                  className={cn(
+                    "relative p-4 rounded-xl cursor-pointer smooth-transition touch-manipulation border-2",
+                    isSelected
+                      ? "shadow-lg bg-primary/5"
+                      : "border-border hover:border-primary/30 hover:shadow-sm"
+                  )}
+                  style={isSelected ? { 
+                    borderColor: themeClasses.primary,
+                  } : undefined}
+                  onClick={() => onServiceSelect(service)}
+                >
+                  {isSelected && (
+                    <CheckCircle 
+                      className="absolute top-3 right-3 h-5 w-5" 
+                      style={{ color: themeClasses.primary }}
+                    />
+                  )}
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 pr-2">
+                      <h3 className="font-semibold text-foreground text-lg">{service.name}</h3>
+                      {service.description && (
+                        <p className="text-sm text-muted-foreground mt-1 mb-2">{service.description}</p>
+                      )}
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Clock className="h-4 w-4 mr-1" />
+                        {service.duration_minutes} minutos
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className={`text-2xl font-bold text-[${themeClasses.primary}]`}>
-                      ${service.price}
+                    <div className="text-right ml-4">
+                      <div className="text-2xl font-bold" style={{ color: themeClasses.primary }}>
+                        ${service.price}
+                      </div>
+                      <div className="text-xs text-muted-foreground">MXN</div>
                     </div>
-                    <div className="text-xs text-muted-foreground">MXN</div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </CardContent>
