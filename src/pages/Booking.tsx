@@ -411,6 +411,8 @@ const Booking = () => {
             console.log('Step changed to:', step);
           }}
           onClearData={handleClearData}
+          provider={provider}
+          onBackToProfile={() => navigate(`/${username}`)}
         >
           <ServiceSelectionStep
             services={services}

@@ -7,6 +7,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
 import { toast } from 'sonner';
+import { BookingProfileHeader } from './BookingProfileHeader';
 
 interface Service {
   id: string;
@@ -30,6 +31,8 @@ interface ProgressiveBookingFlowProps {
   onStepChange?: (step: BookingStep) => void;
   onClearData?: (step: BookingStep) => void;
   children: React.ReactNode[];
+  provider?: any;
+  onBackToProfile?: () => void;
 }
 
 type BookingStep = 'service' | 'datetime' | 'details' | 'confirmation';
@@ -47,7 +50,9 @@ const ProgressiveBookingFlow = ({
   onSubmit,
   onStepChange,
   onClearData,
-  children
+  children,
+  provider,
+  onBackToProfile
 }: ProgressiveBookingFlowProps) => {
   const [currentStep, setCurrentStep] = useState<BookingStep>('service');
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -208,6 +213,10 @@ const ProgressiveBookingFlow = ({
   };
 
   const canGoPrev = () => {
+    // On first step, allow going back if onBackToProfile is provided
+    if (currentStepIndex === 0) {
+      return !!onBackToProfile;
+    }
     return currentStepIndex > 0;
   };
 
@@ -228,13 +237,22 @@ const ProgressiveBookingFlow = ({
   if (isMobile) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
+        {/* Profile Header */}
+        {provider && onBackToProfile && (
+          <BookingProfileHeader 
+            provider={provider}
+            themeColor={themeClasses.primary}
+            onBackClick={onBackToProfile}
+          />
+        )}
+        
         {/* Mobile Progress Header */}
         <div className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border/50 p-4">
           <div className="flex items-center justify-between mb-3">
             <Button
               variant="ghost"
               size="sm"
-              onClick={handlePrev}
+              onClick={currentStepIndex === 0 ? onBackToProfile : handlePrev}
               disabled={!canGoPrev()}
               className="h-8 w-8 p-0"
             >
@@ -309,6 +327,15 @@ const ProgressiveBookingFlow = ({
   // Desktop/Tablet Layout
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
+      {/* Profile Header */}
+      {provider && onBackToProfile && (
+        <BookingProfileHeader 
+          provider={provider}
+          themeColor={themeClasses.primary}
+          onBackClick={onBackToProfile}
+        />
+      )}
+      
       <div className="container mx-auto px-4 py-8">
         <div className={cn(
           "mx-auto transition-all duration-500 ease-in-out",
@@ -387,7 +414,7 @@ const ProgressiveBookingFlow = ({
             <div className="flex justify-between mt-6">
               <Button
                 variant="outline"
-                onClick={handlePrev}
+                onClick={currentStepIndex === 0 ? onBackToProfile : handlePrev}
                 disabled={!canGoPrev()}
                 className="px-6"
               >
