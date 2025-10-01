@@ -28,12 +28,13 @@ interface ProgressiveBookingFlowProps {
   onClientDataChange: (data: any) => void;
   onSubmit: () => void;
   onStepChange?: (step: BookingStep) => void;
+  onClearData?: (step: BookingStep) => void;
   children: React.ReactNode[];
 }
 
 type BookingStep = 'service' | 'datetime' | 'details' | 'confirmation';
 
-const ProgressiveBookingFlow = ({
+const ProgressiveBookingFlow = ({ 
   services,
   providerId,
   selectedService,
@@ -45,6 +46,7 @@ const ProgressiveBookingFlow = ({
   onClientDataChange,
   onSubmit,
   onStepChange,
+  onClearData,
   children
 }: ProgressiveBookingFlowProps) => {
   const [currentStep, setCurrentStep] = useState<BookingStep>('service');
@@ -173,6 +175,11 @@ const ProgressiveBookingFlow = ({
         console.log(`Booking Flow: Cleared future steps from ${newStep}:`, futureSteps);
         return updated;
       });
+      
+      // Call parent to clear state
+      if (onClearData) {
+        onClearData(newStep);
+      }
     }
     
     if (isManual) {

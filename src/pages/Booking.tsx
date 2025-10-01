@@ -125,6 +125,48 @@ const Booking = () => {
     }
   };
 
+  const handleClearData = (step: string) => {
+    console.log(`Booking: Clearing data for step: ${step}`);
+    
+    // Clear data based on which step we're going back to
+    if (step === 'service') {
+      // Going back to service selection - clear everything
+      setSelectedService(null);
+      setSelectedDate(undefined);
+      setSelectedTime("");
+      setClientData({
+        name: "",
+        phone: "",
+        email: "",
+        notes: "",
+        colonia: "",
+        postalCode: ""
+      });
+    } else if (step === 'datetime') {
+      // Going back to date/time - clear date, time, and client data
+      setSelectedDate(undefined);
+      setSelectedTime("");
+      setClientData({
+        name: "",
+        phone: "",
+        email: "",
+        notes: "",
+        colonia: "",
+        postalCode: ""
+      });
+    } else if (step === 'details') {
+      // Going back to client details - only clear client data
+      setClientData({
+        name: "",
+        phone: "",
+        email: "",
+        notes: "",
+        colonia: "",
+        postalCode: ""
+      });
+    }
+  };
+
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -368,6 +410,7 @@ const Booking = () => {
             // Log step changes for debugging
             console.log('Step changed to:', step);
           }}
+          onClearData={handleClearData}
         >
           <ServiceSelectionStep
             services={services}
