@@ -149,8 +149,32 @@ const ProgressiveBookingFlow = ({
     }
   }, [selectedService, selectedDate, selectedTime, clientData.name, currentStep, isManualNavigation, isTransitioning, completedSteps, highestStepReached]);
 
+  // Helper to get steps that come after a given step
+  const getFutureSteps = (step: BookingStep): BookingStep[] => {
+    const stepOrder: BookingStep[] = ['service', 'datetime', 'details', 'confirmation'];
+    const stepIndex = stepOrder.indexOf(step);
+    return stepOrder.slice(stepIndex + 1);
+  };
+
   const handleStepTransition = (newStep: BookingStep, isManual = false) => {
     console.log(`Booking Flow: Transitioning to ${newStep}, manual: ${isManual}`);
+    
+    // Clear future completed steps when navigating backward
+    const stepOrder: BookingStep[] = ['service', 'datetime', 'details', 'confirmation'];
+    const currentIndex = stepOrder.indexOf(currentStep);
+    const newIndex = stepOrder.indexOf(newStep);
+    
+    if (newIndex < currentIndex) {
+      // Going backward - clear all future steps from completedSteps
+      const futureSteps = getFutureSteps(newStep);
+      setCompletedSteps(prev => {
+        const updated = new Set(prev);
+        futureSteps.forEach(step => updated.delete(step));
+        console.log(`Booking Flow: Cleared future steps from ${newStep}:`, futureSteps);
+        return updated;
+      });
+    }
+    
     if (isManual) {
       setIsManualNavigation(true);
     }
