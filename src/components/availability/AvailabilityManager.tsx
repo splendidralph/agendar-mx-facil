@@ -8,6 +8,7 @@ import { TimeSelect } from '@/components/ui/time-select';
 import { Calendar, Clock, Plus, X, Save } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { normalizeTimeFormat } from '@/lib/utils';
 
 interface AvailabilitySlot {
   id?: string;
@@ -30,6 +31,11 @@ const DAYS_OF_WEEK = [
   { value: 6, label: 'Sábado' },
   { value: 0, label: 'Domingo' },
 ];
+
+const getDayName = (dayOfWeek: number): string => {
+  const day = DAYS_OF_WEEK.find(d => d.value === dayOfWeek);
+  return day?.label || 'día';
+};
 
 const AvailabilityManager = ({ providerId }: Props) => {
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
@@ -60,7 +66,13 @@ const AvailabilityManager = ({ providerId }: Props) => {
         }));
         setAvailability(defaultSlots);
       } else {
-        setAvailability(data);
+        // Normalize time format from database (HH:MM:SS -> HH:MM)
+        const normalizedData = data.map(slot => ({
+          ...slot,
+          start_time: normalizeTimeFormat(slot.start_time) || '09:00',
+          end_time: normalizeTimeFormat(slot.end_time) || '17:00',
+        }));
+        setAvailability(normalizedData);
       }
     } catch (error) {
       console.error('Error fetching availability:', error);
@@ -95,22 +107,48 @@ const AvailabilityManager = ({ providerId }: Props) => {
   const saveAvailability = async () => {
     setSaving(true);
     try {
+      // CRITICAL FIX: Client-side validation for time range constraints
+      const validationErrors: string[] = [];
+      const activeSlots = availability.filter(slot => slot.is_active);
+
+      for (const slot of activeSlots) {
+        // Check if times are provided
+        if (!slot.start_time || !slot.end_time) {
+          validationErrors.push(`El ${getDayName(slot.day_of_week)} debe tener hora de inicio y fin.`);
+          continue;
+        }
+
+        // Create Date objects for comparison to avoid string issues
+        const startTime = new Date(`2000/01/01 ${slot.start_time}`);
+        const endTime = new Date(`2000/01/01 ${slot.end_time}`);
+
+        // Check the database constraint: end_time must be greater than start_time
+        if (endTime <= startTime) {
+          validationErrors.push(`La hora de fin debe ser posterior a la hora de inicio el ${getDayName(slot.day_of_week)}.`);
+        }
+      }
+
+      // If there are validation errors, show the first one and stop
+      if (validationErrors.length > 0) {
+        toast.error(validationErrors[0]);
+        setSaving(false);
+        return;
+      }
+
       // Delete existing availability for this provider
       await supabase
         .from('availability')
         .delete()
         .eq('provider_id', providerId);
 
-      // Insert new availability slots
-      const slotsToInsert = availability
-        .filter(slot => slot.is_active)
-        .map(slot => ({
-          provider_id: providerId,
-          day_of_week: slot.day_of_week,
-          start_time: slot.start_time,
-          end_time: slot.end_time,
-          is_active: slot.is_active,
-        }));
+      // Insert new availability slots with explicit seconds format
+      const slotsToInsert = activeSlots.map(slot => ({
+        provider_id: providerId,
+        day_of_week: slot.day_of_week,
+        start_time: `${slot.start_time}:00`,
+        end_time: `${slot.end_time}:00`,
+        is_active: slot.is_active,
+      }));
 
       if (slotsToInsert.length > 0) {
         const { error } = await supabase
