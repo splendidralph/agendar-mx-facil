@@ -6,7 +6,7 @@ import { CalendarDays, Clock, AlertCircle, ChevronRight, ArrowLeft } from 'lucid
 import { supabase } from '@/integrations/supabase/client';
 import { format, addDays, startOfDay, isSameDay, isAfter, isBefore, isToday, isTomorrow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
+import { cn, formatTimeTo12Hour } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useTheme } from '@/contexts/ThemeContext';
 
@@ -106,13 +106,9 @@ const ModernBookingCalendar = ({
       if (isDateAvailable(checkDate)) {
         const slotsCount = await getAvailableSlotsCount(checkDate);
         
-        const label = isToday(checkDate) 
-          ? 'Hoy' 
-          : isTomorrow(checkDate) 
-            ? 'Mañana' 
-            : format(checkDate, 'EEEE', { locale: es });
-        
-        const subLabel = format(checkDate, 'd MMM', { locale: es });
+        // Full date format: "miércoles, 1 de octubre"
+        const label = format(checkDate, "EEEE, d 'de' MMMM", { locale: es });
+        const subLabel = '';
         
         days.push({
           date: checkDate,
@@ -298,6 +294,16 @@ const ModernBookingCalendar = ({
     return 'Varios espacios';
   };
 
+  const getTimeRange = () => {
+    if (timeSlots.length === 0) return '';
+    const availableSlots = timeSlots.filter(s => s.available);
+    if (availableSlots.length === 0) return '';
+    
+    const firstSlot = availableSlots[0].time;
+    const lastSlot = availableSlots[availableSlots.length - 1].time;
+    return `${formatTimeTo12Hour(firstSlot)} a ${formatTimeTo12Hour(lastSlot)}`;
+  };
+
   const groupTimeSlots = () => {
     const morning = timeSlots.filter(slot => {
       const hour = parseInt(slot.time.split(':')[0]);
@@ -355,11 +361,11 @@ const ModernBookingCalendar = ({
             </Button>
             
             <div className="mb-4">
-              <h3 className="text-xl font-semibold text-foreground mb-1">
-                {selectedDay.label}, {selectedDay.subLabel}
+              <h3 className="text-xl font-semibold text-foreground mb-1 capitalize">
+                {selectedDay.label}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Selecciona tu horario preferido
+                {getTimeRange() || 'Selecciona tu horario preferido'}
               </p>
             </div>
           </div>
@@ -403,7 +409,7 @@ const ModernBookingCalendar = ({
                         )}
                       >
                         <Clock className="h-4 w-4 mr-2" />
-                        {slot.time}
+                        {formatTimeTo12Hour(slot.time)}
                       </Button>
                     ))}
                   </div>
@@ -435,7 +441,7 @@ const ModernBookingCalendar = ({
                         )}
                       >
                         <Clock className="h-4 w-4 mr-2" />
-                        {slot.time}
+                        {formatTimeTo12Hour(slot.time)}
                       </Button>
                     ))}
                   </div>
@@ -467,7 +473,7 @@ const ModernBookingCalendar = ({
                         )}
                       >
                         <Clock className="h-4 w-4 mr-2" />
-                        {slot.time}
+                        {formatTimeTo12Hour(slot.time)}
                       </Button>
                     ))}
                   </div>

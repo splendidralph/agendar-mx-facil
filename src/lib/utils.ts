@@ -14,3 +14,14 @@ export const normalizeTimeFormat = (time: string | null | undefined): string | n
   // Use substring to ensure only HH:MM is kept, regardless of :SS presence
   return time.substring(0, 5);
 }
+
+/**
+ * Converts 24-hour time format to 12-hour format with AM/PM
+ * Example: "09:00" -> "9:00 AM", "17:30" -> "5:30 PM"
+ */
+export const formatTimeTo12Hour = (time: string): string => {
+  const [hours, minutes] = time.split(':').map(Number);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const displayHour = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+  return `${displayHour}:${minutes.toString().padStart(2, '0')} ${period}`;
+}

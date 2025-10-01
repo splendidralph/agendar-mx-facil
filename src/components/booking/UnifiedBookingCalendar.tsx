@@ -7,6 +7,7 @@ import { CalendarDays, Clock, AlertCircle, ChevronLeft, ChevronRight } from 'luc
 import { supabase } from '@/integrations/supabase/client';
 import { format, addDays, startOfDay, isSameDay, isAfter, isBefore, isToday, isTomorrow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { formatTimeTo12Hour } from '@/lib/utils';
 
 interface TimeSlot {
   time: string;
@@ -172,9 +173,8 @@ const UnifiedBookingCalendar = ({
   };
 
   const getDateLabel = (date: Date) => {
-    if (isToday(date)) return 'Hoy';
-    if (isTomorrow(date)) return 'Mañana';
-    return format(date, 'EEE d', { locale: es });
+    // Full date format: "miércoles 1"
+    return format(date, 'EEEE d', { locale: es });
   };
 
   const groupTimeSlots = () => {
@@ -284,8 +284,8 @@ const UnifiedBookingCalendar = ({
             ) : (
               <div className="animate-slide-up">
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-foreground mb-1">Horarios disponibles</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <h4 className="text-lg font-semibold text-foreground mb-1 capitalize">Horarios disponibles</h4>
+                  <p className="text-sm text-muted-foreground capitalize">
                     {format(date, "EEEE, d 'de' MMMM", { locale: es })}
                   </p>
                 </div>
@@ -328,7 +328,7 @@ const UnifiedBookingCalendar = ({
                               }`}
                             >
                               <Clock className="h-4 w-4 mr-2" />
-                              {slot.time}
+                              {formatTimeTo12Hour(slot.time)}
                             </Button>
                           ))}
                         </div>
@@ -359,7 +359,7 @@ const UnifiedBookingCalendar = ({
                               }`}
                             >
                               <Clock className="h-4 w-4 mr-2" />
-                              {slot.time}
+                              {formatTimeTo12Hour(slot.time)}
                             </Button>
                           ))}
                         </div>
@@ -390,7 +390,7 @@ const UnifiedBookingCalendar = ({
                               }`}
                             >
                               <Clock className="h-4 w-4 mr-2" />
-                              {slot.time}
+                              {formatTimeTo12Hour(slot.time)}
                             </Button>
                           ))}
                         </div>
