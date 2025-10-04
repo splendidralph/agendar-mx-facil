@@ -294,7 +294,7 @@ serve(async (req) => {
         booking_date: bookingDate,
         booking_time: bookingTime,
         total_price: service.price,
-        status: 'pending',
+        status: 'confirmed',
         source_type: 'web',
         client_notes: clientData?.notes || null
       })
