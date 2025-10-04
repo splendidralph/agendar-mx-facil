@@ -60,7 +60,7 @@ const DateTimeStep = ({
 
   if (isMobile) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 animate-fade-in">
         <ServiceSummary />
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-foreground mb-2">Fecha y hora</h3>
@@ -80,7 +80,7 @@ const DateTimeStep = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       <ServiceSummary />
       <ModernBookingCalendar
         providerId={providerId}

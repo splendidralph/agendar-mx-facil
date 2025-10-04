@@ -148,7 +148,7 @@ const ProgressiveBookingFlow = ({
     if (currentStep === 'service' && selectedService && !selectedDate && !completedSteps.has('datetime')) {
       console.log('Booking Flow: Auto-advancing from service to datetime (first time)');
       toast.success('✓ Servicio seleccionado');
-      setTimeout(() => setCurrentStep('datetime'), 800);
+      setTimeout(() => setCurrentStep('datetime'), 500);
     } else if (currentStep === 'datetime' && selectedDate && selectedTime && !clientData.name && !completedSteps.has('details')) {
       console.log('Booking Flow: Auto-advancing from datetime to details (first time)');
       toast.success('✓ Fecha y hora seleccionadas');
