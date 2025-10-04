@@ -112,66 +112,69 @@ const MobileBookingsTable = ({ providerId, isMobile }: MobileBookingsTableProps)
               </p>
             </div>
           ) : (
-            <div className="space-y-4 p-4">
+            <div className="space-y-3 p-4">
               {filteredBookings.map((booking, index) => (
                 <Card key={booking.id} className="border border-border/50 card-hover touch-manipulation">
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      {/* Header with Status */}
-                      <div className="flex items-center justify-between">
+                  <CardContent className="p-5">
+                    <div className="space-y-4">
+                      {/* Client Name */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">{booking.client_info.name}</span>
+                          <User className="h-5 w-5 text-muted-foreground" />
+                          <span className="font-semibold text-base">{booking.client_info.name}</span>
                         </div>
                         {getStatusBadge(booking.status)}
                       </div>
 
                       {/* Service Info */}
-                      <div className="space-y-1">
-                        <p className="font-medium text-primary">{booking.service.name}</p>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
+                      <div className="space-y-2 pt-1">
+                        <p className="font-medium text-base text-primary">{booking.service.name}</p>
+                        <div className="flex flex-col gap-1.5 text-sm">
+                          <span className="flex items-center gap-2 text-muted-foreground">
+                            <Clock className="h-4 w-4" />
                             {booking.service.duration_minutes} min
                           </span>
-                          <span className="font-medium text-foreground">${booking.total_price}</span>
+                          <span className="flex items-center gap-2 font-semibold text-base">
+                            💰 ${booking.total_price}
+                          </span>
                         </div>
                       </div>
 
                       {/* Date and Time */}
-                      <div className="flex items-center gap-4 text-sm">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3 text-muted-foreground" />
-                          {formatDate(booking.booking_date)}
+                      <div className="flex flex-col gap-2 text-sm pt-1">
+                        <span className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">{formatDate(booking.booking_date)}</span>
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3 text-muted-foreground" />
-                          {formatTime(booking.booking_time)}
+                        <span className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">{formatTime(booking.booking_time)}</span>
                         </span>
                       </div>
 
                       {/* Contact Info */}
                       {booking.client_info.phone && (
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Phone className="h-3 w-3" />
-                          {booking.client_info.phone}
+                        <div className="flex items-center gap-2 text-sm pt-1">
+                          <Phone className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">{booking.client_info.phone}</span>
                         </div>
                       )}
 
                       {/* Actions */}
-                      <div className="flex gap-2 pt-2">
+                      <div className="pt-2 border-t border-border/50">
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button
                               variant="outline"
-                              size="sm"
-                              className="touch-manipulation"
+                              size="default"
+                              className="w-full touch-manipulation h-11"
                               onClick={() => {
                                 setSelectedBooking(booking);
                                 setNotes(booking.provider_notes || '');
                               }}
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit className="h-4 w-4 mr-2" />
+                              Editar Notas
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-sm mx-4">
