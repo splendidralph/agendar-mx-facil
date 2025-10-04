@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import HeroSection from "@/components/homepage/HeroSection";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ChatWidget from "@/components/ChatWidget";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -210,6 +211,7 @@ const Index = () => {
           </footer>
         </div>
       </section>
+      <ChatWidget />
     </div>
   );
 };

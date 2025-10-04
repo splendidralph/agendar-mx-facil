@@ -8,6 +8,7 @@ import { useBookings } from "@/hooks/useBookings";
 import MobileHeader from "@/components/dashboard/MobileHeader";
 import DashboardTabs from "@/components/dashboard/DashboardTabs";
 import { useIsMobile } from "@/hooks/use-mobile";
+import ChatWidget from "@/components/ChatWidget";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -159,6 +160,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <ChatWidget />
     </div>
   );
 };
