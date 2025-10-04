@@ -150,49 +150,76 @@ _Mensaje automático de BookEasy.mx_`
     })
 
     let response;
+    
+    // Try template message first if available
+    if (templateSid) {
+      console.log('Attempting to send template message with SID:', templateSid)
+      
+      const templateVariables = JSON.stringify([
+        clientName,
+        service.name,
+        bookingDate,
+        bookingTime,
+        provider.business_name
+      ])
 
-    // Template message is REQUIRED for client notifications
-    if (!templateSid) {
-      console.error('CRITICAL: booking_confirmation Template SID environment variable is missing.')
-      throw new Error('Client notification template not configured. Cannot send WhatsApp to client.')
+      response = await fetch(twilioUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          From: twilioWhatsAppNumber,
+          To: toWhatsAppNumber,
+          ContentSid: templateSid,
+          ContentVariables: templateVariables,
+        }),
+      })
+
+      // If template fails, fall back to plain text
+      if (!response.ok) {
+        console.log('Template message failed, falling back to plain text')
+        response = await fetch(twilioUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            From: twilioWhatsAppNumber,
+            To: toWhatsAppNumber,
+            Body: whatsappMessage,
+          }),
+        })
+      }
+    } else {
+      // No template available, use plain text
+      console.log('No template SID available, using plain text message')
+      response = await fetch(twilioUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          From: twilioWhatsAppNumber,
+          To: toWhatsAppNumber,
+          Body: whatsappMessage,
+        }),
+      })
     }
 
-    console.log('Attempting to send template message with SID:', templateSid)
-
-    const templateVariables = JSON.stringify([
-      clientName,
-      service.name,
-      bookingDate,
-      bookingTime,
-      provider.business_name
-    ])
-
-    response = await fetch(twilioUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        From: twilioWhatsAppNumber,
-        To: toWhatsAppNumber,
-        ContentSid: templateSid,
-        ContentVariables: templateVariables,
-      }),
-    })
-
-    // CRITICAL: If template fails, throw error immediately
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Twilio API rejected template for client notification:', {
+      const errorText = await response.text()
+      console.error('Twilio API error details for client notification:', {
         status: response.status,
         statusText: response.statusText,
         error: errorText,
         to: toWhatsAppNumber,
-        from: twilioWhatsAppNumber,
-        templateSid: templateSid
-      });
-      throw new Error(`Failed to send client WhatsApp template: ${response.status} - ${errorText}`);
+        from: twilioWhatsAppNumber
+      })
+      throw new Error(`Failed to send client WhatsApp message: ${response.status} - ${errorText}`)
     }
 
     const twilioResponse = await response.json()

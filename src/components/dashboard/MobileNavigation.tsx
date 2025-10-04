@@ -29,6 +29,7 @@ const MobileNavigation = ({
     { id: "appointments", label: "Citas", icon: Calendar },
     { id: "services", label: "Servicios", icon: ClipboardList },
     { id: "availability", label: "Horarios", icon: Calendar },
+    { id: "promote", label: "Promocionar", icon: Share2 },
     { id: "settings", label: "Configuración", icon: Settings },
   ];
 

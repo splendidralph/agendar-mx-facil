@@ -160,6 +160,21 @@ const MobileBookingsTable = ({ providerId, isMobile }: MobileBookingsTableProps)
 
                       {/* Actions */}
                       <div className="flex gap-2 pt-2">
+                        <Select
+                          value={booking.status}
+                          onValueChange={(value) => updateBookingStatus(booking.id, value as BookingData['status'])}
+                        >
+                          <SelectTrigger className="flex-1 touch-manipulation">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pendiente</SelectItem>
+                            <SelectItem value="confirmed">Confirmar</SelectItem>
+                            <SelectItem value="completed">Completar</SelectItem>
+                            <SelectItem value="cancelled">Cancelar</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button
@@ -298,6 +313,21 @@ const MobileBookingsTable = ({ providerId, isMobile }: MobileBookingsTableProps)
                     <TableCell className="font-medium">${booking.total_price}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
+                        <Select
+                          value={booking.status}
+                          onValueChange={(value) => updateBookingStatus(booking.id, value as BookingData['status'])}
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pendiente</SelectItem>
+                            <SelectItem value="confirmed">Confirmar</SelectItem>
+                            <SelectItem value="completed">Completar</SelectItem>
+                            <SelectItem value="cancelled">Cancelar</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button

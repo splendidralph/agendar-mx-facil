@@ -109,6 +109,8 @@ const DashboardTabs = ({
       case "availability":
         return <AvailabilityManager providerId={provider.id} />;
       
+      case "promote":
+        return <PromotionManager provider={provider} />;
       
       case "settings":
         return (
@@ -130,7 +132,7 @@ const DashboardTabs = ({
       {/* Desktop Tabs */}
       {!isMobile ? (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 glassmorphism mb-8 h-12">
+          <TabsList className="grid w-full grid-cols-6 glassmorphism mb-8 h-12">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Overview
@@ -146,6 +148,10 @@ const DashboardTabs = ({
             <TabsTrigger value="availability" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Horarios
+            </TabsTrigger>
+            <TabsTrigger value="promote" className="flex items-center gap-2">
+              <Share2 className="h-4 w-4" />
+              Promocionar
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
@@ -163,6 +169,9 @@ const DashboardTabs = ({
             {renderTabContent()}
           </TabsContent>
           <TabsContent value="availability">
+            {renderTabContent()}
+          </TabsContent>
+          <TabsContent value="promote">
             {renderTabContent()}
           </TabsContent>
           <TabsContent value="settings" className="space-y-6">
