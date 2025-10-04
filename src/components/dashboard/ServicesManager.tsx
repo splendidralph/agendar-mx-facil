@@ -158,7 +158,7 @@ const ServicesManager = ({ providerId }: ServicesManagerProps) => {
   return (
     <Card className="border-border/50 shadow-lg">
       <CardHeader>
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
           <div>
             <CardTitle>Mis Servicios</CardTitle>
             <CardDescription>
@@ -167,7 +167,7 @@ const ServicesManager = ({ providerId }: ServicesManagerProps) => {
           </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => openDialog()}>
+              <Button onClick={() => openDialog()} className="w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 Agregar Servicio
               </Button>
