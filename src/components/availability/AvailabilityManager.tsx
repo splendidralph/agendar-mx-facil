@@ -224,38 +224,65 @@ const AvailabilityManager = ({ providerId }: Props) => {
                     );
                     
                     return (
-                      <div key={`${slot.day_of_week}-${index}`} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-3 border rounded-lg">
-                        <Switch
-                          checked={slot.is_active}
-                          onCheckedChange={(checked) => updateTimeSlot(globalIndex, 'is_active', checked)}
-                          className="shrink-0"
-                        />
-                        
-                         <div className="flex items-center gap-2 w-full sm:flex-1">
-                           <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
-                           <TimeSelect
-                             value={slot.start_time}
-                             onValueChange={(value) => updateTimeSlot(globalIndex, 'start_time', value)}
-                             placeholder="Inicio"
-                             className="flex-1 sm:w-32"
-                           />
-                           <span className="text-muted-foreground shrink-0">-</span>
-                           <TimeSelect
-                             value={slot.end_time}
-                             onValueChange={(value) => updateTimeSlot(globalIndex, 'end_time', value)}
-                             placeholder="Fin"
-                             className="flex-1 sm:w-32"
-                           />
-                         </div>
+                      <div key={`${slot.day_of_week}-${index}`} className="flex flex-col gap-3 p-4 border rounded-lg">
+                        {/* Switch Toggle */}
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={slot.is_active}
+                            onCheckedChange={(checked) => updateTimeSlot(globalIndex, 'is_active', checked)}
+                            className="shrink-0"
+                          />
+                          <Label className="text-sm">
+                            {slot.is_active ? 'Disponible' : 'No disponible'}
+                          </Label>
+                        </div>
 
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeTimeSlot(globalIndex)}
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive shrink-0 self-end sm:self-center"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        {/* Time Selection - Stacked on Mobile, Inline on Desktop */}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                          {/* Start Time */}
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
+                            <Label className="text-sm text-muted-foreground min-w-[60px] flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              Inicio:
+                            </Label>
+                            <TimeSelect
+                              value={slot.start_time}
+                              onValueChange={(value) => updateTimeSlot(globalIndex, 'start_time', value)}
+                              placeholder="Inicio"
+                              className="w-full sm:w-32"
+                            />
+                          </div>
+
+                          {/* Separator - Hidden on mobile */}
+                          <span className="hidden sm:block text-muted-foreground">-</span>
+
+                          {/* End Time */}
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
+                            <Label className="text-sm text-muted-foreground min-w-[60px] flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              Fin:
+                            </Label>
+                            <TimeSelect
+                              value={slot.end_time}
+                              onValueChange={(value) => updateTimeSlot(globalIndex, 'end_time', value)}
+                              placeholder="Fin"
+                              className="w-full sm:w-32"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Delete Button */}
+                        <div className="flex justify-end pt-2 border-t sm:border-0 sm:pt-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeTimeSlot(globalIndex)}
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <X className="h-4 w-4 mr-2" />
+                            Eliminar
+                          </Button>
+                        </div>
                       </div>
                     );
                   })}
