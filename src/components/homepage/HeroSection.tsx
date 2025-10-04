@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Calendar, Phone, Instagram, Users, Star, TrendingUp, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -17,68 +17,43 @@ const HeroSection = () => {
     }
   };
 
-
   return (
-    <section className="relative py-20 md:py-28 lg:py-36 px-4 overflow-hidden gradient-mesh pattern-dots">
-      {/* Geometric pattern elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-primary/10"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 rounded-full bg-accent/10"></div>
-        <div className="absolute bottom-32 left-1/4 w-40 h-40 rounded-full bg-primary/5"></div>
-      </div>
-      
+    <section className="relative py-16 md:py-24 px-4 overflow-hidden">
       <div className="container mx-auto text-center relative z-10">
-        <div className="max-w-5xl mx-auto">
-          {/* Beta Badge */}
-          <div className="solid-card-primary inline-flex items-center gap-2 px-6 py-3 rounded-full mb-10 font-medium">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            <span className="text-foreground">{t('hero.badge')}</span>
-          </div>
-
+        <div className="max-w-3xl mx-auto">
           {/* Main headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-foreground mb-8 leading-[1.1] tracking-tight">
-            {t('hero.title')}
-            <span className="block mt-3 text-gradient-primary">
-              {t('hero.subtitle')}
-            </span>
-            <span className="block mt-2 text-gradient-accent text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
-              {t('hero.subtitle2')}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
+            Tu agenda profesional
+            <span className="block mt-2 text-primary">
+              en un link
             </span>
           </h1>
 
-          {/* Supporting content */}
-          <div className="mb-12 md:mb-16 max-w-4xl mx-auto">
-            
-            {/* Location Badge */}
-            <div className="solid-card-accent p-6 mb-10">
-              <p className="text-lg font-semibold text-foreground mb-2">{t('hero.locationBadge')}</p>
-              <p className="text-muted-foreground text-lg">
-                {t('hero.location')}
-              </p>
-            </div>
-            
-            {/* Link preview */}
-            <div className="solid-card-strong p-8 inline-block max-w-full">
-              <span className="text-sm block text-muted-foreground mb-2">{t('hero.linkPreview')}</span>
-              <div className="font-mono text-xl break-all">
-                <span className="text-gradient-primary font-semibold">bookeasy.mx/</span>
-                <span className="text-gradient-accent font-bold bg-accent/10 px-2 py-1 rounded-md border border-accent/20">tuusuario</span>
-              </div>
+          {/* Sub-headline */}
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Crea tu perfil en 2 minutos. Tus clientes reservan solos.
+          </p>
+          
+          {/* Link preview */}
+          <div className="bg-muted/50 border border-border p-6 rounded-2xl inline-block mb-10 max-w-full">
+            <div className="font-mono text-lg md:text-xl break-all">
+              <span className="text-muted-foreground">bookeasy.mx/</span>
+              <span className="text-primary font-semibold">tuusuario</span>
             </div>
           </div>
 
           {/* CTA Button */}
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-3">
             <Button 
               size="lg" 
-              className="accent-gradient text-white hover:opacity-90 text-xl font-semibold group border-0 px-12 py-6 h-auto rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="text-lg font-semibold group px-8 py-6 h-auto rounded-full hover:scale-105 transition-all duration-200 shadow-lg"
               onClick={handleGetStarted}
             >
-              {t('hero.cta.create')}
-              <ArrowRight className="h-6 w-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
+              Crear mi perfil gratis
+              <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <p className="text-sm text-muted-foreground font-medium">
-              {t('hero.limitedSpots')}
+            <p className="text-sm text-muted-foreground">
+              Sin tarjeta de crédito • Gratis para siempre
             </p>
           </div>
         </div>
