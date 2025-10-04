@@ -178,12 +178,11 @@ const PublicProfile = () => {
         {isOwner && (
           <Button
             onClick={() => navigate('/dashboard')}
-            className="fixed bottom-20 right-4 md:top-20 md:bottom-auto md:right-8 btn-primary shadow-lg z-50 animate-fade-in gap-2"
+            className="fixed top-20 right-4 md:right-8 btn-primary shadow-lg z-50 animate-fade-in gap-2"
             size="lg"
           >
             <LayoutDashboard className="h-5 w-5" />
-            <span className="hidden md:inline">Ir al Dashboard</span>
-            <span className="md:hidden">Panel</span>
+            Ir a Dashboard
           </Button>
         )}
 
