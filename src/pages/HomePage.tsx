@@ -195,7 +195,7 @@ const Index = () => {
               {/* Powered by strip */}
               <div className="mt-6 pt-4 border-t">
                 <p className="text-xs text-muted-foreground">
-                  Powered by{' '}
+                  Beta powered by{' '}
                   <a 
                     href="https://newbizmarketing.com" 
                     target="_blank" 
