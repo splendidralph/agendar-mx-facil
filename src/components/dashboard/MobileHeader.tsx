@@ -74,18 +74,6 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
           )}
         </div>
       </header>
-
-      {/* Mobile FAB for Quick Link Access */}
-      {username && (
-        <div className="fixed bottom-6 right-4 z-40 md:hidden">
-          <Button
-            onClick={onCopyLink}
-            className="h-14 w-14 rounded-full gradient-primary text-primary-foreground shadow-2xl touch-manipulation floating-cta animate-glow hover:scale-110 smooth-transition"
-          >
-            <Link className="h-6 w-6" />
-          </Button>
-        </div>
-      )}
     </>
   );
 };
