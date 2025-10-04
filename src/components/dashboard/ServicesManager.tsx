@@ -259,42 +259,64 @@ const ServicesManager = ({ providerId }: ServicesManagerProps) => {
         ) : (
           <div className="space-y-4">
             {services.map((service) => (
-              <div key={service.id} className="flex flex-col sm:flex-row sm:justify-between gap-3 p-4 border rounded-lg">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold truncate">{service.name}</h3>
-                  {service.description && (
-                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{service.description}</p>
-                  )}
-                  <div className="flex items-center gap-3 mt-2 flex-wrap">
-                    <div className="flex items-center gap-1 text-sm">
-                      <DollarSign className="h-3 w-3 shrink-0" />
-                      <span>{service.price}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm">
-                      <Clock className="h-3 w-3 shrink-0" />
-                      <span>{service.duration_minutes} min</span>
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      {categoryLabels[service.category] || service.category}
-                    </Badge>
+              <div key={service.id} className="flex flex-col gap-4 p-5 border rounded-lg">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-base sm:text-lg">{service.name}</h3>
+                    {service.description && (
+                      <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{service.description}</p>
+                    )}
+                  </div>
+                  <div className="hidden sm:flex gap-2 shrink-0">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => openDialog(service)}
+                      className="h-9 w-9 p-0"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDelete(service.id)}
+                      className="h-9 w-9 p-0"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-                <div className="flex gap-2 self-end sm:self-start shrink-0">
+                
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                  <div className="flex items-center gap-2 text-base">
+                    <DollarSign className="h-4 w-4 shrink-0" />
+                    <span className="font-medium">${service.price}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-base">
+                    <Clock className="h-4 w-4 shrink-0" />
+                    <span>{service.duration_minutes} min</span>
+                  </div>
+                  <Badge variant="outline" className="text-sm">
+                    {categoryLabels[service.category] || service.category}
+                  </Badge>
+                </div>
+
+                <div className="flex sm:hidden flex-col gap-2">
                   <Button
-                    size="sm"
                     variant="outline"
                     onClick={() => openDialog(service)}
-                    className="h-9 w-9 p-0"
+                    className="w-full h-11 touch-manipulation"
                   >
-                    <Edit className="h-4 w-4" />
+                    <Edit className="h-4 w-4 mr-2" />
+                    Editar Servicio
                   </Button>
                   <Button
-                    size="sm"
                     variant="outline"
                     onClick={() => handleDelete(service.id)}
-                    className="h-9 w-9 p-0"
+                    className="w-full h-11 touch-manipulation text-destructive hover:text-destructive"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Eliminar
                   </Button>
                 </div>
               </div>
