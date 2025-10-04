@@ -52,9 +52,6 @@ const HeroSection = () => {
               Crear mi perfil gratis
               <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <p className="text-sm text-muted-foreground">
-              Sin tarjeta de crédito • Gratis para siempre
-            </p>
           </div>
         </div>
       </div>

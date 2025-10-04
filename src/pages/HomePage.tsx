@@ -133,8 +133,7 @@ const Index = () => {
                 <Link2 className="h-6 w-6" />
               </div>
               <h3 className="font-semibold text-lg mb-2 text-foreground">Tu Link Profesional</h3>
-              <p className="text-sm text-muted-foreground mb-1">bookeasy.mx/tuusuario</p>
-              <p className="text-xs text-muted-foreground">Siempre tuyo, siempre gratis</p>
+              <p className="text-sm text-muted-foreground">bookeasy.mx/tuusuario</p>
             </div>
 
             {/* Feature 2 */}
@@ -143,8 +142,7 @@ const Index = () => {
                 <CalendarDays className="h-6 w-6" />
               </div>
               <h3 className="font-semibold text-lg mb-2 text-foreground">Calendario Automático</h3>
-              <p className="text-sm text-muted-foreground mb-1">Tus clientes reservan solos</p>
-              <p className="text-xs text-muted-foreground">Sin mensajes de ida y vuelta</p>
+              <p className="text-sm text-muted-foreground">Tus clientes reservan solos</p>
             </div>
 
             {/* Feature 3 */}
@@ -153,8 +151,7 @@ const Index = () => {
                 <MessageCircle className="h-6 w-6" />
               </div>
               <h3 className="font-semibold text-lg mb-2 text-foreground">Confirmación WhatsApp</h3>
-              <p className="text-sm text-muted-foreground mb-1">Notificaciones automáticas</p>
-              <p className="text-xs text-muted-foreground">Sin que tú escribas nada</p>
+              <p className="text-sm text-muted-foreground">Notificaciones automáticas</p>
             </div>
           </div>
         </div>
@@ -192,8 +189,23 @@ const Index = () => {
                 hello@bookeasy.mx
               </p>
               <p className="text-xs text-muted-foreground">
-                © 2024 Bookeasy.mx • Todos los derechos reservados
+                © 2025 Bookeasy.mx • Todos los derechos reservados
               </p>
+              
+              {/* Powered by strip */}
+              <div className="mt-6 pt-4 border-t">
+                <p className="text-xs text-muted-foreground">
+                  Powered by{' '}
+                  <a 
+                    href="https://newbizmarketing.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Newbiz Marketing
+                  </a>
+                </p>
+              </div>
             </div>
           </footer>
         </div>
