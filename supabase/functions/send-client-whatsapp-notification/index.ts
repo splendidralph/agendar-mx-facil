@@ -159,13 +159,13 @@ _Mensaje automático de BookEasy.mx_`
 
     console.log('Attempting to send template message with SID:', templateSid)
 
-    const templateVariables = JSON.stringify([
-      clientName,
-      service.name,
-      bookingDate,
-      bookingTime,
-      provider.business_name
-    ])
+    const templateVariables = JSON.stringify({
+      "1": provider.business_name,  // {{1}} - Provider name
+      "2": service.name,             // {{2}} - Service name
+      "3": bookingDate,              // {{3}} - Date
+      "4": bookingTime,              // {{4}} - Time
+      "5": service.price.toString()  // {{5}} - Price
+    })
 
     response = await fetch(twilioUrl, {
       method: 'POST',
