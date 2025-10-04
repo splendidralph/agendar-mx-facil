@@ -47,20 +47,12 @@ const MobileNavigation = ({
       <SheetContent side="right" className="w-80 p-0">
         <div className="flex flex-col h-full">
           <div className="p-4 border-b border-border">
-            <div className="flex items-center justify-between">
+            <div>
               <h2 className="text-lg font-semibold">Dashboard</h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsOpen(false)}
-                className="p-2"
-              >
-                <X className="h-5 w-5" />
-              </Button>
+              <p className="text-sm text-muted-foreground mt-1">
+                Hola, {businessName}
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              Hola, {businessName}
-            </p>
           </div>
           
           <div className="flex-1 p-4 space-y-4">
