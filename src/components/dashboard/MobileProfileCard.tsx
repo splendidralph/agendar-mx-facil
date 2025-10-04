@@ -48,12 +48,14 @@ const MobileProfileCard = ({
               {provider.business_name || "Sin nombre"}
             </h3>
             {provider.category && (
-              <Badge variant="secondary" className="mt-1">
-                {provider.category}
-              </Badge>
+              <div className="mt-1 max-w-full overflow-hidden">
+                <Badge variant="secondary" className="truncate max-w-full">
+                  {provider.category}
+                </Badge>
+              </div>
             )}
             {provider.username && (
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground mt-1 truncate">
                 @{provider.username}
               </p>
             )}

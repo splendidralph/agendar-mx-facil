@@ -259,40 +259,42 @@ const ServicesManager = ({ providerId }: ServicesManagerProps) => {
         ) : (
           <div className="space-y-4">
             {services.map((service) => (
-              <div key={service.id} className="flex justify-between items-start p-4 border rounded-lg">
-                <div className="flex-1">
-                  <h3 className="font-semibold">{service.name}</h3>
+              <div key={service.id} className="flex flex-col sm:flex-row sm:justify-between gap-3 p-4 border rounded-lg">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold truncate">{service.name}</h3>
                   {service.description && (
-                    <p className="text-sm text-muted-foreground mt-1">{service.description}</p>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{service.description}</p>
                   )}
-                  <div className="flex items-center gap-4 mt-2">
+                  <div className="flex items-center gap-3 mt-2 flex-wrap">
                     <div className="flex items-center gap-1 text-sm">
-                      <DollarSign className="h-3 w-3" />
-                      {service.price}
+                      <DollarSign className="h-3 w-3 shrink-0" />
+                      <span>{service.price}</span>
                     </div>
                     <div className="flex items-center gap-1 text-sm">
-                      <Clock className="h-3 w-3" />
-                      {service.duration_minutes} min
+                      <Clock className="h-3 w-3 shrink-0" />
+                      <span>{service.duration_minutes} min</span>
                     </div>
                     <Badge variant="outline" className="text-xs">
                       {categoryLabels[service.category] || service.category}
                     </Badge>
                   </div>
                 </div>
-                <div className="flex gap-2 ml-4">
+                <div className="flex gap-2 self-end sm:self-start shrink-0">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => openDialog(service)}
+                    className="h-9 w-9 p-0"
                   >
-                    <Edit className="h-3 w-3" />
+                    <Edit className="h-4 w-4" />
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => handleDelete(service.id)}
+                    className="h-9 w-9 p-0"
                   >
-                    <Trash2 className="h-3 w-3" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
