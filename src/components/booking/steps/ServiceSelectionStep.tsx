@@ -41,27 +41,12 @@ const ServiceSelectionStep = ({
         ) : (
           <div className="space-y-3">
             {services.map((service) => {
-              const isSelected = selectedService?.id === service.id;
               return (
                 <div
                   key={service.id}
-                  className={cn(
-                    "relative p-4 rounded-xl cursor-pointer smooth-transition touch-manipulation border-2",
-                    isSelected
-                      ? "shadow-lg scale-[1.02] bg-primary/5"
-                      : "border-border hover:border-primary/30 hover:shadow-sm active:scale-95"
-                  )}
-                  style={isSelected ? { 
-                    borderColor: themeClasses.primary,
-                  } : undefined}
+                  className="relative p-4 rounded-xl cursor-pointer smooth-transition touch-manipulation border-2 border-border hover:border-primary/30 hover:shadow-sm active:scale-95"
                   onClick={() => onServiceSelect(service)}
                 >
-                  {isSelected && (
-                    <CheckCircle 
-                      className="absolute top-3 right-3 h-5 w-5" 
-                      style={{ color: themeClasses.primary }}
-                    />
-                  )}
                   <div className="flex justify-between items-start">
                     <div className="flex-1 pr-2">
                       <h3 className="font-semibold text-foreground text-lg">{service.name}</h3>
@@ -105,27 +90,12 @@ const ServiceSelectionStep = ({
         ) : (
           <div className="grid gap-3">
             {services.map((service) => {
-              const isSelected = selectedService?.id === service.id;
               return (
                 <div
                   key={service.id}
-                  className={cn(
-                    "relative p-4 rounded-xl cursor-pointer smooth-transition touch-manipulation border-2",
-                    isSelected
-                      ? "shadow-lg bg-primary/5"
-                      : "border-border hover:border-primary/30 hover:shadow-sm"
-                  )}
-                  style={isSelected ? { 
-                    borderColor: themeClasses.primary,
-                  } : undefined}
+                  className="relative p-4 rounded-xl cursor-pointer smooth-transition touch-manipulation border-2 border-border hover:border-primary/30 hover:shadow-sm"
                   onClick={() => onServiceSelect(service)}
                 >
-                  {isSelected && (
-                    <CheckCircle 
-                      className="absolute top-3 right-3 h-5 w-5" 
-                      style={{ color: themeClasses.primary }}
-                    />
-                  )}
                   <div className="flex justify-between items-start">
                     <div className="flex-1 pr-2">
                       <h3 className="font-semibold text-foreground text-lg">{service.name}</h3>
