@@ -8,13 +8,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import ReferralFooter from '@/components/profile/ReferralFooter';
 
-import { MapPin, Instagram, Clock, DollarSign, Phone, Star } from 'lucide-react';
+import { MapPin, Instagram, Clock, DollarSign, Phone, Star, LayoutDashboard } from 'lucide-react';
 import { toast } from 'sonner';
 import { categoryLabels } from '@/utils/serviceCategories';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Provider {
   id: string;
+  user_id: string;
   business_name: string;
   bio: string;
   category: string;
@@ -47,9 +49,10 @@ const RESERVED_ROUTES = [
 const PublicProfile = () => {
   const { username } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [provider, setProvider] = useState<Provider | null>(null);
   const [services, setServices] = useState<Service[]>([]);
-  
+  const [isOwner, setIsOwner] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -80,7 +83,7 @@ const PublicProfile = () => {
       // Fetch provider data
       const { data: providerData, error: providerError } = await supabase
         .from('providers')
-        .select('id, business_name, bio, category, address, instagram_handle, username, phone, profile_image_url, avg_rating, review_count, theme_color')
+        .select('id, user_id, business_name, bio, category, address, instagram_handle, username, phone, profile_image_url, avg_rating, review_count, theme_color')
         .eq('username', cleanUsername)
         .eq('profile_completed', true)
         .eq('is_active', true)
@@ -103,6 +106,11 @@ const PublicProfile = () => {
 
       console.log('PublicProfile: Provider found:', providerData);
       setProvider(providerData);
+
+      // Check if the logged-in user is the owner
+      if (user && providerData.user_id === user.id) {
+        setIsOwner(true);
+      }
 
       // Fetch services
       const { data: servicesData, error: servicesError } = await supabase
@@ -166,6 +174,19 @@ const PublicProfile = () => {
   return (
     <ThemeProvider themeColor={provider.theme_color || 'blue'}>
       <div className="min-h-screen bg-gradient-to-br from-secondary to-background">
+        {/* Dashboard button for owner */}
+        {isOwner && (
+          <Button
+            onClick={() => navigate('/dashboard')}
+            className="fixed bottom-20 right-4 md:top-20 md:bottom-auto md:right-8 btn-primary shadow-lg z-50 animate-fade-in gap-2"
+            size="lg"
+          >
+            <LayoutDashboard className="h-5 w-5" />
+            <span className="hidden md:inline">Ir al Dashboard</span>
+            <span className="md:hidden">Panel</span>
+          </Button>
+        )}
+
         {/* Header */}
         <header className="bg-card/80 backdrop-blur-sm border-b border-border">
           <div className="container mx-auto px-4 py-4 flex items-center justify-center">
