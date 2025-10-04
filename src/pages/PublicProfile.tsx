@@ -76,6 +76,49 @@ const PublicProfile = () => {
     }
   }, [username, navigate]);
 
+  // Update meta tags when provider data loads
+  useEffect(() => {
+    if (provider) {
+      // Update document title
+      document.title = `${provider.business_name} - Bookeasy.mx`;
+      
+      // Helper function to update meta tags
+      const updateMetaTag = (property: string, content: string) => {
+        let metaTag = document.querySelector(`meta[property="${property}"]`);
+        if (!metaTag) {
+          metaTag = document.querySelector(`meta[name="${property}"]`);
+        }
+        if (metaTag) {
+          metaTag.setAttribute('content', content);
+        }
+      };
+      
+      // Update meta description
+      const description = provider.bio || `${provider.business_name} - ${categoryLabels[provider.category as keyof typeof categoryLabels] || provider.category} en Tijuana`;
+      updateMetaTag('description', description);
+      
+      // Update Open Graph tags
+      updateMetaTag('og:title', `${provider.business_name} - Bookeasy.mx`);
+      updateMetaTag('og:description', description);
+      updateMetaTag('og:type', 'profile');
+      
+      // Update Twitter Card tags
+      updateMetaTag('twitter:title', `${provider.business_name} - Bookeasy.mx`);
+      updateMetaTag('twitter:description', description);
+      
+      // Update OG image if provider has profile image
+      if (provider.profile_image_url) {
+        updateMetaTag('og:image', provider.profile_image_url);
+        updateMetaTag('twitter:image', provider.profile_image_url);
+      }
+    }
+    
+    // Cleanup - reset to defaults when unmounting
+    return () => {
+      document.title = 'Bookeasy.mx - Plataforma de Reservas Online';
+    };
+  }, [provider]);
+
   const fetchProviderData = async (cleanUsername: string) => {
     try {
       console.log('PublicProfile: Fetching provider data for username:', cleanUsername);
