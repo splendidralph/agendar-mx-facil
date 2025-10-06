@@ -969,6 +969,48 @@ export type Database = {
           },
         ]
       }
+      site_banners: {
+        Row: {
+          animation_type: string
+          background_color: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean
+          is_dismissible: boolean
+          link_url: string | null
+          text_color: string | null
+          text_primary: string
+          text_secondary: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          animation_type?: string
+          background_color?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean
+          is_dismissible?: boolean
+          link_url?: string | null
+          text_color?: string | null
+          text_primary?: string
+          text_secondary?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          animation_type?: string
+          background_color?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean
+          is_dismissible?: boolean
+          link_url?: string | null
+          text_color?: string | null
+          text_primary?: string
+          text_secondary?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       subcategories: {
         Row: {
           created_at: string

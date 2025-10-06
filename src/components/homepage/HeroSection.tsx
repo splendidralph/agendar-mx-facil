@@ -18,7 +18,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative py-16 md:py-24 px-4 overflow-hidden">
+    <section className="relative py-16 md:py-24 px-4 overflow-hidden pt-20 md:pt-28">
       <div className="container mx-auto text-center relative z-10">
         <div className="max-w-3xl mx-auto">
           {/* Main headline */}

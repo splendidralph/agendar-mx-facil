@@ -12,6 +12,7 @@ import AdminOverview from "@/components/admin/AdminOverview";
 import ColoniaAnalytics from "@/components/admin/ColoniaAnalytics";
 import ProviderAnalytics from "@/components/admin/ProviderAnalytics";
 import RevenueAnalytics from "@/components/admin/RevenueAnalytics";
+import { BannerManager } from "@/components/admin/BannerManager";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -118,7 +119,7 @@ const Admin = () => {
 
           {/* Analytics Tabs */}
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
                 <span className="hidden sm:inline">Resumen</span>
@@ -134,6 +135,10 @@ const Admin = () => {
               <TabsTrigger value="revenue" className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4" />
                 <span className="hidden sm:inline">Ingresos</span>
+              </TabsTrigger>
+              <TabsTrigger value="banner" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <span className="hidden sm:inline">Banner</span>
               </TabsTrigger>
             </TabsList>
 
@@ -151,6 +156,10 @@ const Admin = () => {
 
             <TabsContent value="revenue" className="space-y-6">
               <RevenueAnalytics />
+            </TabsContent>
+
+            <TabsContent value="banner" className="space-y-6">
+              <BannerManager />
             </TabsContent>
           </Tabs>
         </div>

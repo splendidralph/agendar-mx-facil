@@ -7,6 +7,7 @@ import HeroSection from "@/components/homepage/HeroSection";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import ChatWidget from "@/components/ChatWidget";
+import { AnimatedBanner } from "@/components/homepage/AnimatedBanner";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -24,6 +25,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
+      {/* Animated Banner - Homepage Only */}
+      <AnimatedBanner />
+      
       {/* Header */}
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">
