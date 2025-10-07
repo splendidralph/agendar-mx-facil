@@ -5,7 +5,7 @@ export const LogoIcon = ({ className = "h-8 w-8" }: { className?: string }) => {
     <img 
       src={logoIcon} 
       alt="Bookeasy Calendar Icon" 
-      className={className}
+      className={`${className} rounded-lg`}
     />
   );
 };

@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Calendar, Link } from "lucide-react";
+import { Link } from "lucide-react";
 import MobileNavigation from "./MobileNavigation";
 import ProfilePictureUpload from "./ProfilePictureUpload";
+import { LogoIcon } from "@/components/branding/LogoIcon";
+import { LogoText } from "@/components/branding/LogoText";
 
 interface MobileHeaderProps {
   businessName: string;
@@ -23,10 +25,8 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
       <header className="glassmorphism border-b border-white/10 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg animate-glow">
-              <Calendar className="h-6 w-6" />
-            </div>
-            <span className="text-2xl font-bold text-foreground font-poppins">Bookeasy.mx</span>
+            <LogoIcon className="h-8 w-8" />
+            <LogoText className="text-2xl" />
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-muted-foreground hidden sm:inline font-inter">
@@ -50,11 +50,9 @@ const MobileHeader = ({ businessName, onSignOut, onCopyLink, onViewProfile, user
       <header className="glassmorphism border-b border-white/10 sticky top-0 z-50 touch-manipulation">
         <div className="flex justify-between items-center px-4 py-3">
           <div className="flex items-center space-x-3 flex-1 min-w-0">
-            <div className="gradient-primary text-primary-foreground p-2.5 rounded-xl shadow-lg animate-glow">
-              <Calendar className="h-5 w-5" />
-            </div>
+            <LogoIcon className="h-7 w-7" />
             <div className="min-w-0 flex-1">
-              <span className="text-lg font-bold text-foreground font-poppins block">Bookeasy</span>
+              <LogoText className="text-base" />
               <p className="text-sm text-muted-foreground truncate">
                 {businessName}
               </p>

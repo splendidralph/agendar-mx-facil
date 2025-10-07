@@ -2,10 +2,12 @@ import { ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageToggleOnboarding } from '@/components/ui/language-toggle';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { LogoIcon } from '@/components/branding/LogoIcon';
+import { LogoText } from '@/components/branding/LogoText';
 
 interface OnboardingLayoutProps {
   children: ReactNode;
@@ -47,10 +49,8 @@ export const OnboardingLayout = ({
               onClick={() => window.location.href = '/'}
               className="flex items-center space-x-4 hover:opacity-80 transition-opacity cursor-pointer"
             >
-              <div className="bg-primary text-white p-3 rounded-2xl shadow-lg border-2 border-primary/20">
-                <Calendar className="h-7 w-7 drop-shadow-sm" />
-              </div>
-              <span className="text-3xl font-bold text-foreground font-poppins tracking-tight">Bookeasy.mx</span>
+              <LogoIcon className="h-10 w-10" />
+              <LogoText className="text-3xl" />
             </button>
             
             <div className="flex items-center space-x-2">
