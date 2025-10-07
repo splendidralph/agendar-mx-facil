@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface BannerData {
@@ -16,16 +15,8 @@ interface BannerData {
 
 export const AnimatedBanner = () => {
   const [banner, setBanner] = useState<BannerData | null>(null);
-  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
-    // Check if banner was dismissed in this session
-    const dismissed = sessionStorage.getItem('banner-dismissed');
-    if (dismissed) {
-      setIsDismissed(true);
-      return;
-    }
-
     // Fetch active banner
     const fetchBanner = async () => {
       const { data, error } = await supabase
@@ -49,12 +40,7 @@ export const AnimatedBanner = () => {
     fetchBanner();
   }, []);
 
-  const handleDismiss = () => {
-    sessionStorage.setItem('banner-dismissed', 'true');
-    setIsDismissed(true);
-  };
-
-  if (!banner || isDismissed) {
+  if (!banner) {
     return null;
   }
 
@@ -84,28 +70,10 @@ export const AnimatedBanner = () => {
         <div className="flex gap-4 items-center shrink-0">{textContent}</div>
         <div className="flex gap-4 items-center shrink-0">{textContent}</div>
       </div>
-      {banner.is_dismissible && (
-        <button
-          onClick={handleDismiss}
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:opacity-70 transition-opacity z-10 bg-black/20 rounded"
-          aria-label="Dismiss banner"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      )}
     </div>
   ) : (
-    <div className="flex items-center justify-center gap-4 px-4 py-3 relative">
+    <div className="flex items-center justify-center gap-4 px-4 py-3">
       {textContent}
-      {banner.is_dismissible && (
-        <button
-          onClick={handleDismiss}
-          className="absolute right-2 p-1 hover:opacity-70 transition-opacity"
-          aria-label="Dismiss banner"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      )}
     </div>
   );
 
