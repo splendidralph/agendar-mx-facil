@@ -59,18 +59,44 @@ export const AnimatedBanner = () => {
   }
 
   const animationClass = {
-    marquee: 'animate-[scroll_20s_linear_infinite]',
+    marquee: 'overflow-hidden',
     fade: 'animate-[fade-in_1s_ease-in-out_infinite_alternate]',
     pulse: 'animate-pulse',
     none: ''
   }[banner.animation_type] || '';
 
-  const content = (
-    <div className="flex items-center justify-center gap-4 px-4 py-3 relative">
-      <span className="font-semibold text-sm sm:text-base">{banner.text_primary}</span>
+  const isMarquee = banner.animation_type === 'marquee';
+
+  const textContent = (
+    <>
+      <span className="font-semibold text-sm sm:text-base whitespace-nowrap">{banner.text_primary}</span>
       {banner.text_secondary && (
-        <span className="text-sm sm:text-base opacity-90">{banner.text_secondary}</span>
+        <span className="text-sm sm:text-base opacity-90 whitespace-nowrap ml-4">{banner.text_secondary}</span>
       )}
+    </>
+  );
+
+  const content = isMarquee ? (
+    <div className="relative py-3">
+      <div className="flex gap-8 animate-marquee hover:[animation-play-state:paused]">
+        <div className="flex gap-4 items-center shrink-0">{textContent}</div>
+        <div className="flex gap-4 items-center shrink-0">{textContent}</div>
+        <div className="flex gap-4 items-center shrink-0">{textContent}</div>
+        <div className="flex gap-4 items-center shrink-0">{textContent}</div>
+      </div>
+      {banner.is_dismissible && (
+        <button
+          onClick={handleDismiss}
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:opacity-70 transition-opacity z-10 bg-black/20 rounded"
+          aria-label="Dismiss banner"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
+    </div>
+  ) : (
+    <div className="flex items-center justify-center gap-4 px-4 py-3 relative">
+      {textContent}
       {banner.is_dismissible && (
         <button
           onClick={handleDismiss}
