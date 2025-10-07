@@ -23,22 +23,22 @@ const HeroSection = () => {
         <div className="max-w-3xl mx-auto">
           {/* Main headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Tu agenda profesional
+            {t('hero.heading')}
             <span className="block mt-2 bg-gradient-to-r from-bookeasy-mint-400 to-bookeasy-mint-500 bg-clip-text text-transparent">
-              en un link
+              {t('hero.headingHighlight')}
             </span>
           </h1>
 
           {/* Sub-headline */}
           <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Crea tu perfil en 2 minutos. Tus clientes reservan solos.
+            {t('hero.description')}
           </p>
           
           {/* Link preview */}
           <div className="bg-gradient-to-br from-bookeasy-mint-100/80 to-bookeasy-orange-100/50 border-2 border-bookeasy-mint-200 p-6 rounded-2xl inline-block mb-10 max-w-full shadow-lg">
             <div className="font-mono text-lg md:text-xl break-all">
-              <span className="text-muted-foreground">bookeasy.mx/</span>
-              <span className="bg-gradient-to-r from-bookeasy-mint-500 to-bookeasy-mint-600 bg-clip-text text-transparent font-semibold">tuusuario</span>
+              <span className="text-muted-foreground">{t('hero.linkLabel')}</span>
+              <span className="bg-gradient-to-r from-bookeasy-mint-500 to-bookeasy-mint-600 bg-clip-text text-transparent font-semibold">{t('hero.linkPlaceholder')}</span>
             </div>
           </div>
 
@@ -50,7 +50,7 @@ const HeroSection = () => {
               className="text-lg font-semibold group px-8 py-6 h-auto rounded-full hover:scale-105 transition-all duration-200"
               onClick={handleGetStarted}
             >
-              Crear mi perfil gratis
+              {t('hero.ctaButton')}
               <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>

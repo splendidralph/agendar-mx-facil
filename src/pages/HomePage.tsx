@@ -137,8 +137,8 @@ const Index = () => {
               <div className="bg-gradient-to-br from-bookeasy-mint-300 to-bookeasy-mint-400 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <Link2 className="h-6 w-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-foreground">Tu Link Profesional</h3>
-              <p className="text-sm text-muted-foreground">bookeasy.mx/tuusuario</p>
+              <h3 className="font-semibold text-lg mb-2 text-foreground">{t('home.features.link.title')}</h3>
+              <p className="text-sm text-muted-foreground">{t('home.features.link.description')}</p>
             </div>
 
             {/* Feature 2 */}
@@ -146,8 +146,8 @@ const Index = () => {
               <div className="bg-gradient-to-br from-bookeasy-orange-300 to-bookeasy-orange-400 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <CalendarDays className="h-6 w-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-foreground">Calendario Automático</h3>
-              <p className="text-sm text-muted-foreground">Tus clientes reservan solos</p>
+              <h3 className="font-semibold text-lg mb-2 text-foreground">{t('home.features.calendar.title')}</h3>
+              <p className="text-sm text-muted-foreground">{t('home.features.calendar.description')}</p>
             </div>
 
             {/* Feature 3 */}
@@ -155,8 +155,8 @@ const Index = () => {
               <div className="bg-gradient-to-br from-bookeasy-mint-400 to-bookeasy-mint-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <MessageCircle className="h-6 w-6" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-foreground">Confirmación WhatsApp</h3>
-              <p className="text-sm text-muted-foreground">Notificaciones automáticas</p>
+              <h3 className="font-semibold text-lg mb-2 text-foreground">{t('home.features.whatsapp.title')}</h3>
+              <p className="text-sm text-muted-foreground">{t('home.features.whatsapp.description')}</p>
             </div>
           </div>
         </div>
@@ -167,17 +167,17 @@ const Index = () => {
         <div className="container mx-auto text-center">
           <div className="max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Empieza gratis hoy
+              {t('home.cta.title')}
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              En 2 minutos tendrás tu perfil listo para compartir
+              {t('home.cta.description')}
             </p>
             <Button 
               size="lg" 
               className="text-lg font-semibold px-8 py-6 h-auto rounded-full hover:scale-105 transition-all duration-200 shadow-lg"
               onClick={handleGetStarted}
             >
-              Crear mi perfil
+              {t('home.cta.button')}
             </Button>
           </div>
 
@@ -192,13 +192,13 @@ const Index = () => {
                 hello@bookeasy.mx
               </p>
               <p className="text-xs text-muted-foreground">
-                © 2025 Bookeasy.mx • Todos los derechos reservados
+                {t('home.footer.copyright')}
               </p>
               
               {/* Powered by strip */}
               <div className="mt-6 pt-4 border-t">
                 <p className="text-xs text-muted-foreground">
-                  Beta powered by{' '}
+                  {t('home.footer.poweredBy')}{' '}
                   <a 
                     href="https://newbizmarketing.com" 
                     target="_blank" 

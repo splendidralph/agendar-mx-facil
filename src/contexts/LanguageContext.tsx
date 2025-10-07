@@ -120,6 +120,29 @@ const esTranslations: Record<string, string> = {
   'onboarding.steps.services': 'Servicios',
   'onboarding.steps.contact': 'Contacto',
   'onboarding.steps.preview': 'Vista Previa',
+  
+  // Homepage Hero
+  'hero.heading': 'Tu agenda profesional',
+  'hero.headingHighlight': 'en un link',
+  'hero.description': 'Crea tu perfil en 2 minutos. Tus clientes reservan solos.',
+  'hero.linkLabel': 'bookeasy.mx/',
+  'hero.linkPlaceholder': 'tuusuario',
+  'hero.ctaButton': 'Crear mi perfil gratis',
+  
+  // Homepage Features
+  'home.features.link.title': 'Tu Link Profesional',
+  'home.features.link.description': 'bookeasy.mx/tuusuario',
+  'home.features.calendar.title': 'Calendario Automático',
+  'home.features.calendar.description': 'Tus clientes reservan solos',
+  'home.features.whatsapp.title': 'Confirmación WhatsApp',
+  'home.features.whatsapp.description': 'Notificaciones automáticas',
+  
+  // Homepage CTA & Footer
+  'home.cta.title': 'Empieza gratis hoy',
+  'home.cta.description': 'En 2 minutos tendrás tu perfil listo para compartir',
+  'home.cta.button': 'Crear mi perfil',
+  'home.footer.copyright': '© 2025 Bookeasy.mx • Todos los derechos reservados',
+  'home.footer.poweredBy': 'Beta powered by',
 };
 
 const enTranslations: Record<string, string> = {
@@ -193,4 +216,27 @@ const enTranslations: Record<string, string> = {
   'onboarding.steps.services': 'Services',
   'onboarding.steps.contact': 'Contact',
   'onboarding.steps.preview': 'Preview',
+  
+  // Homepage Hero
+  'hero.heading': 'Your professional calendar',
+  'hero.headingHighlight': 'in one link',
+  'hero.description': 'Create your profile in 2 minutes. Your clients book on their own.',
+  'hero.linkLabel': 'bookeasy.mx/',
+  'hero.linkPlaceholder': 'yourusername',
+  'hero.ctaButton': 'Create my profile free',
+  
+  // Homepage Features
+  'home.features.link.title': 'Your Professional Link',
+  'home.features.link.description': 'bookeasy.mx/yourusername',
+  'home.features.calendar.title': 'Automatic Calendar',
+  'home.features.calendar.description': 'Your clients book on their own',
+  'home.features.whatsapp.title': 'WhatsApp Confirmation',
+  'home.features.whatsapp.description': 'Automatic notifications',
+  
+  // Homepage CTA & Footer
+  'home.cta.title': 'Start free today',
+  'home.cta.description': 'In 2 minutes you\'ll have your profile ready to share',
+  'home.cta.button': 'Create my profile',
+  'home.footer.copyright': '© 2025 Bookeasy.mx • All rights reserved',
+  'home.footer.poweredBy': 'Beta powered by',
 };
