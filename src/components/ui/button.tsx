@@ -19,6 +19,7 @@ const buttonVariants = cva(
         ghost: "hover:bg-card/50 hover:text-foreground smooth-transition",
         link: "text-primary underline-offset-4 hover:underline smooth-transition",
         accent: "gradient-accent text-white hover:shadow-xl hover:-translate-y-0.5 smooth-transition shadow-lg",
+        bookeasy: "bg-gradient-to-r from-bookeasy-mint-400 via-bookeasy-mint-500 to-bookeasy-orange-400 text-white hover:shadow-2xl hover:from-bookeasy-mint-500 hover:via-bookeasy-orange-400 hover:to-bookeasy-orange-500 smooth-transition shadow-lg",
       },
       size: {
         default: "h-10 px-4 py-2",

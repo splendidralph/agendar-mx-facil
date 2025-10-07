@@ -67,18 +67,35 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				bookeasy: {
-					50: '#f0f9ff',
-					100: '#e0f2fe',
-					200: '#bae6fd',
-					300: '#7dd3fc',
-					400: '#38bdf8',
-					500: '#1D84B5',
-					600: '#0284c7',
-					700: '#0369a1',
-					800: '#075985',
-					900: '#0c4a6e',
+			bookeasy: {
+				// Mint/Teal range (for "book")
+				mint: {
+					50: '#F0FDFB',
+					100: '#CCFBF1',
+					200: '#99F6E4',
+					300: '#5EDDC7',
+					400: '#4DB8A8',
+					500: '#3D9B8F',
+					600: '#2D6A60',
+					700: '#1E4D47',
 				},
+				// Orange/Yellow range (for "easy")
+				orange: {
+					50: '#FFF7ED',
+					100: '#FFEDD5',
+					200: '#FED7AA',
+					300: '#FDB462',
+					400: '#FFB84D',
+					500: '#F59E0B',
+					600: '#D97706',
+				},
+				// Backgrounds
+				bg: {
+					light: '#6DD5C3',
+					medium: '#5BC5B3',
+					dark: '#3D9B8F',
+				}
+			},
 				trust: {
 					blue: '#1D84B5',
 					teal: '#00A591',

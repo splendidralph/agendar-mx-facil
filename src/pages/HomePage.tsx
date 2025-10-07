@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Calendar, Menu, X, LogOut, Link2, CalendarDays, MessageCircle } from "lucide-react";
+import { Menu, X, LogOut, Link2, CalendarDays, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,6 +8,8 @@ import { LanguageToggle } from "@/components/ui/language-toggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import ChatWidget from "@/components/ChatWidget";
 import { AnimatedBanner } from "@/components/homepage/AnimatedBanner";
+import { LogoIcon } from "@/components/branding/LogoIcon";
+import { LogoText } from "@/components/branding/LogoText";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -29,14 +31,12 @@ const Index = () => {
       <AnimatedBanner />
       
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-40 border-b bg-gradient-to-r from-bookeasy-mint-50 to-bookeasy-orange-50/30 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
-              <div className="bg-primary text-primary-foreground p-2 rounded-xl">
-                <Calendar className="h-6 w-6" />
-              </div>
-              <span className="text-xl md:text-2xl font-bold text-foreground">Bookeasy.mx</span>
+              <LogoIcon className="h-8 w-8" />
+              <LogoText />
             </div>
             
             {/* Desktop Menu */}
@@ -129,12 +129,12 @@ const Index = () => {
       <HeroSection />
 
       {/* Simple Feature Cards */}
-      <section className="py-16 md:py-20 px-4 bg-muted/30">
+      <section className="py-16 md:py-20 px-4 bg-gradient-to-b from-bookeasy-mint-50/30 to-background">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {/* Feature 1 */}
-            <div className="bg-background border rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="bg-primary/10 text-primary w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-background border-2 border-bookeasy-mint-200/50 rounded-2xl p-6 text-center hover:shadow-xl hover:border-bookeasy-mint-300 transition-all hover:-translate-y-1">
+              <div className="bg-gradient-to-br from-bookeasy-mint-300 to-bookeasy-mint-400 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <Link2 className="h-6 w-6" />
               </div>
               <h3 className="font-semibold text-lg mb-2 text-foreground">Tu Link Profesional</h3>
@@ -142,8 +142,8 @@ const Index = () => {
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-background border rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="bg-primary/10 text-primary w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-background border-2 border-bookeasy-orange-200/50 rounded-2xl p-6 text-center hover:shadow-xl hover:border-bookeasy-orange-300 transition-all hover:-translate-y-1">
+              <div className="bg-gradient-to-br from-bookeasy-orange-300 to-bookeasy-orange-400 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <CalendarDays className="h-6 w-6" />
               </div>
               <h3 className="font-semibold text-lg mb-2 text-foreground">Calendario Automático</h3>
@@ -151,8 +151,8 @@ const Index = () => {
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-background border rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="bg-primary/10 text-primary w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-background border-2 border-bookeasy-mint-200/50 rounded-2xl p-6 text-center hover:shadow-xl hover:border-bookeasy-mint-300 transition-all hover:-translate-y-1">
+              <div className="bg-gradient-to-br from-bookeasy-mint-400 to-bookeasy-mint-500 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <MessageCircle className="h-6 w-6" />
               </div>
               <h3 className="font-semibold text-lg mb-2 text-foreground">Confirmación WhatsApp</h3>
@@ -185,10 +185,8 @@ const Index = () => {
           <footer className="border-t pt-8">
             <div className="flex flex-col items-center gap-4">
               <div className="flex items-center space-x-2">
-                <div className="bg-primary text-primary-foreground p-2 rounded-xl">
-                  <Calendar className="h-5 w-5" />
-                </div>
-                <span className="text-lg font-bold">Bookeasy.mx</span>
+                <LogoIcon className="h-6 w-6" />
+                <LogoText />
               </div>
               <p className="text-sm text-muted-foreground">
                 hello@bookeasy.mx
